@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function Home() {
   const [email, setEmail] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
 
   const handleGetStarted = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,71 +14,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white text-xl font-bold">R</span>
-              </div>
-              <span className="text-2xl font-bold gradient-text">Razmena Vrtića</span>
-            </div>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Mogućnosti</a>
-              <a href="#how-it-works" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Kako funkcioniše</a>
-              <a href="#testimonials" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Iskustva</a>
-              <a href="/login" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Prijavi se</a>
-              {/* <button className="btn-secondary">Prijavi se</button> */}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-white/50 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 space-y-4 border-t border-white/20 pt-4 mobile-menu-enter">
-              <a
-                href="#features"
-                className="block text-color-text-muted hover:text-color-text transition-colors font-medium"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Mogućnosti
-              </a>
-              <a
-                href="#how-it-works"
-                className="block text-color-text-muted hover:text-color-text transition-colors font-medium"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Kako funkcioniše
-              </a>
-              <a
-                href="#testimonials"
-                className="block text-color-text-muted hover:text-color-text transition-colors font-medium"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Iskustva
-              </a>
-              <button className="btn-secondary w-full">Prijavi se</button>
-            </div>
-          )}
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="relative pt-40 pb-32 px-6 overflow-hidden">

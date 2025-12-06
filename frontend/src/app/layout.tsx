@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import Header from "../components/Header";
+import PageWrapper from "../components/PageWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +29,8 @@ export default function RootLayout({
   return (
     <html lang="sr">
       <body className={`${inter.variable} ${outfit.variable}`}>
-        {children}
+        <Header />
+        <PageWrapper>{children}</PageWrapper>
       </body>
     </html>
   );
