@@ -30,7 +30,8 @@ export default function Home() {
               <a href="#features" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Mogućnosti</a>
               <a href="#how-it-works" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Kako funkcioniše</a>
               <a href="#testimonials" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Iskustva</a>
-              <button className="btn-secondary">Prijavi se</button>
+              <a href="/login" className="text-color-text-muted hover:text-color-text transition-colors font-medium">Prijavi se</a>
+              {/* <button className="btn-secondary">Prijavi se</button> */}
             </div>
 
             {/* Mobile Menu Button */}

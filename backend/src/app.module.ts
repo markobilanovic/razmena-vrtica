@@ -8,6 +8,8 @@ import { Child } from './entities/child.entity';
 import { Wishlist } from './entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from './entities/match.entity';
 import { MatchingModule } from './modules/matching.module';
+import { AuthModule } from './modules/auth.module';
+import { UsersModule } from './modules/users.module';
 
 @Module({
   imports: [
@@ -22,9 +24,12 @@ import { MatchingModule } from './modules/matching.module';
       synchronize: true,
     }),
     MatchingModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule { }
+
 

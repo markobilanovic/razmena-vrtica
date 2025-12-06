@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 export async function seedUsers(dataSource: DataSource): Promise<User[]> {
     const userRepository = dataSource.getRepository(User);
@@ -31,7 +32,7 @@ export async function seedUsers(dataSource: DataSource): Promise<User[]> {
             user = new User();
             user.email = userData.email;
             user.full_name = userData.full_name;
-            user.password_hash = userData.password_hash; // In real app this should be hashed, for mock it's fine or use simple hash
+            user.password_hash = await bcrypt.hash(userData.password_hash, 10);
             // If you actually use auth, you might need a real hash. Assuming plain for now or irrelevant for this specific test
         }
         users.push(user);
