@@ -349,4 +349,22 @@ export class MatchingService {
         const hasNullOrUndefined = match.participants.some(p => p.child.group == null);
         return ageGroups.size === 1 && !hasNullOrUndefined;
     }
+
+    /**
+     * Find all match groups where a specific child is a participant
+     */
+    async findMatchGroupsForChild(childId: string): Promise<MatchGroup[]> {
+        // We find matches where the child is one of the participants
+        // We need to load all participants of that match group to show the full circle
+        return this.matchGroupRepository
+            .createQueryBuilder('matchGroup')
+            .innerJoin('matchGroup.participants', 'participant') // Filter by participant
+            .leftJoinAndSelect('matchGroup.participants', 'allParticipants') // Load ALL participants
+            .leftJoinAndSelect('allParticipants.child', 'child')
+            .leftJoinAndSelect('child.parent', 'parent')
+            .leftJoinAndSelect('child.current_kindergarten', 'current_kindergarten')
+            .where('participant.child_id = :childId', { childId })
+            .orderBy('matchGroup.created_at', 'DESC')
+            .getMany();
+    }
 }

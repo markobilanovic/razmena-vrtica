@@ -51,4 +51,12 @@ export class MatchingController {
         const valid = await this.matchingService.validateMatchAgeGroup(matchId);
         return { valid };
     }
+
+    /**
+     * Get all match groups involved for a specific child
+     */
+    @Get('child/:childId/groups')
+    async getMatchGroupsForChild(@Param('childId') childId: string): Promise<MatchGroup[]> {
+        return this.matchingService.findMatchGroupsForChild(childId);
+    }
 }
