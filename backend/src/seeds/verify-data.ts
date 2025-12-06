@@ -31,7 +31,22 @@ async function verifyData() {
         });
 
         const total = await kindergartenRepository.count();
-        console.log(`\n📊 Total kindergartens: ${total}\n`);
+        console.log(`\n📊 Total kindergartens: ${total}`);
+
+        const userRepo = AppDataSource.getRepository(User);
+        console.log(`📊 Total users: ${await userRepo.count()}`);
+
+        const childRepo = AppDataSource.getRepository(Child);
+        console.log(`📊 Total children: ${await childRepo.count()}`);
+
+        const wishlistRepo = AppDataSource.getRepository(Wishlist);
+        console.log(`📊 Total wishlists: ${await wishlistRepo.count()}`);
+
+        const matchGroupRepo = AppDataSource.getRepository(MatchGroup);
+        console.log(`📊 Total matches: ${await matchGroupRepo.count()}`);
+
+        const matchParticipantRepo = AppDataSource.getRepository(MatchParticipant);
+        console.log(`📊 Total match participants: ${await matchParticipantRepo.count()}\n`);
 
     } catch (error) {
         console.error('Error:', error);
