@@ -74,11 +74,23 @@ export class MatchingService {
      * This ensures children are only matched with others in the same age group
      */
     private findMatchesInAgeGroup(children: Child[]): PotentialMatch[] {
+        // Use the general circle matching algorithm with min depth 2 and max depth 5
+        // This will cover both direct swaps (depth 2) and larger circles (3-5)
+        return this.findCircleMatches(children, 2, 5);
+    }
+
+    /**
+     * Find circle matches (cycles) in the preference graph
+     * @param children All children in the pool
+     * @param minDepth Minimum cycle length (e.g., 2 for direct swap)
+     * @param maxDepth Maximum cycle length (e.g., 5)
+     */
+    private findCircleMatches(children: Child[], minDepth: number, maxDepth: number): PotentialMatch[] {
         const potentialMatches: PotentialMatch[] = [];
+        const uniqueCycleKeys = new Set<string>();
 
-        // Create a map of current kindergarten -> children who want to leave
+        // 1. Build Adjacency Map: Current Kindergarten ID -> Children currently there (who want to move)
         const childrenByCurrentKG = new Map<string, Child[]>();
-
         for (const child of children) {
             if (child.wishlists && child.wishlists.length > 0) {
                 const currentKGId = child.current_kindergarten_id;
@@ -89,38 +101,109 @@ export class MatchingService {
             }
         }
 
-        // Look for direct swaps (2-way matches)
-        for (const child1 of children) {
-            if (!child1.wishlists || child1.wishlists.length === 0) continue;
+        // 2. DFS for Cycle Detection
 
-            for (const wishlist1 of child1.wishlists) {
-                const desiredKGId = wishlist1.target_kindergarten_id;
-                const childrenAtDesiredKG = childrenByCurrentKG.get(desiredKGId) || [];
+        // Helper to generate a unique key for a cycle to avoid duplicates
+        // Key format: sorted_child_ids_joined_by_comma
+        // Example: "id1,id2,id3"
+        const getCycleKey = (path: Child[]) => {
+            return path.map(c => c.id).sort().join(',');
+        };
 
-                for (const child2 of childrenAtDesiredKG) {
-                    // Check if child2 wants to go to child1's current kindergarten
-                    const wantsChild1KG = child2.wishlists.some(
-                        w => w.target_kindergarten_id === child1.current_kindergarten_id
-                    );
+        const dfs = (
+            startChild: Child,
+            currentChild: Child,
+            path: Child[],
+            visitedInPath: Set<string>
+        ) => {
+            // Stop if path gets too long
+            if (path.length > maxDepth) return;
 
-                    if (wantsChild1KG && child1.id !== child2.id) {
-                        // Verify they are in the same age group (double-check)
-                        if (child1.group === child2.group) {
-                            potentialMatches.push({
-                                children: [child1, child2],
-                                targetKindergartens: [
-                                    child2.current_kindergarten_id,
-                                    child1.current_kindergarten_id,
-                                ],
-                            });
+            // Check if current child wants to go to start child's kindergarten
+            // AND we have met the minimum depth requirement
+            if (path.length >= minDepth) {
+                const wantsStartKG = currentChild.wishlists.some(
+                    w => w.target_kindergarten_id === startChild.current_kindergarten_id
+                );
+
+                if (wantsStartKG) {
+                    // CYCLE FOUND!
+                    const cycleKey = getCycleKey(path);
+                    if (!uniqueCycleKeys.has(cycleKey)) {
+                        uniqueCycleKeys.add(cycleKey);
+
+                        // Construct the PotentialMatch object
+                        // targetKindergartens should correspond to the children in the path
+                        // For a cycle A -> B -> C -> A:
+                        // A moves to B's current KG
+                        // B moves to C's current KG
+                        // C moves to A's current KG
+
+                        // Path is [A, B, C]
+                        // Target KGs:
+                        // A's target is B.current_kindergarten_id
+                        // B's target is C.current_kindergarten_id
+                        // C's target is A.current_kindergarten_id
+
+                        const targetKGs: string[] = [];
+                        for (let i = 0; i < path.length; i++) {
+                            const nextChild = path[(i + 1) % path.length];
+                            targetKGs.push(nextChild.current_kindergarten_id);
+                        }
+
+                        potentialMatches.push({
+                            children: [...path],
+                            targetKindergartens: targetKGs
+                        });
+                    }
+                    // Continue searching? 
+                    // Usually we can stop this branch here because a larger cycle containing this sub-cycle 
+                    // starting at 'startChild' doesn't make sense in this context 
+                    // (we are looking for simple cycles).
+                    return;
+                }
+            }
+
+            // Continue DFS
+            // We need to look at where currentChild wants to go
+            for (const wish of currentChild.wishlists) {
+                const nextKGId = wish.target_kindergarten_id;
+                const candidatesAtNextKG = childrenByCurrentKG.get(nextKGId) || [];
+
+                for (const nextChild of candidatesAtNextKG) {
+                    // Avoid reusing children in the same path
+                    if (!visitedInPath.has(nextChild.id)) {
+
+                        // OPTIMIZATION: Ensure strict ordering for the start node to reduce redundant searches
+                        // Ensure we only find the cycle starting from the child with the "smallest" ID
+                        // This canonical form avoids finding A-B-C, B-C-A, and C-A-B separately.
+                        // However, since we track uniqueCycleKeys, this is just an optimization.
+                        if (startChild.id < nextChild.id) {
+                            // This optimization might skip valid paths if we strictly enforce startChild must be smallest.
+                            // Actually, let's just rely on uniqueCycleKeys for deduplication.
+                            // But we must strictly avoid cycles within the path itself (visitedInPath handles this).
+                        }
+
+                        // Only recurse if we are still under max depth (path len + 1 <= maxDepth)
+                        if (path.length + 1 <= maxDepth) {
+                            visitedInPath.add(nextChild.id);
+                            path.push(nextChild);
+
+                            dfs(startChild, nextChild, path, visitedInPath);
+
+                            path.pop();
+                            visitedInPath.delete(nextChild.id);
                         }
                     }
                 }
             }
-        }
+        };
 
-        // TODO: Implement circular matches (3+ way swaps) if needed
-        // Circular matches would also need to respect age group constraints
+        // Start DFS from each child
+        for (const child of children) {
+            // We start a path with just this child
+            dfs(child, child, [child], new Set([child.id]));
+        }
 
         return potentialMatches;
     }
