@@ -3,35 +3,26 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { loginApi, ApiError } from "@/lib/api"
+import { useLogin } from "@/lib/queries"
+import { ApiError } from "@/lib/api"
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const loginMutation = useLogin()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError("")
 
-    try {
-      const data = await loginApi(email, password)
-      localStorage.setItem("access_token", data.access_token)
-      localStorage.setItem("user", JSON.stringify(data.user))
-
-      router.push("/dashboard")
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError("An unexpected error occurred")
-      }
-    } finally {
-      setLoading(false)
-    }
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: () => {
+          router.push("/dashboard")
+        },
+      },
+    )
   }
 
   return (
@@ -51,9 +42,11 @@ export default function LoginPage() {
         </div>
 
         <form className="space-y-6" onSubmit={handleLogin}>
-          {error && (
+          {loginMutation.isError && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-200 text-sm text-center">
-              {error}
+              {loginMutation.error instanceof ApiError
+                ? loginMutation.error.message
+                : "An unexpected error occurred"}
             </div>
           )}
           <div className="space-y-2">
@@ -134,10 +127,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loginMutation.isPending}
             className="w-full py-3.5 px-6 bg-white text-indigo-600 hover:bg-white/90 active:scale-[0.98] rounded-xl font-bold text-lg shadow-lg shadow-indigo-900/20 transition-all duration-200 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Prijavljivanje..." : "Prijavi se"}
+            {loginMutation.isPending ? "Prijavljivanje..." : "Prijavi se"}
           </button>
         </form>
 

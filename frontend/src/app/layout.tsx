@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google"
 import "./globals.css"
 import Header from "../components/Header"
 import PageWrapper from "../components/PageWrapper"
+import QueryProvider from "../components/QueryProvider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,8 +31,10 @@ export default function RootLayout({
   return (
     <html lang="sr">
       <body className={`${inter.variable} ${outfit.variable}`}>
-        <Header />
-        <PageWrapper>{children}</PageWrapper>
+        <QueryProvider>
+          <Header />
+          <PageWrapper>{children}</PageWrapper>
+        </QueryProvider>
       </body>
     </html>
   )

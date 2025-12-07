@@ -1,15 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  getUserProfileApi,
-  checkMatchesApi,
-  getMatchGroupsForChildApi,
-  getPotentialMatchesApi,
-  ApiError,
-} from "@/lib/api"
+import { useUserProfile, useChildData } from "@/lib/queries"
 import {
   UserProfile,
   Kindergarten,
@@ -17,57 +10,29 @@ import {
   AgeGroup,
   MatchStatus,
 } from "@repo/shared"
+import { useEffect } from "react"
 
 // Type alias for convenience
 type User = UserProfile
 type Child = NonNullable<UserProfile["children"]>[number]
 
-const ChildTabContent = ({ child }: { child: Child }) => {
-  const [matches, setMatches] = useState<Kindergarten[]>([])
-  const [assignedMatches, setAssignedMatches] = useState<
-    MatchGroupWithDetails[]
-  >([])
-  const [potentials, setPotentials] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+interface ChildTabContentProps {
+  child: Child
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch direct matches using typed API
-        const matchesData = await checkMatchesApi(child.id)
-        setMatches(matchesData)
+const ChildTabContent = ({ child }: ChildTabContentProps) => {
+  const { matches, matchGroups, potentials, isLoading } = useChildData(
+    child.id,
+    child.group as AgeGroup | undefined,
+  )
 
-        // Fetch assigned matches using typed API
-        const assignedData = await getMatchGroupsForChildApi(child.id)
-        setAssignedMatches(assignedData)
-
-        // Fetch potentials using typed API
-        if (child.group) {
-          const potentialData = await getPotentialMatchesApi(
-            child.group as AgeGroup,
-          )
-          setPotentials(potentialData)
-        }
-      } catch (error) {
-        if (error instanceof ApiError) {
-          console.error("API Error:", error.message)
-        } else {
-          console.error("Error fetching child data", error)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [child])
-
-  if (loading)
+  if (isLoading) {
     return (
       <div className="text-center p-4 text-color-text-muted">
         Učitavanje podataka o detetu...
       </div>
     )
+  }
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -100,9 +65,9 @@ const ChildTabContent = ({ child }: { child: Child }) => {
           </div>
           <h3 className="text-lg font-bold text-teal-800">Aktivne razmene</h3>
         </div>
-        {assignedMatches.length > 0 ? (
+        {matchGroups.length > 0 ? (
           <div className="grid gap-3">
-            {assignedMatches.map((group) => {
+            {matchGroups.map((group) => {
               const isPending = group.status === MatchStatus.PENDING_ACCEPTANCE
               const isActive = group.status === MatchStatus.ACTIVE_CONTACT
 
@@ -270,35 +235,25 @@ const ChildTabContent = ({ child }: { child: Child }) => {
 }
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { data: user, isLoading, isError } = useUserProfile()
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("access_token")
-      if (!token) {
-        router.push("/login")
-        return
-      }
+    if (typeof window === "undefined") return
 
-      try {
-        const data = await getUserProfileApi()
-        setUser(data as User)
-      } catch (error) {
-        if (error instanceof ApiError) {
-          console.error("API Error:", error.message)
-        }
-        router.push("/login")
-      } finally {
-        setLoading(false)
-      }
+    const token = localStorage.getItem("access_token")
+    if (!token) {
+      router.push("/login")
     }
-
-    fetchUser()
   }, [router])
 
-  if (loading) {
+  useEffect(() => {
+    if (isError) {
+      router.push("/login")
+    }
+  }, [isError, router])
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

@@ -3,36 +3,27 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { registerApi, ApiError } from "@/lib/api"
+import { useRegister } from "@/lib/queries"
+import { ApiError } from "@/lib/api"
 
 export default function RegisterPage() {
   const router = useRouter()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const registerMutation = useRegister()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError("")
 
-    try {
-      const data = await registerApi(email, password, fullName)
-      localStorage.setItem("access_token", data.access_token)
-      localStorage.setItem("user", JSON.stringify(data.user))
-
-      router.push("/dashboard")
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError("An unexpected error occurred")
-      }
-    } finally {
-      setLoading(false)
-    }
+    registerMutation.mutate(
+      { email, password, fullName },
+      {
+        onSuccess: () => {
+          router.push("/dashboard")
+        },
+      },
+    )
   }
 
   return (
@@ -52,9 +43,11 @@ export default function RegisterPage() {
         </div>
 
         <form className="space-y-6" onSubmit={handleRegister}>
-          {error && (
+          {registerMutation.isError && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-200 text-sm text-center">
-              {error}
+              {registerMutation.error instanceof ApiError
+                ? registerMutation.error.message
+                : "An unexpected error occurred"}
             </div>
           )}
           <div className="space-y-2">
@@ -149,10 +142,10 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={registerMutation.isPending}
             className="w-full py-3.5 px-6 bg-white text-indigo-600 hover:bg-white/90 active:scale-[0.98] rounded-xl font-bold text-lg shadow-lg shadow-indigo-900/20 transition-all duration-200 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Kreiram nalog..." : "Registruj se"}
+            {registerMutation.isPending ? "Kreiram nalog..." : "Registruj se"}
           </button>
         </form>
 
