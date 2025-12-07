@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { WishlistService } from '../services/wishlist.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import type { CreateWishlistRequest, WishlistResponse } from '@repo/shared';
+import type {
+  CreateWishlistRequest,
+  UpdateWishlistRequest,
+  WishlistResponse,
+} from '@repo/shared';
 
 @Controller('wishlists')
 @UseGuards(JwtAuthGuard)
@@ -25,7 +29,7 @@ export class WishlistController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() body: Partial<CreateWishlistRequest>,
+    @Body() body: UpdateWishlistRequest,
   ): Promise<WishlistResponse> {
     return this.wishlistService.update(id, body);
   }

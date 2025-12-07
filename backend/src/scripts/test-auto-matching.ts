@@ -34,10 +34,10 @@ async function testAutoMatching() {
 
     const matchesForAgeGroup =
       await matchingService.checkAndCreateMatchesForAgeGroup(
-        AgeGroup.JASLICE_1,
+        AgeGroup.MLADJA_JASLENA,
       );
     console.log(
-      `✅ Found and created ${matchesForAgeGroup.length} matches for age group JASLICE_1`,
+      `✅ Found and created ${matchesForAgeGroup.length} matches for age group MLADJA_JASLENA`,
     );
 
     // Test 3: Try creating duplicate match (should be prevented)
@@ -46,7 +46,7 @@ async function testAutoMatching() {
 
     const matchesAgain =
       await matchingService.checkAndCreateMatchesForAgeGroup(
-        AgeGroup.JASLICE_1,
+        AgeGroup.MLADJA_JASLENA,
       );
     console.log(
       `✅ Second run created ${matchesAgain.length} matches (should be 0 if duplicates prevented)`,

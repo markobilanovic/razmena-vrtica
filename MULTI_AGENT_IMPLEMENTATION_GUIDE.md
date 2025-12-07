@@ -151,10 +151,10 @@ See **Step 6** in `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md` (lines 518-542)
    - Add to imports array
 
 #### Acceptance Criteria:
-- [ ] Matches are automatically created on wishlist create
-- [ ] Matches are automatically updated on wishlist update
-- [ ] Wishlist operations don't fail if matching fails
-- [ ] Proper error logging in place
+- [x] Matches are automatically created on wishlist create
+- [x] Matches are automatically updated on wishlist update
+- [x] Wishlist operations don't fail if matching fails
+- [x] Proper error logging in place
 
 #### Code Reference:
 See **Step 3** in `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md` (lines 345-443)

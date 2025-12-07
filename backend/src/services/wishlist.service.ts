@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Wishlist } from '../entities/wishlist.entity';
 import { Child } from '../entities/child.entity';
 import { Kindergarten } from '../entities/kindergarten.entity';
+import { MatchingService } from './matching.service';
 
 export interface CreateWishlistDto {
   child_id: string;
@@ -23,6 +24,7 @@ export class WishlistService {
     private childRepository: Repository<Child>,
     @InjectRepository(Kindergarten)
     private kindergartenRepository: Repository<Kindergarten>,
+    private matchingService: MatchingService,
   ) {}
 
   async create(createWishlistDto: CreateWishlistDto): Promise<Wishlist> {
@@ -55,7 +57,16 @@ export class WishlistService {
 
     // Create wishlist
     const wishlist = this.wishlistRepository.create(createWishlistDto);
-    return this.wishlistRepository.save(wishlist);
+    const savedWishlist = await this.wishlistRepository.save(wishlist);
+
+    // AUTO-MATCH: Check for new matches after creating wishlist
+    this.matchingService
+      .checkAndCreateMatchesForChild(createWishlistDto.child_id)
+      .catch((error) => {
+        console.error('Error auto-creating matches:', error);
+      });
+
+    return savedWishlist;
   }
 
   async update(id: string, updateWishlistDto: UpdateWishlistDto): Promise<Wishlist> {
@@ -74,7 +85,16 @@ export class WishlistService {
     }
 
     Object.assign(wishlist, updateWishlistDto);
-    return this.wishlistRepository.save(wishlist);
+    const savedWishlist = await this.wishlistRepository.save(wishlist);
+
+    // AUTO-MATCH: Check for new matches after updating wishlist
+    this.matchingService
+      .checkAndCreateMatchesForChild(wishlist.child_id)
+      .catch((error) => {
+        console.error('Error auto-creating matches:', error);
+      });
+
+    return savedWishlist;
   }
 
   async delete(id: string): Promise<void> {
@@ -82,7 +102,17 @@ export class WishlistService {
     if (!wishlist) {
       throw new Error('Wishlist not found');
     }
+
+    const childId = wishlist.child_id;
     await this.wishlistRepository.remove(wishlist);
+
+    // AUTO-MATCH: Check if any existing matches need to be invalidated
+    // or if new matches are now possible after removing this wishlist
+    this.matchingService
+      .checkAndCreateMatchesForChild(childId)
+      .catch((error) => {
+        console.error('Error auto-creating matches:', error);
+      });
   }
 
   async findByChild(childId: string): Promise<Wishlist[]> {
