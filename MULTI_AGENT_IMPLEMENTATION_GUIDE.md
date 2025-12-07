@@ -211,7 +211,8 @@ See **Step 3** in `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md` (lines 345-443)
 - [x] Logging is in place (console logging implemented)
 
 #### Code Reference:
-See **Testing Strategy** in `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md` (lines 545-577)
+- See **Testing Strategy** in `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md` (lines 545-577)
+- See **Comprehensive Testing Plan** in `TESTING_PLAN.md` (complete test implementation guide)
 
 ---
 
@@ -428,9 +429,10 @@ Update this section as work progresses:
 
 If you encounter issues:
 1. Check the detailed plan: `AUTOMATIC_MATCHING_IMPLEMENTATION_PLAN.md`
-2. Review existing similar code (e.g., `matching.service.ts`, `kindergarten.service.ts`)
-3. Check TypeORM documentation for query issues
-4. Report blockers in the Progress Tracking section
+2. Check the testing plan: `TESTING_PLAN.md` (for writing tests)
+3. Review existing similar code (e.g., `matching.service.ts`, `kindergarten.service.ts`)
+4. Check TypeORM documentation for query issues
+5. Report blockers in the Progress Tracking section
 
 ---
 
