@@ -1,5 +1,4 @@
-import { Suspense } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Suspense, useState } from "react"
 import { ChildDataSkeleton } from "@/components/LoadingFallback"
 import { ChildTabContent } from "./ChildTabContent"
 
@@ -26,6 +25,10 @@ interface ChildrenTabsProps {
 }
 
 export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
+  const [selectedChildId, setSelectedChildId] = useState(
+    children?.[0]?.id || ""
+  )
+
   if (!children || children.length === 0) {
     return (
       <div className="text-center py-20 bg-gray-50/50 rounded-2xl border border-dashed border-gray-300">
@@ -42,31 +45,75 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
     )
   }
 
+  const selectedChild = children.find((child) => child.id === selectedChildId)
+
+  const handleDelete = (childId: string) => {
+    // TODO: Implement delete functionality
+    console.log("Delete child:", childId)
+    alert("Delete functionality will be implemented")
+  }
+
   return (
-    <Tabs defaultValue={children[0].id} className="w-full">
-      <TabsList className="mb-8 w-full flex flex-wrap gap-2 bg-blue-50/50 p-1.5 rounded-xl border border-blue-100">
-        {children.map((child) => (
-          <TabsTrigger
-            key={child.id}
-            value={child.id}
-            className="flex-1 min-w-[120px] rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all py-2.5 font-medium"
+    <div className="w-full">
+      {/* Dropdown and Delete Button */}
+      <div className="mb-8 flex items-center gap-3">
+        <div className="flex-1 relative">
+          <select
+            value={selectedChildId}
+            onChange={(e) => setSelectedChildId(e.target.value)}
+            className="w-full px-4 py-3 pr-10 text-base font-medium bg-white border-2 border-blue-100 rounded-xl shadow-sm appearance-none cursor-pointer hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           >
-            {child.name}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-      {children.map((child) => (
-        <TabsContent
-          key={child.id}
-          value={child.id}
-          className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            {children.map((child) => (
+              <option key={child.id} value={child.id}>
+                {child.name}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg
+              className="w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
+        <button
+          onClick={() => handleDelete(selectedChildId)}
+          className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2 font-medium border-2 border-red-100 hover:border-red-200"
+          title="Obriši dete"
         >
-          <Suspense fallback={<ChildDataSkeleton />}>
-            <ChildTabContent child={child} />
-          </Suspense>
-        </TabsContent>
-      ))}
-    </Tabs>
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          <span className="hidden sm:inline">Obriši</span>
+        </button>
+      </div>
+
+      {/* Child Content */}
+      {selectedChild && (
+        <Suspense fallback={<ChildDataSkeleton />}>
+          <ChildTabContent child={selectedChild} />
+        </Suspense>
+      )}
+    </div>
   )
 }
 
