@@ -386,4 +386,116 @@ export class MatchingService {
       .orderBy('matchGroup.created_at', 'DESC')
       .getMany();
   }
+
+  /**
+   * Check for and automatically create matches for a specific child
+   * Called after wishlist changes for that child
+   *
+   * @param childId - The child whose wishlists changed
+   * @returns Array of created matches (could be multiple if child is in multiple cycles)
+   */
+  async checkAndCreateMatchesForChild(childId: string): Promise<MatchGroup[]> {
+    const child = await this.childRepository.findOne({
+      where: { id: childId },
+      relations: ['current_kindergarten', 'wishlists'],
+    });
+
+    if (!child || !child.group) {
+      return [];
+    }
+
+    // Find all potential matches in this child's age group
+    const potentialMatches = await this.findPotentialMatches(child.group);
+
+    const createdMatches: MatchGroup[] = [];
+
+    // Check each potential match to see if this child is involved
+    for (const potentialMatch of potentialMatches) {
+      const childIds = potentialMatch.children.map((c) => c.id);
+
+      // Only create match if our child is part of it
+      if (childIds.includes(childId)) {
+        // Check if a match with these exact children already exists
+        const existingMatch = await this.findExistingMatch(childIds);
+
+        if (!existingMatch) {
+          try {
+            const newMatch = await this.createMatch(childIds);
+            createdMatches.push(newMatch);
+          } catch (error) {
+            console.error(
+              `Failed to create match for children ${childIds.join(', ')}:`,
+              error,
+            );
+          }
+        }
+      }
+    }
+
+    return createdMatches;
+  }
+
+  /**
+   * Check if a match with the exact same set of children already exists
+   * Used to prevent duplicate matches
+   */
+  private async findExistingMatch(
+    childIds: string[],
+  ): Promise<MatchGroup | null> {
+    // Get all pending or active matches
+    const matches = await this.matchGroupRepository
+      .createQueryBuilder('matchGroup')
+      .leftJoinAndSelect('matchGroup.participants', 'participants')
+      .where('matchGroup.status IN (:...statuses)', {
+        statuses: [MatchStatus.PENDING_ACCEPTANCE, MatchStatus.ACTIVE_CONTACT],
+      })
+      .getMany();
+
+    // Check each match to see if it has the exact same children
+    for (const match of matches) {
+      const matchChildIds = match.participants.map((p) => p.child_id).sort();
+      const sortedInputIds = [...childIds].sort();
+
+      if (
+        matchChildIds.length === sortedInputIds.length &&
+        matchChildIds.every((id, index) => id === sortedInputIds[index])
+      ) {
+        return match;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Check for matches across an entire age group
+   * Useful for batch processing or when multiple wishlists change
+   */
+  async checkAndCreateMatchesForAgeGroup(
+    ageGroup: AgeGroup,
+  ): Promise<MatchGroup[]> {
+    const potentialMatches = await this.findPotentialMatches(ageGroup);
+    const createdMatches: MatchGroup[] = [];
+
+    for (const potentialMatch of potentialMatches) {
+      const childIds = potentialMatch.children.map((c) => c.id);
+
+      // Check if match already exists
+      const existingMatch = await this.findExistingMatch(childIds);
+
+      if (!existingMatch) {
+        try {
+          const newMatch = await this.createMatch(childIds);
+          createdMatches.push(newMatch);
+        } catch (error) {
+          console.error(
+            `Failed to create match for children ${childIds.join(', ')}:`,
+            error,
+          );
+        }
+      }
+    }
+
+    return createdMatches;
+  }
 }
