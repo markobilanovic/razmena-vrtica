@@ -6,8 +6,9 @@ import { calculateAgeGroup } from '../utils/age-group.util';
 
 export interface CreateChildDto {
   name: string;
-  birth_date: Date;
-  gender: Gender;
+  birth_date?: Date;
+  gender?: Gender;
+  group: AgeGroup;
   parent_id: string;
   current_kindergarten_id: string;
 }
@@ -16,6 +17,7 @@ export interface UpdateChildDto {
   name?: string;
   birth_date?: Date;
   gender?: Gender;
+  group?: AgeGroup;
   current_kindergarten_id?: string;
 }
 
@@ -28,29 +30,19 @@ export class ChildService {
 
   /**
    * Create a new child
-   * Automatically calculates and sets the age group based on birth date
+   * Age group is now mandatory and provided directly
+   * Birth date and gender are optional
    */
   async create(createChildDto: CreateChildDto): Promise<Child> {
     const child = this.childRepository.create(createChildDto);
 
-    // Automatically calculate age group from birth date
-    const ageGroup = calculateAgeGroup(child.birth_date);
-
-    if (!ageGroup) {
-      throw new Error(
-        `Child age is outside the valid kindergarten age range. ` +
-          `Birth date: ${child.birth_date}`,
-      );
+    // If birth date is provided, calculate age_group number for backwards compatibility
+    if (child.birth_date) {
+      const birthDate = new Date(child.birth_date);
+      const ageInYears =
+        (Date.now() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+      child.age_group = Math.floor(ageInYears);
     }
-
-    child.group = ageGroup;
-
-    // The age_group field is kept for backwards compatibility
-    // You might want to calculate it as a number if still needed
-    const birthDate = new Date(child.birth_date);
-    const ageInYears =
-      (Date.now() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-    child.age_group = Math.floor(ageInYears);
 
     return this.childRepository.save(child);
   }

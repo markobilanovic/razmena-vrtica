@@ -243,3 +243,22 @@ export async function getAllKindergartensApi(): Promise<Kindergarten[]> {
     z.array(KindergartenSchema),
   )
 }
+
+// ==================== CHILD API ====================
+
+export interface CreateChildRequest {
+  name: string
+  birth_date?: string
+  gender?: "MALE" | "FEMALE"
+  group: string // AgeGroup enum value
+  current_kindergarten_id: string
+}
+
+export async function createChildApi(
+  data: CreateChildRequest,
+): Promise<any> {
+  return fetchApi("/children", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+}

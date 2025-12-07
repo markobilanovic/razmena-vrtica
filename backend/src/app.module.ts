@@ -12,6 +12,7 @@ import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
 import { KindergartenModule } from './modules/kindergarten.module';
 import { WishlistModule } from './modules/wishlist.module';
+import { ChildModule } from './modules/child.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { WishlistModule } from './modules/wishlist.module';
     UsersModule,
     KindergartenModule,
     WishlistModule,
+    ChildModule,
   ],
   controllers: [AppController],
   providers: [AppService],

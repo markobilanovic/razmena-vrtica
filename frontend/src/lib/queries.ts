@@ -17,6 +17,8 @@ import {
   getKindergartensByIdsApi,
   getKindergartenByIdApi,
   getAllKindergartensApi,
+  createChildApi,
+  CreateChildRequest,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -185,6 +187,20 @@ export function useKindergartensBatch(ids: string[]) {
     queryKey: queryKeys.kindergartensBatch(ids),
     queryFn: () => getKindergartensByIdsApi(ids),
     staleTime: 30 * 60 * 1000, // 30 minutes
+  })
+}
+
+// ==================== CHILD MUTATIONS ====================
+
+export function useCreateChild() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateChildRequest) => createChildApi(data),
+    onSuccess: () => {
+      // Invalidate user profile to refetch with new child
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+    },
   })
 }
 

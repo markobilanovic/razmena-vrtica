@@ -1,11 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import { useUserProfile } from "@/lib/queries"
 import { ProfileSidebar } from "./ProfileSidebar"
 import { ChildrenTabs } from "./ChildrenTabs"
+import { AddChildDialog } from "./AddChildDialog"
 
 export function DashboardContent() {
   const { data: user } = useUserProfile()
+  const [isAddChildOpen, setIsAddChildOpen] = useState(false)
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
@@ -44,7 +47,10 @@ export function DashboardContent() {
                 <h2 className="text-2xl font-bold flex items-center gap-3">
                   <span className="text-3xl">👶</span> Moja deca
                 </h2>
-                <button className="btn-secondary text-sm py-2 px-4 shadow-none">
+                <button
+                  onClick={() => setIsAddChildOpen(true)}
+                  className="btn-secondary text-sm py-2 px-4 shadow-none"
+                >
                   + Dodaj dete
                 </button>
               </div>
@@ -54,6 +60,11 @@ export function DashboardContent() {
           </div>
         </div>
       </div>
+
+      <AddChildDialog
+        isOpen={isAddChildOpen}
+        onClose={() => setIsAddChildOpen(false)}
+      />
     </div>
   )
 }

@@ -46,13 +46,13 @@ export class Child {
   @Column()
   name: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   birth_date: Date;
 
-  @Column()
+  @Column({ nullable: true })
   age_group: number;
 
-  @Column({ type: 'enum', enum: Gender })
+  @Column({ type: 'enum', enum: Gender, nullable: true })
   gender: Gender;
 
   @Column({ type: 'enum', enum: AgeGroup })

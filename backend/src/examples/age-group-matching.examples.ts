@@ -15,6 +15,7 @@ async function exampleCreateChildren(childService: ChildService) {
     name: 'Ana Petrović',
     birth_date: new Date('2019-06-15'), // ~5 years old
     gender: Gender.FEMALE,
+    group: AgeGroup.STARIJA,
     parent_id: 'parent-uuid-1',
     current_kindergarten_id: 'kindergarten-uuid-1',
   });
@@ -27,6 +28,7 @@ async function exampleCreateChildren(childService: ChildService) {
     name: 'Marko Jovanović',
     birth_date: new Date('2019-09-20'), // ~5 years old
     gender: Gender.MALE,
+    group: AgeGroup.STARIJA,
     parent_id: 'parent-uuid-2',
     current_kindergarten_id: 'kindergarten-uuid-2',
   });
@@ -175,6 +177,7 @@ async function exampleRealisticScenario(
     name: 'Ana Nikolić',
     birth_date: new Date('2019-03-15'), // 5 years old -> STARIJA
     gender: Gender.FEMALE,
+    group: AgeGroup.STARIJA,
     parent_id: 'parent-1',
     current_kindergarten_id: 'kindergarten-a',
   });
@@ -184,6 +187,7 @@ async function exampleRealisticScenario(
     name: 'Milan Đorđević',
     birth_date: new Date('2019-07-20'), // 5 years old -> STARIJA
     gender: Gender.MALE,
+    group: AgeGroup.STARIJA,
     parent_id: 'parent-2',
     current_kindergarten_id: 'kindergarten-b',
   });
@@ -229,6 +233,7 @@ async function exampleDifferentAgeGroups(
     name: 'Nikola Petrović',
     birth_date: new Date('2021-09-01'), // ~3 years old
     gender: Gender.MALE,
+    group: AgeGroup.MLADJA,
     parent_id: 'parent-3',
     current_kindergarten_id: 'kindergarten-a',
   });
@@ -238,6 +243,7 @@ async function exampleDifferentAgeGroups(
     name: 'Jovana Marković',
     birth_date: new Date('2020-11-15'), // ~4 years old
     gender: Gender.FEMALE,
+    group: AgeGroup.SREDNJA,
     parent_id: 'parent-4',
     current_kindergarten_id: 'kindergarten-b',
   });
