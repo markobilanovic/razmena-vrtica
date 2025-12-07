@@ -1,0 +1,28 @@
+{
+  "semi": false,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "printWidth": 80,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "bracketSpacing": true,
+  "useTabs": false,
+  "overrides": [
+    {
+      "files": "backend/**/*.ts",
+      "options": {
+        "semi": true,
+        "singleQuote": true
+      }
+    },
+    {
+      "files": "shared/**/*.ts",
+      "options": {
+        "semi": true,
+        "singleQuote": true
+      }
+    }
+  ]
+}
+

@@ -1,70 +1,73 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   getUserProfileApi,
   checkMatchesApi,
   getMatchGroupsForChildApi,
   getPotentialMatchesApi,
   ApiError,
-} from "@/lib/api";
-import type {
+} from "@/lib/api"
+import {
   UserProfile,
   Kindergarten,
   MatchGroupWithDetails,
   AgeGroup,
-} from "@repo/shared";
+  MatchStatus,
+} from "@repo/shared"
 
 // Type alias for convenience
-type User = UserProfile;
-type Child = NonNullable<UserProfile['children']>[number];
+type User = UserProfile
+type Child = NonNullable<UserProfile["children"]>[number]
 
 const ChildTabContent = ({ child }: { child: Child }) => {
-  const [matches, setMatches] = useState<Kindergarten[]>([]);
-  const [assignedMatches, setAssignedMatches] = useState<MatchGroupWithDetails[]>([]);
-  const [potentials, setPotentials] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [matches, setMatches] = useState<Kindergarten[]>([])
+  const [assignedMatches, setAssignedMatches] = useState<
+    MatchGroupWithDetails[]
+  >([])
+  const [potentials, setPotentials] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch direct matches using typed API
-        const matchesData = await checkMatchesApi(child.id);
-        setMatches(matchesData);
+        const matchesData = await checkMatchesApi(child.id)
+        setMatches(matchesData)
 
         // Fetch assigned matches using typed API
-        const assignedData = await getMatchGroupsForChildApi(child.id);
-        setAssignedMatches(assignedData);
+        const assignedData = await getMatchGroupsForChildApi(child.id)
+        setAssignedMatches(assignedData)
 
         // Fetch potentials using typed API
         if (child.group) {
           const potentialData = await getPotentialMatchesApi(
             child.group as AgeGroup,
-          );
-          setPotentials(potentialData);
+          )
+          setPotentials(potentialData)
         }
       } catch (error) {
         if (error instanceof ApiError) {
-          console.error("API Error:", error.message);
+          console.error("API Error:", error.message)
         } else {
-          console.error("Error fetching child data", error);
+          console.error("Error fetching child data", error)
         }
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [child]);
+    fetchData()
+  }, [child])
 
   if (loading)
     return (
       <div className="text-center p-4 text-color-text-muted">
         Učitavanje podataka o detetu...
       </div>
-    );
+    )
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -100,14 +103,14 @@ const ChildTabContent = ({ child }: { child: Child }) => {
         {assignedMatches.length > 0 ? (
           <div className="grid gap-3">
             {assignedMatches.map((group) => {
-              const isPending = group.status === "PENDING_ACCEPTANCE";
-              const isActive = group.status === "ACTIVE_CONTACT";
+              const isPending = group.status === MatchStatus.PENDING_ACCEPTANCE
+              const isActive = group.status === MatchStatus.ACTIVE_CONTACT
 
               // Find other participants in the match
               const otherParticipants = (group.participants || [])
                 .filter((p) => p.child?.id !== child.id)
                 .map((p) => p.child)
-                .filter((c): c is NonNullable<typeof c> => c !== undefined);
+                .filter((c): c is NonNullable<typeof c> => c !== undefined)
 
               return (
                 <div
@@ -176,7 +179,7 @@ const ChildTabContent = ({ child }: { child: Child }) => {
                     </div>
                   )}
                 </div>
-              );
+              )
             })}
           </div>
         ) : (
@@ -263,51 +266,51 @@ const ChildTabContent = ({ child }: { child: Child }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("access_token")
       if (!token) {
-        router.push("/login");
-        return;
+        router.push("/login")
+        return
       }
 
       try {
-        const data = await getUserProfileApi();
-        setUser(data as User);
+        const data = await getUserProfileApi()
+        setUser(data as User)
       } catch (error) {
         if (error instanceof ApiError) {
-          console.error("API Error:", error.message);
+          console.error("API Error:", error.message)
         }
-        router.push("/login");
+        router.push("/login")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchUser();
-  }, [router]);
+    fetchUser()
+  }, [router])
 
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    );
+    )
   }
 
   if (!user) {
-    return null;
+    return null
   }
 
-  console.log("user", user);
+  console.log("user", user)
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
@@ -371,8 +374,8 @@ export default function Dashboard() {
               <button
                 className="w-full mt-6 py-3 px-4 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                 onClick={() => {
-                  localStorage.removeItem("access_token");
-                  router.push("/login");
+                  localStorage.removeItem("access_token")
+                  router.push("/login")
                 }}
               >
                 <svg
@@ -451,5 +454,5 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  );
+  )
 }

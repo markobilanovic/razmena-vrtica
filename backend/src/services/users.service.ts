@@ -8,7 +8,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async findOneById(id: string): Promise<User | null> {
     return this.usersRepository.findOne({
@@ -17,7 +17,6 @@ export class UsersService {
         'children',
         'children.current_kindergarten',
         'children.wishlists',
-        'children.wishlists.target_kindergarten',
       ],
     });
   }

@@ -20,7 +20,14 @@ import { UsersModule } from './modules/users.module';
       username: 'admin',
       password: 'password',
       database: 'razmena_vrtica',
-      entities: [User, Kindergarten, Child, Wishlist, MatchGroup, MatchParticipant],
+      entities: [
+        User,
+        Kindergarten,
+        Child,
+        Wishlist,
+        MatchGroup,
+        MatchParticipant,
+      ],
       synchronize: true,
     }),
     MatchingModule,
@@ -30,6 +37,4 @@ import { UsersModule } from './modules/users.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
-
-
+export class AppModule {}

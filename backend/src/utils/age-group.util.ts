@@ -10,50 +10,56 @@ import { AgeGroup } from '../entities/child.entity';
  * - STARIJA: 4.5y - 5.5y
  * - NAJSTARIJA: 5.5y - 6.5y
  */
-export function calculateAgeGroup(birthDate: Date, referenceDate: Date = new Date()): AgeGroup | null {
-    const ageInMonths = getAgeInMonths(birthDate, referenceDate);
+export function calculateAgeGroup(
+  birthDate: Date,
+  referenceDate: Date = new Date(),
+): AgeGroup | null {
+  const ageInMonths = getAgeInMonths(birthDate, referenceDate);
 
-    // Converting years to months for easier comparison
-    // 0.5y = 6 months, 1.5y = 18 months, etc.
+  // Converting years to months for easier comparison
+  // 0.5y = 6 months, 1.5y = 18 months, etc.
 
-    if (ageInMonths >= 6 && ageInMonths < 18) {
-        return AgeGroup.MLADJA_JASLENA;
-    } else if (ageInMonths >= 18 && ageInMonths < 30) {
-        return AgeGroup.STARIJA_JASLENA;
-    } else if (ageInMonths >= 30 && ageInMonths < 42) {
-        return AgeGroup.MLADJA;
-    } else if (ageInMonths >= 42 && ageInMonths < 54) {
-        return AgeGroup.SREDNJA;
-    } else if (ageInMonths >= 54 && ageInMonths < 66) {
-        return AgeGroup.STARIJA;
-    } else if (ageInMonths >= 66 && ageInMonths < 78) {
-        return AgeGroup.NAJSTARIJA;
-    }
+  if (ageInMonths >= 6 && ageInMonths < 18) {
+    return AgeGroup.MLADJA_JASLENA;
+  } else if (ageInMonths >= 18 && ageInMonths < 30) {
+    return AgeGroup.STARIJA_JASLENA;
+  } else if (ageInMonths >= 30 && ageInMonths < 42) {
+    return AgeGroup.MLADJA;
+  } else if (ageInMonths >= 42 && ageInMonths < 54) {
+    return AgeGroup.SREDNJA;
+  } else if (ageInMonths >= 54 && ageInMonths < 66) {
+    return AgeGroup.STARIJA;
+  } else if (ageInMonths >= 66 && ageInMonths < 78) {
+    return AgeGroup.NAJSTARIJA;
+  }
 
-    return null; // Child is too young or too old for these groups
+  return null; // Child is too young or too old for these groups
 }
 
 /**
  * Calculate age in months between two dates
  */
 function getAgeInMonths(birthDate: Date, referenceDate: Date): number {
-    const birth = new Date(birthDate);
-    const reference = new Date(referenceDate);
+  const birth = new Date(birthDate);
+  const reference = new Date(referenceDate);
 
-    let months = (reference.getFullYear() - birth.getFullYear()) * 12;
-    months += reference.getMonth() - birth.getMonth();
+  let months = (reference.getFullYear() - birth.getFullYear()) * 12;
+  months += reference.getMonth() - birth.getMonth();
 
-    // If the day of the month hasn't been reached yet, subtract one month
-    if (reference.getDate() < birth.getDate()) {
-        months--;
-    }
+  // If the day of the month hasn't been reached yet, subtract one month
+  if (reference.getDate() < birth.getDate()) {
+    months--;
+  }
 
-    return months;
+  return months;
 }
 
 /**
  * Get age in years (decimal) from birth date
  */
-export function getAgeInYears(birthDate: Date, referenceDate: Date = new Date()): number {
-    return getAgeInMonths(birthDate, referenceDate) / 12;
+export function getAgeInYears(
+  birthDate: Date,
+  referenceDate: Date = new Date(),
+): number {
+  return getAgeInMonths(birthDate, referenceDate) / 12;
 }

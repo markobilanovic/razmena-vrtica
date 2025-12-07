@@ -7,11 +7,11 @@ import { Wishlist } from '../entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Child, Wishlist, MatchGroup, MatchParticipant]),
-    ],
-    controllers: [MatchingController],
-    providers: [MatchingService],
-    exports: [MatchingService],
+  imports: [
+    TypeOrmModule.forFeature([Child, Wishlist, MatchGroup, MatchParticipant]),
+  ],
+  controllers: [MatchingController],
+  providers: [MatchingService],
+  exports: [MatchingService],
 })
-export class MatchingModule { }
+export class MatchingModule {}
