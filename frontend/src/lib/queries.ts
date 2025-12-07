@@ -19,6 +19,9 @@ import {
   getAllKindergartensApi,
   createChildApi,
   CreateChildRequest,
+  createWishlistApi,
+  CreateWishlistRequest,
+  deleteWishlistApi,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -204,3 +207,28 @@ export function useCreateChild() {
   })
 }
 
+// ==================== WISHLIST MUTATIONS ====================
+
+export function useCreateWishlist() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateWishlistRequest) => createWishlistApi(data),
+    onSuccess: () => {
+      // Invalidate user profile to refetch with updated wishlists
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+    },
+  })
+}
+
+export function useDeleteWishlist() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (wishlistId: string) => deleteWishlistApi(wishlistId),
+    onSuccess: () => {
+      // Invalidate user profile to refetch with updated wishlists
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+    },
+  })
+}

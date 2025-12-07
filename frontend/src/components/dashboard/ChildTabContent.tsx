@@ -61,6 +61,7 @@ export const ChildTabContent = ({ child }: ChildTabContentProps) => {
       />
       
       <WishlistSection 
+        childId={child.id}
         wishlists={child.wishlists} 
         kindergartenMap={kindergartenMap}
       />

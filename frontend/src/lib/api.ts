@@ -262,3 +262,32 @@ export async function createChildApi(
     body: JSON.stringify(data),
   })
 }
+
+// ==================== WISHLIST API ====================
+
+export interface CreateWishlistRequest {
+  child_id: string
+  target_kindergarten_id: string
+}
+
+export interface WishlistResponse {
+  id: string
+  child_id: string
+  target_kindergarten_id: string
+  created_at: string
+}
+
+export async function createWishlistApi(
+  data: CreateWishlistRequest,
+): Promise<WishlistResponse> {
+  return fetchApi("/wishlists", {
+    method: "POST",
+    body: JSON.stringify(data),
+  })
+}
+
+export async function deleteWishlistApi(id: string): Promise<{ success: boolean }> {
+  return fetchApi(`/wishlists/${id}`, {
+    method: "DELETE",
+  })
+}
