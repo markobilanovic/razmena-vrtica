@@ -23,6 +23,18 @@ import {
 } from "@repo/shared"
 import { z } from "zod"
 
+// Define Kindergarten schema and type
+const KindergartenSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  city: z.string(),
+  address: z.string(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
+})
+
+export type Kindergarten = z.infer<typeof KindergartenSchema>
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
 
 // Custom error class for API errors
@@ -197,5 +209,37 @@ export async function getMatchGroupsForChildApi(
     `/matching/child/${childId}/groups`,
     {},
     z.array(MatchGroupWithDetailsSchema),
+  )
+}
+
+// ==================== KINDERGARTEN API ====================
+
+export async function getKindergartenByIdApi(
+  id: string,
+): Promise<Kindergarten> {
+  return fetchApi<Kindergarten>(
+    `/kindergartens/${id}`,
+    {},
+    KindergartenSchema,
+  )
+}
+
+export async function getKindergartensByIdsApi(
+  ids: string[],
+): Promise<Kindergarten[]> {
+  if (ids.length === 0) return []
+  const query = ids.map((id) => `ids=${id}`).join("&")
+  return fetchApi<Kindergarten[]>(
+    `/kindergartens/batch?${query}`,
+    {},
+    z.array(KindergartenSchema),
+  )
+}
+
+export async function getAllKindergartensApi(): Promise<Kindergarten[]> {
+  return fetchApi<Kindergarten[]>(
+    `/kindergartens`,
+    {},
+    z.array(KindergartenSchema),
   )
 }

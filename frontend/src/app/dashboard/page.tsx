@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { Suspense, useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useUserProfile, useChildData } from "@/lib/queries"
+import { useUserProfile, useChildData, useKindergartensBatch } from "@/lib/queries"
 import { QueryErrorBoundary } from "@/components/ErrorBoundary"
 import {
   DashboardSkeleton,
@@ -29,6 +29,21 @@ const ChildTabContent = ({ child }: ChildTabContentProps) => {
   const { matches, matchGroups, potentials } = useChildData(
     child.id,
     child.group as AgeGroup | undefined,
+  )
+
+  // Extract unique kindergarten IDs from wishlists
+  const wishlistKindergartenIds = (child.wishlists || [])
+    .map((wish) => wish.target_kindergarten_id)
+    .filter(Boolean)
+
+  // Fetch kindergarten details only if there are wishlists
+  const { data: kindergartens = [] } = useKindergartensBatch(
+    wishlistKindergartenIds,
+  )
+
+  // Create a map for quick lookup
+  const kindergartenMap = new Map(
+    kindergartens.map((k) => [k.id, k]),
   )
 
   return (
@@ -158,15 +173,27 @@ const ChildTabContent = ({ child }: ChildTabContentProps) => {
         </div>
         {child.wishlists && child.wishlists.length > 0 ? (
           <ul className="space-y-2">
-            {child.wishlists.map((wish, index) => (
-              <li
-                key={index}
-                className="flex items-center gap-2 bg-white/50 p-3 rounded-lg"
-              >
-                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                <span>Vrtić ID: {wish.target_kindergarten_id}</span>
-              </li>
-            ))}
+            {child.wishlists.map((wish, index) => {
+              const kindergarten = kindergartenMap.get(wish.target_kindergarten_id)
+              return (
+                <li
+                  key={index}
+                  className="flex flex-col gap-1 bg-white/50 p-3 rounded-lg"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span className="font-semibold">
+                      {kindergarten?.name || "Učitavanje..."}
+                    </span>
+                  </div>
+                  {kindergarten?.address && (
+                    <span className="text-sm text-color-text-muted ml-4">
+                      {kindergarten.address}
+                    </span>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <p className="text-color-text-muted italic">Nema unetih želja.</p>

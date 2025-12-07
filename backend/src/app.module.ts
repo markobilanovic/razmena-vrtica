@@ -10,6 +10,7 @@ import { MatchGroup, MatchParticipant } from './entities/match.entity';
 import { MatchingModule } from './modules/matching.module';
 import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
+import { KindergartenModule } from './modules/kindergarten.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UsersModule } from './modules/users.module';
     MatchingModule,
     AuthModule,
     UsersModule,
+    KindergartenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

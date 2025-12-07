@@ -14,6 +14,9 @@ import {
   createMatchApi,
   getMatchesByAgeGroupApi,
   validateMatchApi,
+  getKindergartensByIdsApi,
+  getKindergartenByIdApi,
+  getAllKindergartensApi,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -30,6 +33,10 @@ export const queryKeys = {
   matchesByAgeGroup: (ageGroup: AgeGroup) =>
     ["matches", "ageGroup", ageGroup] as const,
   validateMatch: (matchId: string) => ["match", matchId, "validate"] as const,
+  kindergartens: ["kindergartens"] as const,
+  kindergarten: (id: string) => ["kindergarten", id] as const,
+  kindergartensBatch: (ids: string[]) =>
+    ["kindergartens", "batch", ids.sort().join(",")] as const,
 }
 
 // ==================== AUTH QUERIES ====================
@@ -153,5 +160,31 @@ export function useChildData(childId: string, ageGroup?: AgeGroup) {
     matchGroups: matchGroups.data ?? [],
     potentials: potentials.data ?? [],
   }
+}
+
+// ==================== KINDERGARTEN QUERIES ====================
+
+export function useKindergartens() {
+  return useSuspenseQuery({
+    queryKey: queryKeys.kindergartens,
+    queryFn: getAllKindergartensApi,
+    staleTime: 30 * 60 * 1000, // 30 minutes - kindergartens don't change often
+  })
+}
+
+export function useKindergarten(id: string) {
+  return useSuspenseQuery({
+    queryKey: queryKeys.kindergarten(id),
+    queryFn: () => getKindergartenByIdApi(id),
+    staleTime: 30 * 60 * 1000, // 30 minutes
+  })
+}
+
+export function useKindergartensBatch(ids: string[]) {
+  return useSuspenseQuery({
+    queryKey: queryKeys.kindergartensBatch(ids),
+    queryFn: () => getKindergartensByIdsApi(ids),
+    staleTime: 30 * 60 * 1000, // 30 minutes
+  })
 }
 
