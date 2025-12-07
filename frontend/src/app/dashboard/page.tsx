@@ -15,7 +15,7 @@ interface Child {
         address: string;
     };
     wishlists?: {
-        wish_kindergarten_id: string;
+        target_kindergarten_id: string;
     }[];
 }
 
@@ -114,27 +114,6 @@ const ChildTabContent = ({ child }: { child: Child }) => {
                 )}
             </div>
 
-            <div className="glass-card p-6 rounded-2xl border border-white/50">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">
-                        ✨
-                    </div>
-                    <h3 className="text-lg font-bold">Želje</h3>
-                </div>
-                {child.wishlists && child.wishlists.length > 0 ? (
-                    <ul className="space-y-2">
-                        {child.wishlists.map((wish, index) => (
-                            <li key={index} className="flex items-center gap-2 bg-white/50 p-3 rounded-lg">
-                                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                                <span>Vrtić ID: {wish.wish_kindergarten_id}</span>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-color-text-muted italic">Nema unetih želja.</p>
-                )}
-            </div>
-
             {/* Active Exchanges Section */}
             <div className="glass-card p-6 rounded-2xl border border-teal-100 bg-teal-50/30">
                 <div className="flex items-center gap-3 mb-4">
@@ -208,6 +187,27 @@ const ChildTabContent = ({ child }: { child: Child }) => {
                     </div>
                 ) : (
                     <p className="text-color-text-muted italic">Nema aktivnih razmena.</p>
+                )}
+            </div>
+
+            <div className="glass-card p-6 rounded-2xl border border-white/50">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-2xl">
+                        ✨
+                    </div>
+                    <h3 className="text-lg font-bold">Želje</h3>
+                </div>
+                {child.wishlists && child.wishlists.length > 0 ? (
+                    <ul className="space-y-2">
+                        {child.wishlists.map((wish, index) => (
+                            <li key={index} className="flex items-center gap-2 bg-white/50 p-3 rounded-lg">
+                                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                                <span>Vrtić ID: {wish.target_kindergarten_id}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-color-text-muted italic">Nema unetih želja.</p>
                 )}
             </div>
 
