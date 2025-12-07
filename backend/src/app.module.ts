@@ -11,6 +11,7 @@ import { MatchingModule } from './modules/matching.module';
 import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
 import { KindergartenModule } from './modules/kindergarten.module';
+import { WishlistModule } from './modules/wishlist.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { KindergartenModule } from './modules/kindergarten.module';
     AuthModule,
     UsersModule,
     KindergartenModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
