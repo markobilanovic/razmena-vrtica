@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerApi, ApiError } from "@/lib/api";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -18,28 +19,17 @@ export default function RegisterPage() {
         setError("");
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-            const res = await fetch(`${apiUrl}/auth/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ fullName, email, password }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.message || "Greska pri registraciji");
-            }
-
-            const data = await res.json();
+            const data = await registerApi(email, password, fullName);
             localStorage.setItem("access_token", data.access_token);
-            // Optionally store user info
             localStorage.setItem("user", JSON.stringify(data.user));
 
             router.push("/dashboard");
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err) {
+            if (err instanceof ApiError) {
+                setError(err.message);
+            } else {
+                setError("An unexpected error occurred");
+            }
         } finally {
             setLoading(false);
         }

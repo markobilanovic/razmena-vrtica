@@ -1,8 +1,13 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { MatchingService } from '../services/matching.service';
-import { AgeGroup } from '../entities/child.entity';
+import { AgeGroup } from '@repo/shared';
 import { Kindergarten } from '../entities/kindergarten.entity';
 import { MatchGroup } from '../entities/match.entity';
+import type {
+    CheckMatchesRequest,
+    CreateMatchRequest,
+    ValidateMatchResponse,
+} from '@repo/shared';
 
 @Controller('matching')
 export class MatchingController {
@@ -22,7 +27,7 @@ export class MatchingController {
      * Returns a list of kindergartens that the child can switch to immediately
      */
     @Post('check-matches')
-    async checkMatches(@Body() body: { childId: string }): Promise<Kindergarten[]> {
+    async checkMatches(@Body() body: CheckMatchesRequest): Promise<Kindergarten[]> {
         return this.matchingService.findDirectMatchesForChild(body.childId);
     }
 
@@ -31,7 +36,7 @@ export class MatchingController {
      * All children MUST be in the same age group
      */
     @Post('create')
-    async createMatch(@Body() body: { childIds: string[] }): Promise<MatchGroup> {
+    async createMatch(@Body() body: CreateMatchRequest): Promise<MatchGroup> {
         return this.matchingService.createMatch(body.childIds);
     }
 
@@ -47,7 +52,7 @@ export class MatchingController {
      * Validate that a match contains only children from the same age group
      */
     @Get('validate/:matchId')
-    async validateMatch(@Param('matchId') matchId: string): Promise<{ valid: boolean }> {
+    async validateMatch(@Param('matchId') matchId: string): Promise<ValidateMatchResponse> {
         const valid = await this.matchingService.validateMatchAgeGroup(matchId);
         return { valid };
     }
