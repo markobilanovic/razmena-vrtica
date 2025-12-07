@@ -1,8 +1,14 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { Suspense, useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useUserProfile, useChildData } from "@/lib/queries"
+import { QueryErrorBoundary } from "@/components/ErrorBoundary"
+import {
+  DashboardSkeleton,
+  ChildDataSkeleton,
+} from "@/components/LoadingFallback"
 import {
   UserProfile,
   Kindergarten,
@@ -10,7 +16,6 @@ import {
   AgeGroup,
   MatchStatus,
 } from "@repo/shared"
-import { useEffect } from "react"
 
 // Type alias for convenience
 type User = UserProfile
@@ -21,18 +26,10 @@ interface ChildTabContentProps {
 }
 
 const ChildTabContent = ({ child }: ChildTabContentProps) => {
-  const { matches, matchGroups, potentials, isLoading } = useChildData(
+  const { matches, matchGroups, potentials } = useChildData(
     child.id,
     child.group as AgeGroup | undefined,
   )
-
-  if (isLoading) {
-    return (
-      <div className="text-center p-4 text-color-text-muted">
-        Učitavanje podataka o detetu...
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -234,38 +231,9 @@ const ChildTabContent = ({ child }: ChildTabContentProps) => {
   )
 }
 
-export default function Dashboard() {
+function DashboardContent() {
   const router = useRouter()
-  const { data: user, isLoading, isError } = useUserProfile()
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-
-    const token = localStorage.getItem("access_token")
-    if (!token) {
-      router.push("/login")
-    }
-  }, [router])
-
-  useEffect(() => {
-    if (isError) {
-      router.push("/login")
-    }
-  }, [isError, router])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
-  console.log("user", user)
+  const { data: user } = useUserProfile()
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
@@ -399,7 +367,9 @@ export default function Dashboard() {
                       value={child.id}
                       className="mt-0 focus-visible:outline-none focus-visible:ring-0"
                     >
-                      <ChildTabContent child={child} />
+                      <Suspense fallback={<ChildDataSkeleton />}>
+                        <ChildTabContent child={child} />
+                      </Suspense>
                     </TabsContent>
                   ))}
                 </Tabs>
@@ -409,5 +379,43 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+    
+    if (typeof window === "undefined") return
+
+    const token = localStorage.getItem("access_token")
+    if (!token) {
+      router.push("/login")
+    }
+  }, [router])
+
+  // Show loading state during SSR or before client hydration
+  if (!isClient) {
+    return <DashboardSkeleton />
+  }
+
+  return (
+    <QueryErrorBoundary
+      onReset={() => {
+        if (typeof window !== "undefined") {
+          const token = localStorage.getItem("access_token")
+          if (!token) {
+            window.location.href = "/login"
+          }
+        }
+      }}
+    >
+      <Suspense fallback={<DashboardSkeleton />}>
+        <DashboardContent />
+      </Suspense>
+    </QueryErrorBoundary>
   )
 }

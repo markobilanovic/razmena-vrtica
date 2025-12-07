@@ -13,6 +13,8 @@ export default function QueryProvider({ children }: { children: ReactNode }) {
             gcTime: 5 * 60 * 1000, // 5 minutes (formerly cacheTime)
             retry: 1,
             refetchOnWindowFocus: false,
+            // Enable throwing errors for error boundaries
+            throwOnError: true,
           },
         },
       }),

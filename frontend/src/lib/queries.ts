@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useQuery,
+  useSuspenseQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 import {
   getUserProfileApi,
   checkMatchesApi,
@@ -63,7 +68,7 @@ export function useRegister() {
 // ==================== USER QUERIES ====================
 
 export function useUserProfile() {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.userProfile,
     queryFn: getUserProfileApi,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -74,42 +79,37 @@ export function useUserProfile() {
 // ==================== MATCHING QUERIES ====================
 
 export function useChildMatches(childId: string) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.childMatches(childId),
     queryFn: () => checkMatchesApi(childId),
-    enabled: !!childId, // Only run if childId exists
   })
 }
 
 export function useChildMatchGroups(childId: string) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.childMatchGroups(childId),
     queryFn: () => getMatchGroupsForChildApi(childId),
-    enabled: !!childId,
   })
 }
 
 export function usePotentialMatches(ageGroup?: AgeGroup) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.potentialMatches(ageGroup),
     queryFn: () => getPotentialMatchesApi(ageGroup),
-    enabled: !!ageGroup, // Only run if ageGroup exists
   })
 }
 
 export function useMatchesByAgeGroup(ageGroup: AgeGroup) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.matchesByAgeGroup(ageGroup),
     queryFn: () => getMatchesByAgeGroupApi(ageGroup),
-    enabled: !!ageGroup,
   })
 }
 
 export function useValidateMatch(matchId: string) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: queryKeys.validateMatch(matchId),
     queryFn: () => validateMatchApi(matchId),
-    enabled: !!matchId,
   })
 }
 
@@ -152,9 +152,6 @@ export function useChildData(childId: string, ageGroup?: AgeGroup) {
     matches: matches.data ?? [],
     matchGroups: matchGroups.data ?? [],
     potentials: potentials.data ?? [],
-    isLoading: matches.isLoading || matchGroups.isLoading || potentials.isLoading,
-    isError: matches.isError || matchGroups.isError || potentials.isError,
-    error: matches.error || matchGroups.error || potentials.error,
   }
 }
 
