@@ -15,4 +15,9 @@ export class AuthController {
         }
         return this.authService.login(user);
     }
+
+    @Post('register')
+    async register(@Body() signUpDto: Record<string, any>) {
+        return this.authService.register(signUpDto);
+    }
 }

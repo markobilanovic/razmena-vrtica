@@ -38,4 +38,19 @@ export class AuthService {
             }
         };
     }
+
+    async register(user: any) {
+        const { email, password, fullName } = user;
+        const existingUser = await this.usersRepository.findOne({ where: { email } });
+        if (existingUser) {
+            throw new UnauthorizedException('User already exists');
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await this.usersRepository.save({
+            email,
+            password_hash: hashedPassword,
+            full_name: fullName,
+        });
+        return this.login(newUser);
+    }
 }

@@ -20,4 +20,9 @@ export class UsersService {
     async findOneByEmail(email: string): Promise<User | null> {
         return this.usersRepository.findOne({ where: { email } });
     }
+
+    async create(userData: Partial<User>): Promise<User> {
+        const user = this.usersRepository.create(userData);
+        return this.usersRepository.save(user);
+    }
 }
