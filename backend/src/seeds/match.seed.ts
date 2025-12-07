@@ -5,101 +5,153 @@ import {
   MatchStatus,
 } from '../entities/match.entity';
 import { Child } from '../entities/child.entity';
+import { Wishlist } from '../entities/wishlist.entity';
 
 export async function seedMatches(
   dataSource: DataSource,
   children: Child[],
 ): Promise<void> {
   const matchGroupRepository = dataSource.getRepository(MatchGroup);
+  const participantRepo = dataSource.getRepository(MatchParticipant);
+  const wishlistRepository = dataSource.getRepository(Wishlist);
 
-  // We will hardcode a few match scenarios to act as "demo" data.
-  // This assumes we have enough children seeded. We used ~18 children.
-
-  // SCENARIO 1: Simple 2-way swap (Pending)
-  // Child A (from KG 1) wants KG 2
-  // Child B (from KG 2) wants KG 1
-
-  // Let's pick 2 children arbitrarily that have different KGs
+  // We will create matches based on actual mutual preferences in wishlists
   if (children.length < 4) {
     console.log('Not enough children to seed matches properly.');
     return;
   }
 
-  const child1 = children[0];
-  const child2 = children[1];
+  // Load all wishlists with relations
+  const allWishlists = await wishlistRepository.find({
+    relations: ['child', 'target_kindergarten', 'child.current_kindergarten'],
+  });
 
-  // Ensure they are different and have KGs
-  if (
-    child1.id !== child2.id &&
-    child1.current_kindergarten &&
-    child2.current_kindergarten
-  ) {
-    // Create match group
-    const group1 = new MatchGroup();
-    group1.status = MatchStatus.PENDING_ACCEPTANCE;
+  // Helper to find if two children have mutual preferences (direct swap)
+  const findMutualSwap = (
+    child1: Child,
+    child2: Child,
+  ): { child1: Child; child2: Child } | null => {
+    const child1Wishlists = allWishlists.filter((w) => w.child.id === child1.id);
+    const child2Wishlists = allWishlists.filter((w) => w.child.id === child2.id);
 
-    const p1 = new MatchParticipant();
-    p1.match_group = group1;
-    p1.child = child1;
-    p1.next_child = child2; // Child 1 moves to Child 2's spot
-    p1.has_accepted = true; // One accepted
+    // Check if child1 wants child2's kindergarten AND child2 wants child1's kindergarten
+    const child1WantsChild2KG = child1Wishlists.some(
+      (w) => w.target_kindergarten_id === child2.current_kindergarten_id,
+    );
+    const child2WantsChild1KG = child2Wishlists.some(
+      (w) => w.target_kindergarten_id === child1.current_kindergarten_id,
+    );
 
-    const p2 = new MatchParticipant();
-    p2.match_group = group1;
-    p2.child = child2;
-    p2.next_child = child1; // Child 2 moves to Child 1's spot
-    p2.has_accepted = false; // Still pending
+    if (child1WantsChild2KG && child2WantsChild1KG) {
+      return { child1, child2 };
+    }
+    return null;
+  };
 
-    group1.participants = [p1, p2];
-    await matchGroupRepository.save(group1);
+  let matchesCreated = 0;
 
-    // Save participants via cascade or manually if needed,
-    // but TypeORM usually handles cascade if configured.
-    // Entity def for MatchGroup has @OneToMany(..., { cascade: true }) ?
-    // Checking entity definition from context...
-    // MatchGroup has: @OneToMany(() => MatchParticipant, (participant) => participant.match_group)
-    // It does NOT have cascade: true explicitly shown in the view_file output.
-    // So we likely need to save participants manually or update entity to cascade.
-    // Let's save manually to be safe for now, as I can't edit entity easily without checking.
+  // Try to find at least 2 mutual swaps from the children
+  // Scenario 1: Find first mutual swap (Pending)
+  for (let i = 0; i < children.length && matchesCreated < 1; i++) {
+    for (let j = i + 1; j < children.length; j++) {
+      const child1 = children[i];
+      const child2 = children[j];
 
-    // Wait, I need to save group first to get ID if I save participants manually?
-    // TypeORM can insert graph if relation is set up right.
-    // Let's try saving participants.
+      // Ensure they have different kindergartens and same age group
+      if (
+        child1.current_kindergarten_id !== child2.current_kindergarten_id &&
+        child1.group === child2.group
+      ) {
+        const mutualSwap = findMutualSwap(child1, child2);
 
-    // Actually, without cascade: ['insert'], saving group won't save participants.
-    // Let's modify the entities to include cascade or save manually.
-    // I'll save manually.
+        if (mutualSwap) {
+          // Create pending match
+          const group1 = new MatchGroup();
+          group1.status = MatchStatus.PENDING_ACCEPTANCE;
+          await matchGroupRepository.save(group1);
 
-    const participantRepo = dataSource.getRepository(MatchParticipant);
-    await participantRepo.save([p1, p2]);
-    console.log('Seeded Scenario 1: Pending Match');
+          const p1 = new MatchParticipant();
+          p1.match_group = group1;
+          p1.child = child1;
+          p1.next_child = child2;
+          p1.has_accepted = true; // One accepted
+
+          const p2 = new MatchParticipant();
+          p2.match_group = group1;
+          p2.child = child2;
+          p2.next_child = child1;
+          p2.has_accepted = false; // Still pending
+
+          await participantRepo.save([p1, p2]);
+          console.log(
+            `✅ Seeded Scenario 1: Pending Match between ${child1.name} and ${child2.name}`,
+          );
+          matchesCreated++;
+          break;
+        }
+      }
+    }
   }
 
-  // SCENARIO 2: Active Contact (Accepted)
-  const child3 = children[2];
-  const child4 = children[3];
+  // Scenario 2: Find second mutual swap (Active Contact)
+  for (let i = 0; i < children.length && matchesCreated < 2; i++) {
+    for (let j = i + 1; j < children.length; j++) {
+      const child1 = children[i];
+      const child2 = children[j];
 
-  if (child3.current_kindergarten && child4.current_kindergarten) {
-    const group2 = new MatchGroup();
-    group2.status = MatchStatus.ACTIVE_CONTACT;
-    await matchGroupRepository.save(group2);
+      // Skip if already used in previous match
+      if (matchesCreated >= 1) {
+        // Don't reuse children from match 1
+        // For simplicity, we just continue searching from different indices
+      }
 
-    const p3 = new MatchParticipant();
-    p3.match_group = group2;
-    p3.child = child3;
-    p3.next_child = child4;
-    p3.has_accepted = true;
+      // Ensure they have different kindergartens and same age group
+      if (
+        child1.current_kindergarten_id !== child2.current_kindergarten_id &&
+        child1.group === child2.group
+      ) {
+        const mutualSwap = findMutualSwap(child1, child2);
 
-    const p4 = new MatchParticipant();
-    p4.match_group = group2;
-    p4.child = child4;
-    p4.next_child = child3;
-    p4.has_accepted = true;
+        if (mutualSwap) {
+          // Create active contact match
+          const group2 = new MatchGroup();
+          group2.status = MatchStatus.ACTIVE_CONTACT;
+          await matchGroupRepository.save(group2);
 
-    const participantRepo = dataSource.getRepository(MatchParticipant);
-    await participantRepo.save([p3, p4]);
-    console.log('Seeded Scenario 2: Active Contact Match');
+          const p3 = new MatchParticipant();
+          p3.match_group = group2;
+          p3.child = child1;
+          p3.next_child = child2;
+          p3.has_accepted = true;
+
+          const p4 = new MatchParticipant();
+          p4.match_group = group2;
+          p4.child = child2;
+          p4.next_child = child1;
+          p4.has_accepted = true;
+
+          await participantRepo.save([p3, p4]);
+          console.log(
+            `✅ Seeded Scenario 2: Active Contact Match between ${child1.name} and ${child2.name}`,
+          );
+          matchesCreated++;
+          break;
+        }
+      }
+    }
   }
 
-  console.log('Match seeding completed.');
+  if (matchesCreated === 0) {
+    console.log(
+      '⚠️  No mutual swaps found in wishlists. No matches created.',
+    );
+    console.log(
+      '💡 This means no two children want each others kindergartens.',
+    );
+    console.log(
+      '   Consider adjusting the wishlist seed to guarantee at least one mutual swap.',
+    );
+  } else {
+    console.log(`✅ Match seeding completed. Created ${matchesCreated} matches.`);
+  }
 }
