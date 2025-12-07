@@ -14,8 +14,8 @@ const ChildWithMatchRelationsSchema = ChildSchema.extend({
 export const MatchParticipantSchema = z.object({
     id: z.string().uuid(),
     match_group_id: z.string().uuid(),
-    child_id: z.string().uuid(),
-    next_child_id: z.string().uuid(),
+    child_id: z.string().uuid().nullable(),
+    next_child_id: z.string().uuid().nullable(),
     has_accepted: z.boolean(),
 });
 
@@ -23,7 +23,7 @@ export type MatchParticipant = z.infer<typeof MatchParticipantSchema>;
 
 // Match Participant with child relations (for detailed responses)
 export const MatchParticipantWithChildSchema = MatchParticipantSchema.extend({
-    child: ChildWithMatchRelationsSchema.optional(),
+    child: ChildWithMatchRelationsSchema.nullable().optional(),
 });
 
 export type MatchParticipantWithChild = z.infer<typeof MatchParticipantWithChildSchema>;

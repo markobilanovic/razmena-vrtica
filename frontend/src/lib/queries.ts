@@ -22,6 +22,7 @@ import {
   createWishlistApi,
   CreateWishlistRequest,
   deleteWishlistApi,
+  deleteChildApi,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -47,13 +48,22 @@ export const queryKeys = {
 // ==================== AUTH QUERIES ====================
 
 export function useLogin() {
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      loginApi(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) => {
+      // Clear old token before logging in
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("access_token")
+      }
+      return loginApi(email, password)
+    },
     onSuccess: (data) => {
       if (typeof window !== "undefined") {
         localStorage.setItem("access_token", data.access_token)
       }
+      // Clear all cached queries to ensure fresh data for new user
+      queryClient.clear()
     },
   })
 }
@@ -203,6 +213,22 @@ export function useCreateChild() {
     onSuccess: () => {
       // Invalidate user profile to refetch with new child
       queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+    },
+  })
+}
+
+export function useDeleteChild() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (childId: string) => deleteChildApi(childId),
+    onSuccess: () => {
+      // Invalidate user profile to refetch without deleted child
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+      // Invalidate all match-related queries since matches may have been cancelled
+      queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
+      queryClient.invalidateQueries({ queryKey: ["matches"] })
+      queryClient.invalidateQueries({ queryKey: ["child"] })
     },
   })
 }

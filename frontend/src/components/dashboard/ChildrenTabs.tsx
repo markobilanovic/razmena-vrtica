@@ -1,6 +1,9 @@
+"use client"
+
 import { Suspense, useState } from "react"
 import { ChildDataSkeleton } from "@/components/LoadingFallback"
 import { ChildTabContent } from "./ChildTabContent"
+import { useDeleteChild } from "@/lib/queries"
 
 type Child = {
   id: string
@@ -28,6 +31,7 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
   const [selectedChildId, setSelectedChildId] = useState(
     children?.[0]?.id || ""
   )
+  const deleteChildMutation = useDeleteChild()
 
   if (!children || children.length === 0) {
     return (
@@ -47,10 +51,28 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
 
   const selectedChild = children.find((child) => child.id === selectedChildId)
 
-  const handleDelete = (childId: string) => {
-    // TODO: Implement delete functionality
-    console.log("Delete child:", childId)
-    alert("Delete functionality will be implemented")
+  const handleDelete = async (childId: string) => {
+    const child = children.find((c) => c.id === childId)
+    if (!child) return
+
+    const confirmed = window.confirm(
+      `Da li ste sigurni da želite da obrišete dete "${child.name}"?\n\n` +
+        `Ovo će obrisati:\n` +
+        `- Sve želje za razmenu\n` +
+        `- Učešće u svim aktivnim razmenama\n\n` +
+        `Ova akcija se ne može poništiti.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      await deleteChildMutation.mutateAsync(childId)
+    } catch (error) {
+      console.error("Failed to delete child:", error)
+      alert(
+        "Greška pri brisanju deteta. Molimo pokušajte ponovo ili kontaktirajte podršku."
+      )
+    }
   }
 
   return (
@@ -87,23 +109,51 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
         </div>
         <button
           onClick={() => handleDelete(selectedChildId)}
-          className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2 font-medium border-2 border-red-100 hover:border-red-200"
+          disabled={deleteChildMutation.isPending}
+          className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2 font-medium border-2 border-red-100 hover:border-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Obriši dete"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-          <span className="hidden sm:inline">Obriši</span>
+          {deleteChildMutation.isPending ? (
+            <>
+              <svg
+                className="w-5 h-5 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <span className="hidden sm:inline">Brisanje...</span>
+            </>
+          ) : (
+            <>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              <span className="hidden sm:inline">Obriši</span>
+            </>
+          )}
         </button>
       </div>
 

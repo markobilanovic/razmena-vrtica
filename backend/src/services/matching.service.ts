@@ -498,4 +498,24 @@ export class MatchingService {
 
     return createdMatches;
   }
+
+  /**
+   * Invalidate all matches involving a specific child
+   * Called when a child is being deleted
+   * Sets all matches to CANCELLED status
+   */
+  async invalidateMatchesForChild(childId: string): Promise<void> {
+    const matchGroups = await this.findMatchGroupsForChild(childId);
+
+    for (const matchGroup of matchGroups) {
+      // Only invalidate if not already completed or cancelled
+      if (
+        matchGroup.status !== MatchStatus.COMPLETED &&
+        matchGroup.status !== MatchStatus.CANCELLED
+      ) {
+        matchGroup.status = MatchStatus.CANCELLED;
+        await this.matchGroupRepository.save(matchGroup);
+      }
+    }
+  }
 }

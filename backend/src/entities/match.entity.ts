@@ -47,18 +47,18 @@ export class MatchParticipant {
   @Column()
   match_group_id: string;
 
-  @ManyToOne(() => Child)
+  @ManyToOne(() => Child, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'child_id' })
   child: Child;
 
-  @Column()
+  @Column({ nullable: true })
   child_id: string;
 
-  @ManyToOne(() => Child)
+  @ManyToOne(() => Child, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'next_child_id' })
   next_child: Child; // The child/spot this participant receives spot FROM
 
-  @Column()
+  @Column({ nullable: true })
   next_child_id: string;
 
   @Column({ default: false })

@@ -27,7 +27,7 @@ export const ActiveExchangesSection = ({
             const otherParticipants = (group.participants || [])
               .filter((p) => p.child?.id !== currentChildId)
               .map((p) => p.child)
-              .filter((c): c is NonNullable<typeof c> => c !== undefined)
+              .filter((c): c is NonNullable<typeof c> => c !== null && c !== undefined)
 
             return (
               <div

@@ -263,6 +263,14 @@ export async function createChildApi(
   })
 }
 
+export async function deleteChildApi(
+  childId: string,
+): Promise<{ success: boolean; message: string }> {
+  return fetchApi(`/children/${childId}`, {
+    method: "DELETE",
+  })
+}
+
 // ==================== WISHLIST API ====================
 
 export interface CreateWishlistRequest {

@@ -168,4 +168,19 @@ export class ChildService {
 
     return { updated, unchanged, outOfRange };
   }
+
+  /**
+   * Delete a child
+   * This will cascade delete wishlists automatically via database constraints
+   * Note: Matches involving this child should be invalidated separately
+   */
+  async delete(id: string): Promise<void> {
+    const child = await this.childRepository.findOne({ where: { id } });
+
+    if (!child) {
+      throw new Error(`Child with ID ${id} not found`);
+    }
+
+    await this.childRepository.remove(child);
+  }
 }
