@@ -22,3 +22,17 @@ export type CreateWishlistRequest = z.infer<typeof CreateWishlistRequestSchema>;
 export const WishlistResponseSchema = WishlistSchema;
 export type WishlistResponse = Wishlist;
 
+// Update Wishlist Request
+export const UpdateWishlistRequestSchema = z.object({
+    target_kindergarten_id: z.string().uuid().optional(),
+});
+
+export type UpdateWishlistRequest = z.infer<typeof UpdateWishlistRequestSchema>;
+
+// Delete Wishlist Response
+export const DeleteWishlistResponseSchema = z.object({
+    success: z.boolean(),
+});
+
+export type DeleteWishlistResponse = z.infer<typeof DeleteWishlistResponseSchema>;
+
