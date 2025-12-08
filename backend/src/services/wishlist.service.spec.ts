@@ -49,6 +49,9 @@ describe('WishlistService', () => {
           provide: MatchingService,
           useValue: {
             checkAndCreateMatchesForChild: jest.fn().mockResolvedValue([]),
+            validateAndCleanupMatchesForChild: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
       ],
@@ -102,7 +105,9 @@ describe('WishlistService', () => {
     it('should throw error when child not found', async () => {
       childRepo.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow('Child not found');
+      await expect(service.create(createDto)).rejects.toThrow(
+        'Child not found',
+      );
       expect(kindergartenRepo.findOne).not.toHaveBeenCalled();
       expect(wishlistRepo.create).not.toHaveBeenCalled();
     });
@@ -146,9 +151,9 @@ describe('WishlistService', () => {
 
       await service.create(createDto);
 
-      expect(matchingService.checkAndCreateMatchesForChild).toHaveBeenCalledWith(
-        createDto.child_id,
-      );
+      expect(
+        matchingService.checkAndCreateMatchesForChild,
+      ).toHaveBeenCalledWith(createDto.child_id);
     });
 
     it('should create wishlist even if matching fails', async () => {
@@ -237,9 +242,12 @@ describe('WishlistService', () => {
 
       await service.update('wishlist-1', updateDto);
 
-      expect(matchingService.checkAndCreateMatchesForChild).toHaveBeenCalledWith(
-        existingWishlist.child_id,
-      );
+      expect(
+        matchingService.validateAndCleanupMatchesForChild,
+      ).toHaveBeenCalledWith(existingWishlist.child_id);
+      expect(
+        matchingService.checkAndCreateMatchesForChild,
+      ).toHaveBeenCalledWith(existingWishlist.child_id);
     });
 
     it('should update wishlist even if matching fails', async () => {
@@ -255,6 +263,9 @@ describe('WishlistService', () => {
       wishlistRepo.save.mockResolvedValue(updatedWishlist);
 
       // Mock matching service to fail
+      matchingService.validateAndCleanupMatchesForChild.mockRejectedValue(
+        new Error('Validation failed'),
+      );
       matchingService.checkAndCreateMatchesForChild.mockRejectedValue(
         new Error('Matching failed'),
       );
@@ -304,9 +315,12 @@ describe('WishlistService', () => {
 
       await service.delete('wishlist-1');
 
-      expect(matchingService.checkAndCreateMatchesForChild).toHaveBeenCalledWith(
-        wishlist.child_id,
-      );
+      expect(
+        matchingService.validateAndCleanupMatchesForChild,
+      ).toHaveBeenCalledWith(wishlist.child_id);
+      expect(
+        matchingService.checkAndCreateMatchesForChild,
+      ).toHaveBeenCalledWith(wishlist.child_id);
     });
 
     it('should delete wishlist even if matching fails', async () => {
@@ -319,6 +333,9 @@ describe('WishlistService', () => {
       wishlistRepo.remove.mockResolvedValue(wishlist);
 
       // Mock matching service to fail
+      matchingService.validateAndCleanupMatchesForChild.mockRejectedValue(
+        new Error('Validation failed'),
+      );
       matchingService.checkAndCreateMatchesForChild.mockRejectedValue(
         new Error('Matching failed'),
       );
@@ -391,4 +408,3 @@ describe('WishlistService', () => {
     });
   });
 });
-

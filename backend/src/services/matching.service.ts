@@ -518,4 +518,71 @@ export class MatchingService {
       }
     }
   }
+
+  /**
+   * Validate and clean up matches for a child after wishlist changes
+   * This checks if existing matches are still valid based on current wishlists
+   * and invalidates matches where the child no longer wants the required swap
+   */
+  async validateAndCleanupMatchesForChild(childId: string): Promise<void> {
+    // Get the child with current wishlists
+    const child = await this.childRepository.findOne({
+      where: { id: childId },
+      relations: ['wishlists', 'current_kindergarten'],
+    });
+
+    if (!child) {
+      return;
+    }
+
+    // Get all active matches for this child
+    const matchGroups = await this.findMatchGroupsForChild(childId);
+
+    for (const matchGroup of matchGroups) {
+      // Only check active matches (not completed or already cancelled)
+      if (
+        matchGroup.status === MatchStatus.PENDING_ACCEPTANCE ||
+        matchGroup.status === MatchStatus.ACTIVE_CONTACT
+      ) {
+        const isStillValid = this.isMatchStillValidForChild(matchGroup, child);
+
+        if (!isStillValid) {
+          matchGroup.status = MatchStatus.CANCELLED;
+          await this.matchGroupRepository.save(matchGroup);
+          console.log(
+            `Cancelled match ${matchGroup.id} - no longer valid for child ${childId}`,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if a match is still valid for a specific child
+   * A match is valid if the child still has wishlists that support the required swap
+   */
+  private isMatchStillValidForChild(
+    matchGroup: MatchGroup,
+    child: Child,
+  ): boolean {
+    // Find this child's participant record in the match
+    const childParticipant = matchGroup.participants.find(
+      (p) => p.child_id === child.id,
+    );
+
+    if (!childParticipant || !childParticipant.next_child) {
+      return false;
+    }
+
+    // The child needs to want to go to the next child's current kindergarten
+    const targetKindergartenId =
+      childParticipant.next_child.current_kindergarten_id;
+
+    // Check if the child still has a wishlist for this target kindergarten
+    const hasWishlistForTarget = child.wishlists.some(
+      (w) => w.target_kindergarten_id === targetKindergartenId,
+    );
+
+    return hasWishlistForTarget;
+  }
 }

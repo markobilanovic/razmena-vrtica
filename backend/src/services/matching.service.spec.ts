@@ -649,5 +649,142 @@ describe('MatchingService', () => {
       expect(result).toBe(false);
     });
   });
+
+  describe('validateAndCleanupMatchesForChild()', () => {
+    it('should cancel matches when child no longer wants required swap', async () => {
+      const child = mockChild({
+        id: 'child-a',
+        group: AgeGroup.MLADJA,
+        current_kindergarten_id: 'kg-1',
+        wishlists: [
+          // Child now wants kg-3, but match requires them to go to kg-2
+          mockWishlist({ target_kindergarten_id: 'kg-3' }),
+        ],
+      });
+
+      const nextChild = mockChild({
+        id: 'child-b',
+        current_kindergarten_id: 'kg-2',
+      });
+
+      const matchGroup = mockMatchGroup({
+        id: 'match-1',
+        status: MatchStatus.PENDING_ACCEPTANCE,
+        participants: [
+          mockMatchParticipant({
+            child_id: 'child-a',
+            next_child: nextChild,
+          }),
+        ],
+      });
+
+      childRepo.findOne.mockResolvedValue(child);
+
+      const mockFindMatchesQueryBuilder = {
+        innerJoin: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([matchGroup]),
+      };
+      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+      matchGroupRepo.save.mockResolvedValue(matchGroup);
+
+      await service.validateAndCleanupMatchesForChild('child-a');
+
+      expect(matchGroupRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: MatchStatus.CANCELLED,
+        }),
+      );
+    });
+
+    it('should not cancel matches when child still wants required swap', async () => {
+      const child = mockChild({
+        id: 'child-a',
+        group: AgeGroup.MLADJA,
+        current_kindergarten_id: 'kg-1',
+        wishlists: [
+          // Child still wants kg-2, which matches the required swap
+          mockWishlist({ target_kindergarten_id: 'kg-2' }),
+        ],
+      });
+
+      const nextChild = mockChild({
+        id: 'child-b',
+        current_kindergarten_id: 'kg-2',
+      });
+
+      const matchGroup = mockMatchGroup({
+        id: 'match-1',
+        status: MatchStatus.PENDING_ACCEPTANCE,
+        participants: [
+          mockMatchParticipant({
+            child_id: 'child-a',
+            next_child: nextChild,
+          }),
+        ],
+      });
+
+      childRepo.findOne.mockResolvedValue(child);
+
+      const mockFindMatchesQueryBuilder = {
+        innerJoin: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([matchGroup]),
+      };
+      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+
+      await service.validateAndCleanupMatchesForChild('child-a');
+
+      expect(matchGroupRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('should not affect completed or cancelled matches', async () => {
+      const child = mockChild({
+        id: 'child-a',
+        group: AgeGroup.MLADJA,
+        current_kindergarten_id: 'kg-1',
+        wishlists: [],
+      });
+
+      const completedMatch = mockMatchGroup({
+        id: 'match-1',
+        status: MatchStatus.COMPLETED,
+      });
+
+      const cancelledMatch = mockMatchGroup({
+        id: 'match-2',
+        status: MatchStatus.CANCELLED,
+      });
+
+      childRepo.findOne.mockResolvedValue(child);
+
+      const mockFindMatchesQueryBuilder = {
+        innerJoin: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([completedMatch, cancelledMatch]),
+      };
+      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+
+      await service.validateAndCleanupMatchesForChild('child-a');
+
+      expect(matchGroupRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('should handle child not found gracefully', async () => {
+      childRepo.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.validateAndCleanupMatchesForChild('non-existent-child'),
+      ).resolves.not.toThrow();
+
+      expect(matchGroupRepo.createQueryBuilder).not.toHaveBeenCalled();
+    });
+  });
 });
 

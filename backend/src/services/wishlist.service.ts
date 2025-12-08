@@ -69,7 +69,10 @@ export class WishlistService {
     return savedWishlist;
   }
 
-  async update(id: string, updateWishlistDto: UpdateWishlistDto): Promise<Wishlist> {
+  async update(
+    id: string,
+    updateWishlistDto: UpdateWishlistDto,
+  ): Promise<Wishlist> {
     const wishlist = await this.wishlistRepository.findOne({ where: { id } });
     if (!wishlist) {
       throw new Error('Wishlist not found');
@@ -87,7 +90,14 @@ export class WishlistService {
     Object.assign(wishlist, updateWishlistDto);
     const savedWishlist = await this.wishlistRepository.save(wishlist);
 
-    // AUTO-MATCH: Check for new matches after updating wishlist
+    // CLEANUP: First validate and clean up existing matches that may no longer be valid
+    this.matchingService
+      .validateAndCleanupMatchesForChild(wishlist.child_id)
+      .catch((error) => {
+        console.error('Error validating matches after wishlist update:', error);
+      });
+
+    // AUTO-MATCH: Then check for new matches after updating wishlist
     this.matchingService
       .checkAndCreateMatchesForChild(wishlist.child_id)
       .catch((error) => {
@@ -106,8 +116,17 @@ export class WishlistService {
     const childId = wishlist.child_id;
     await this.wishlistRepository.remove(wishlist);
 
-    // AUTO-MATCH: Check if any existing matches need to be invalidated
-    // or if new matches are now possible after removing this wishlist
+    // CLEANUP: First validate and clean up existing matches that may no longer be valid
+    this.matchingService
+      .validateAndCleanupMatchesForChild(childId)
+      .catch((error) => {
+        console.error(
+          'Error validating matches after wishlist deletion:',
+          error,
+        );
+      });
+
+    // AUTO-MATCH: Then check if new matches are now possible after removing this wishlist
     this.matchingService
       .checkAndCreateMatchesForChild(childId)
       .catch((error) => {
@@ -129,4 +148,3 @@ export class WishlistService {
     });
   }
 }
-
