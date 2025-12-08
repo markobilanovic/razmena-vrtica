@@ -64,21 +64,21 @@ export const ChildTabContent = ({ child }: ChildTabContentProps) => {
     <div className="space-y-6 animate-fade-in-up">
       <CurrentKindergartenSection currentKindergarten={child.current_kindergarten} />
       
+      <WishlistSection 
+        childId={child.id}
+        wishlists={child.wishlists} 
+        kindergartenMap={kindergartenMap}
+      />
+
       <ActiveExchangesSection 
         matchGroups={matchGroups} 
         currentChildId={child.id}
         onMatchHidden={handleMatchHidden}
       />
       
-      <WishlistSection 
-        childId={child.id}
-        wishlists={child.wishlists} 
-        kindergartenMap={kindergartenMap}
-      />
+      {/* <DirectMatchesSection matches={matches} />
       
-      <DirectMatchesSection matches={matches} />
-      
-      <PotentialMatchesSection potentials={potentials} />
+      <PotentialMatchesSection potentials={potentials} /> */}
     </div>
   )
 }
