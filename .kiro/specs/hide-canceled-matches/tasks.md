@@ -42,13 +42,13 @@
   - Test invalid match ID handling
   - _Requirements: 1.2, 2.2_
 
-- [ ] 4. Update shared schemas for hide operations
+- [x] 4. Update shared schemas for hide operations
   - Add HiddenMatchSchema to shared/schemas
   - Add HideMatchRequestSchema and HideMatchResponseSchema
   - Export new types from shared package
   - _Requirements: 3.1, 3.2_
 
-- [ ] 5. Modify dashboard queries to filter hidden matches
+- [x] 5. Modify dashboard queries to filter hidden matches
   - Update existing match query methods to exclude hidden matches
   - Ensure all dashboard API endpoints respect hide preferences
   - Update MatchingController endpoints to use filtered queries

@@ -66,13 +66,20 @@ export class MatchingController {
   }
 
   /**
-   * Get all match groups involved for a specific child
+   * Get all match groups involved for a specific child, filtered by user's hide preferences
    */
+  @UseGuards(JwtAuthGuard)
   @Get('child/:childId/groups')
   async getMatchGroupsForChild(
     @Param('childId') childId: string,
+    @Request() req,
   ): Promise<MatchGroup[]> {
-    return this.matchingService.findMatchGroupsForChild(childId);
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    // Use the filtered method that respects user's hide preferences
+    return this.matchingService.getVisibleMatchesForUser(req.user.id, childId);
   }
 
   /**
