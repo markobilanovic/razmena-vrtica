@@ -1,14 +1,52 @@
 import { MatchGroupWithDetails, MatchStatus } from "@repo/shared"
+import { HideMatchConfirmation, HideMatchConfirmationRef } from "../../ui/HideMatchConfirmation"
+import { hideMatchApi } from "../../../lib/api"
+import { useRef, useState } from "react"
 
 interface ActiveExchangesSectionProps {
   matchGroups: MatchGroupWithDetails[]
   currentChildId: string
+  onMatchHidden?: (matchGroupId: string) => void
 }
 
 export const ActiveExchangesSection = ({
   matchGroups,
   currentChildId,
+  onMatchHidden,
 }: ActiveExchangesSectionProps) => {
+  const hideConfirmationRef = useRef<HideMatchConfirmationRef>(null)
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null)
+  const [isHiding, setIsHiding] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleHideClick = (matchGroupId: string) => {
+    setSelectedMatchId(matchGroupId)
+    setError(null)
+    hideConfirmationRef.current?.show()
+  }
+
+  const handleHideConfirm = async () => {
+    if (!selectedMatchId) return
+
+    setIsHiding(true)
+    setError(null)
+
+    try {
+      await hideMatchApi(selectedMatchId)
+      onMatchHidden?.(selectedMatchId)
+    } catch (error) {
+      console.error('Failed to hide match:', error)
+      setError(error instanceof Error ? error.message : 'Failed to hide match')
+    } finally {
+      setIsHiding(false)
+      setSelectedMatchId(null)
+    }
+  }
+
+  const handleHideCancel = () => {
+    setSelectedMatchId(null)
+    setError(null)
+  }
   return (
     <div className="glass-card p-6 rounded-2xl border border-teal-100 bg-teal-50/30">
       <div className="flex items-center gap-3 mb-4">
@@ -22,6 +60,7 @@ export const ActiveExchangesSection = ({
           {matchGroups.map((group) => {
             const isPending = group.status === MatchStatus.PENDING_ACCEPTANCE
             const isActive = group.status === MatchStatus.ACTIVE_CONTACT
+            const isCanceled = group.status === MatchStatus.CANCELLED
 
             // Find other participants in the match
             const otherParticipants = (group.participants || [])
@@ -39,17 +78,37 @@ export const ActiveExchangesSection = ({
                     <p className="font-bold text-lg mb-1">
                       {isActive
                         ? "Kontakt razmena aktivna!"
+                        : isCanceled
+                        ? "Razmena otkazana"
                         : "Potrebno prihvatanje"}
                     </p>
                     <p className="text-sm text-color-text-muted">
                       Status: {group.status}
                     </p>
                   </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${isActive ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
-                  >
-                    {isActive ? "AKTIVNO" : "NA ČEKANJU"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                        isActive 
+                          ? "bg-green-100 text-green-700" 
+                          : isCanceled
+                          ? "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {isActive ? "AKTIVNO" : isCanceled ? "OTKAZANO" : "NA ČEKANJU"}
+                    </span>
+                    {isCanceled && (
+                      <button
+                        onClick={() => handleHideClick(group.id)}
+                        disabled={isHiding}
+                        className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Sakrij ovu otkazanu razmenu"
+                      >
+                        {isHiding && selectedMatchId === group.id ? "Sakrivam..." : "Sakrij"}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -97,6 +156,20 @@ export const ActiveExchangesSection = ({
       ) : (
         <p className="text-color-text-muted italic">Nema aktivnih razmena.</p>
       )}
+      
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-700">
+            <strong>Greška:</strong> {error}
+          </p>
+        </div>
+      )}
+
+      <HideMatchConfirmation
+        ref={hideConfirmationRef}
+        onConfirm={handleHideConfirm}
+        onCancel={handleHideCancel}
+      />
     </div>
   )
 }

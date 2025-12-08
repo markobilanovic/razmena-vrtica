@@ -20,6 +20,9 @@ import {
   MatchGroupSchema,
   MatchGroupWithDetails,
   MatchGroupWithDetailsSchema,
+  HideMatchRequest,
+  HideMatchResponse,
+  HideMatchResponseSchema,
 } from "@repo/shared"
 import { z } from "zod"
 
@@ -209,6 +212,31 @@ export async function getMatchGroupsForChildApi(
     `/matching/child/${childId}/groups`,
     {},
     z.array(MatchGroupWithDetailsSchema),
+  )
+}
+
+export async function hideMatchApi(
+  matchGroupId: string,
+): Promise<HideMatchResponse> {
+  return fetchApi<HideMatchResponse>(
+    `/matches/${matchGroupId}/hide`,
+    {
+      method: "POST",
+      body: JSON.stringify({ matchGroupId } as HideMatchRequest),
+    },
+    HideMatchResponseSchema,
+  )
+}
+
+export async function unhideMatchApi(
+  matchGroupId: string,
+): Promise<HideMatchResponse> {
+  return fetchApi<HideMatchResponse>(
+    `/matches/${matchGroupId}/hide`,
+    {
+      method: "DELETE",
+    },
+    HideMatchResponseSchema,
   )
 }
 

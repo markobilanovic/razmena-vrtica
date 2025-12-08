@@ -1,7 +1,8 @@
 "use client"
 
 import { AgeGroup } from "@repo/shared"
-import { useChildData, useKindergartensBatch } from "@/lib/queries"
+import { useChildData, useKindergartensBatch, queryKeys } from "@/lib/queries"
+import { useQueryClient } from "@tanstack/react-query"
 import {
   CurrentKindergartenSection,
   ActiveExchangesSection,
@@ -33,6 +34,7 @@ interface ChildTabContentProps {
 }
 
 export const ChildTabContent = ({ child }: ChildTabContentProps) => {
+  const queryClient = useQueryClient()
   const { matches, matchGroups, potentials } = useChildData(
     child.id,
     child.group as AgeGroup | undefined,
@@ -51,6 +53,13 @@ export const ChildTabContent = ({ child }: ChildTabContentProps) => {
   // Create a map for quick lookup
   const kindergartenMap = new Map(kindergartens.map((k) => [k.id, k]))
 
+  const handleMatchHidden = (matchGroupId: string) => {
+    // Invalidate match groups query to refetch data without the hidden match
+    queryClient.invalidateQueries({ 
+      queryKey: queryKeys.childMatchGroups(child.id) 
+    })
+  }
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       <CurrentKindergartenSection currentKindergarten={child.current_kindergarten} />
@@ -58,6 +67,7 @@ export const ChildTabContent = ({ child }: ChildTabContentProps) => {
       <ActiveExchangesSection 
         matchGroups={matchGroups} 
         currentChildId={child.id}
+        onMatchHidden={handleMatchHidden}
       />
       
       <WishlistSection 

@@ -75,7 +75,7 @@
   - **Property 5: Cancellation preservation**
   - **Validates: Requirements 2.4**
 
-- [ ] 8. Add hide button to canceled matches in dashboard
+- [x] 8. Add hide button to canceled matches in dashboard
   - Modify ActiveExchangesSection to show hide button for canceled matches
   - Integrate hide confirmation dialog
   - Implement hide action API calls with error handling
