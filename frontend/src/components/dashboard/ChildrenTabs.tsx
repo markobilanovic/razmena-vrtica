@@ -1,9 +1,10 @@
 "use client"
 
-import { Suspense, useState } from "react"
+import { Suspense, useState, useRef } from "react"
 import { ChildDataSkeleton } from "@/components/LoadingFallback"
 import { ChildTabContent } from "./ChildTabContent"
 import { useDeleteChild } from "@/lib/queries"
+import { ConfirmationPopover, ConfirmationPopoverRef } from "@/components/ui/ConfirmationPopover"
 
 type Child = {
   id: string
@@ -31,7 +32,9 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
   const [selectedChildId, setSelectedChildId] = useState(
     children?.[0]?.id || ""
   )
+  const [childToDelete, setChildToDelete] = useState<Child | null>(null)
   const deleteChildMutation = useDeleteChild()
+  const popoverRef = useRef<ConfirmationPopoverRef>(null)
 
   if (!children || children.length === 0) {
     return (
@@ -51,27 +54,25 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
 
   const selectedChild = children.find((child) => child.id === selectedChildId)
 
-  const handleDelete = async (childId: string) => {
+  const showDeleteConfirm = (childId: string) => {
     const child = children.find((c) => c.id === childId)
     if (!child) return
+    setChildToDelete(child)
+    popoverRef.current?.show()
+  }
 
-    const confirmed = window.confirm(
-      `Da li ste sigurni da želite da obrišete dete "${child.name}"?\n\n` +
-        `Ovo će obrisati:\n` +
-        `- Sve želje za razmenu\n` +
-        `- Učešće u svim aktivnim razmenama\n\n` +
-        `Ova akcija se ne može poništiti.`
-    )
-
-    if (!confirmed) return
+  const handleDeleteChild = async () => {
+    if (!childToDelete) return
 
     try {
-      await deleteChildMutation.mutateAsync(childId)
+      await deleteChildMutation.mutateAsync(childToDelete.id)
     } catch (error) {
       console.error("Failed to delete child:", error)
       alert(
         "Greška pri brisanju deteta. Molimo pokušajte ponovo ili kontaktirajte podršku."
       )
+    } finally {
+      setChildToDelete(null)
     }
   }
 
@@ -108,7 +109,7 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
           </div>
         </div>
         <button
-          onClick={() => handleDelete(selectedChildId)}
+          onClick={() => showDeleteConfirm(selectedChildId)}
           disabled={deleteChildMutation.isPending}
           className="px-4 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-2 font-medium border-2 border-red-100 hover:border-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Obriši dete"
@@ -163,6 +164,19 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
           <ChildTabContent child={selectedChild} />
         </Suspense>
       )}
+
+      {/* Delete Confirmation Popover */}
+      <ConfirmationPopover
+        ref={popoverRef}
+        title="Potvrda brisanja"
+        message={
+          childToDelete
+            ? `Da li ste sigurni da želite da obrišete dete "${childToDelete.name}"?\n\nOvo će obrisati:\n- Sve želje za razmenu\n- Učešće u svim aktivnim razmenama\n\nOva akcija se ne može poništiti.`
+            : ""
+        }
+        onConfirm={handleDeleteChild}
+        onCancel={() => setChildToDelete(null)}
+      />
     </div>
   )
 }

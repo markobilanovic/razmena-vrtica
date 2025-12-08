@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { Kindergarten } from "@repo/shared"
 import { useCreateWishlist, useDeleteWishlist, useKindergartens } from "@/lib/queries"
+import { ConfirmationPopover, ConfirmationPopoverRef } from "@/components/ui/ConfirmationPopover"
 
 interface WishlistSectionProps {
   childId: string
@@ -19,7 +20,7 @@ export const WishlistSection = ({
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("")
   const [deletingWishId, setDeletingWishId] = useState<string | null>(null)
   const [confirmDeleteWishId, setConfirmDeleteWishId] = useState<string | null>(null)
-  const popoverRef = useRef<HTMLDivElement>(null)
+  const popoverRef = useRef<ConfirmationPopoverRef>(null)
   
   const { data: allKindergartens = [] } = useKindergartens()
   const createWishlist = useCreateWishlist()
@@ -51,19 +52,13 @@ export const WishlistSection = ({
 
   const showDeleteConfirm = (wishId: string) => {
     setConfirmDeleteWishId(wishId)
-    popoverRef.current?.showPopover()
-  }
-
-  const hideDeleteConfirm = () => {
-    popoverRef.current?.hidePopover()
-    setConfirmDeleteWishId(null)
+    popoverRef.current?.show()
   }
 
   const handleDeleteWish = async () => {
     if (!confirmDeleteWishId) return
 
     setDeletingWishId(confirmDeleteWishId)
-    hideDeleteConfirm()
     
     try {
       await deleteWishlist.mutateAsync(confirmDeleteWishId)
@@ -72,6 +67,7 @@ export const WishlistSection = ({
       alert("Greška pri brisanju želje. Pokušajte ponovo.")
     } finally {
       setDeletingWishId(null)
+      setConfirmDeleteWishId(null)
     }
   }
 
@@ -172,33 +168,13 @@ export const WishlistSection = ({
       )}
 
       {/* Delete Confirmation Popover */}
-      <div
+      <ConfirmationPopover
         ref={popoverRef}
-        // @ts-ignore - popover is a valid attribute
-        popover="auto"
-        className="m-0 p-0 border-0 bg-white rounded-lg shadow-xl max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
-      >
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-2">Potvrda brisanja</h3>
-          <p className="text-gray-600 mb-4">
-            Da li ste sigurni da želite da obrišete ovu želju?
-          </p>
-          <div className="flex gap-3 justify-end">
-            <button
-              onClick={hideDeleteConfirm}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Otkaži
-            </button>
-            <button
-              onClick={handleDeleteWish}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
-            >
-              Obriši
-            </button>
-          </div>
-        </div>
-      </div>
+        title="Potvrda brisanja"
+        message="Da li ste sigurni da želite da obrišete ovu želju?"
+        onConfirm={handleDeleteWish}
+        onCancel={() => setConfirmDeleteWishId(null)}
+      />
     </div>
   )
 }
