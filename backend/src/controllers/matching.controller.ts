@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Query, Request, UseGuards, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { MatchingService } from '../services/matching.service';
 import { AgeGroup } from '@repo/shared';
 import { Kindergarten } from '../entities/kindergarten.entity';
 import { MatchGroup } from '../entities/match.entity';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import type {
   CheckMatchesRequest,
   CreateMatchRequest,
   ValidateMatchResponse,
+  HideMatchResponse,
 } from '@repo/shared';
 
 @Controller('matching')
@@ -71,5 +73,92 @@ export class MatchingController {
     @Param('childId') childId: string,
   ): Promise<MatchGroup[]> {
     return this.matchingService.findMatchGroupsForChild(childId);
+  }
+
+  /**
+   * Hide a match for the authenticated user
+   * Only allows hiding matches that involve the user's children and are in canceled state
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post(':matchId/hide')
+  async hideMatch(
+    @Param('matchId') matchId: string,
+    @Request() req,
+  ): Promise<HideMatchResponse> {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    try {
+      // Validate that the match exists and is in canceled state
+      const match = await this.matchingService.findMatchGroupById(matchId);
+      if (!match) {
+        throw new NotFoundException('Match not found');
+      }
+
+      // Check if match is in canceled state
+      if (match.status !== 'CANCELLED') {
+        throw new BadRequestException('Only canceled matches can be hidden');
+      }
+
+      // Verify user has permission to hide this match (user's child is involved)
+      const userHasPermission = await this.matchingService.userCanAccessMatch(req.user.id, matchId);
+      if (!userHasPermission) {
+        throw new UnauthorizedException('You can only hide matches involving your children');
+      }
+
+      await this.matchingService.hideMatchForUser(req.user.id, matchId);
+      
+      return {
+        success: true,
+        message: 'Match hidden successfully',
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException || error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to hide match');
+    }
+  }
+
+  /**
+   * Unhide a match for the authenticated user
+   * Removes the match from the user's hidden list
+   */
+  @UseGuards(JwtAuthGuard)
+  @Delete(':matchId/hide')
+  async unhideMatch(
+    @Param('matchId') matchId: string,
+    @Request() req,
+  ): Promise<HideMatchResponse> {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    try {
+      // Validate that the match exists
+      const match = await this.matchingService.findMatchGroupById(matchId);
+      if (!match) {
+        throw new NotFoundException('Match not found');
+      }
+
+      // Verify user has permission to unhide this match
+      const userHasPermission = await this.matchingService.userCanAccessMatch(req.user.id, matchId);
+      if (!userHasPermission) {
+        throw new UnauthorizedException('You can only unhide matches involving your children');
+      }
+
+      await this.matchingService.unhideMatchForUser(req.user.id, matchId);
+      
+      return {
+        success: true,
+        message: 'Match unhidden successfully',
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException || error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to unhide match');
+    }
   }
 }

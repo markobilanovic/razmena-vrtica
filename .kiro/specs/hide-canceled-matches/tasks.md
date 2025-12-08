@@ -29,7 +29,7 @@
   - **Property 7: Audit trail creation**
   - **Validates: Requirements 3.1, 3.2**
 
-- [ ] 3. Add API endpoints for hide operations
+- [x] 3. Add API endpoints for hide operations
   - Create POST /matches/:matchId/hide endpoint in MatchingController
   - Create DELETE /matches/:matchId/hide endpoint in MatchingController
   - Add proper authentication and authorization guards

@@ -85,3 +85,28 @@ export const ValidateMatchResponseSchema = z.object({
 
 export type ValidateMatchResponse = z.infer<typeof ValidateMatchResponseSchema>;
 
+// Hidden Match Schema
+export const HiddenMatchSchema = z.object({
+    id: z.string().uuid(),
+    user_id: z.string().uuid(),
+    match_group_id: z.string().uuid(),
+    hidden_at: z.coerce.date(),
+});
+
+export type HiddenMatch = z.infer<typeof HiddenMatchSchema>;
+
+// Hide Match Request Schema
+export const HideMatchRequestSchema = z.object({
+    matchGroupId: z.string().uuid(),
+});
+
+export type HideMatchRequest = z.infer<typeof HideMatchRequestSchema>;
+
+// Hide Match Response Schema
+export const HideMatchResponseSchema = z.object({
+    success: z.boolean(),
+    message: z.string(),
+});
+
+export type HideMatchResponse = z.infer<typeof HideMatchResponseSchema>;
+

@@ -665,4 +665,35 @@ export class MatchingService {
 
     return !!hiddenMatch;
   }
+
+  /**
+   * Find a match group by its ID
+   * Helper method for API endpoints
+   */
+  async findMatchGroupById(matchGroupId: string): Promise<MatchGroup | null> {
+    return this.matchGroupRepository.findOne({
+      where: { id: matchGroupId },
+      relations: ['participants', 'participants.child'],
+    });
+  }
+
+  /**
+   * Check if a user can access a specific match
+   * Returns true if any of the user's children are participants in the match
+   */
+  async userCanAccessMatch(userId: string, matchGroupId: string): Promise<boolean> {
+    const match = await this.matchGroupRepository.findOne({
+      where: { id: matchGroupId },
+      relations: ['participants', 'participants.child', 'participants.child.parent'],
+    });
+
+    if (!match) {
+      return false;
+    }
+
+    // Check if any participant's child belongs to this user
+    return match.participants.some(participant => 
+      participant.child && participant.child.parent && participant.child.parent.id === userId
+    );
+  }
 }
