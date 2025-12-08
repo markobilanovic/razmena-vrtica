@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Kindergarten } from "@repo/shared"
 import { useCreateWishlist, useDeleteWishlist, useKindergartens } from "@/lib/queries"
 
@@ -18,6 +18,8 @@ export const WishlistSection = ({
   const [isAddingWish, setIsAddingWish] = useState(false)
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("")
   const [deletingWishId, setDeletingWishId] = useState<string | null>(null)
+  const [confirmDeleteWishId, setConfirmDeleteWishId] = useState<string | null>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
   
   const { data: allKindergartens = [] } = useKindergartens()
   const createWishlist = useCreateWishlist()
@@ -47,14 +49,24 @@ export const WishlistSection = ({
     }
   }
 
-  const handleDeleteWish = async (wishId: string) => {
-    if (!confirm("Da li ste sigurni da želite da obrišete ovu želju?")) {
-      return
-    }
+  const showDeleteConfirm = (wishId: string) => {
+    setConfirmDeleteWishId(wishId)
+    popoverRef.current?.showPopover()
+  }
 
-    setDeletingWishId(wishId)
+  const hideDeleteConfirm = () => {
+    popoverRef.current?.hidePopover()
+    setConfirmDeleteWishId(null)
+  }
+
+  const handleDeleteWish = async () => {
+    if (!confirmDeleteWishId) return
+
+    setDeletingWishId(confirmDeleteWishId)
+    hideDeleteConfirm()
+    
     try {
-      await deleteWishlist.mutateAsync(wishId)
+      await deleteWishlist.mutateAsync(confirmDeleteWishId)
     } catch (error) {
       console.error("Failed to delete wish:", error)
       alert("Greška pri brisanju želje. Pokušajte ponovo.")
@@ -144,7 +156,7 @@ export const WishlistSection = ({
                   )}
                 </div>
                 <button
-                  onClick={() => handleDeleteWish(wish.id)}
+                  onClick={() => showDeleteConfirm(wish.id)}
                   disabled={isDeleting}
                   className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed p-1 transition-colors"
                   title="Obriši želju"
@@ -158,6 +170,35 @@ export const WishlistSection = ({
       ) : (
         <p className="text-color-text-muted italic">Nema unetih želja.</p>
       )}
+
+      {/* Delete Confirmation Popover */}
+      <div
+        ref={popoverRef}
+        // @ts-ignore - popover is a valid attribute
+        popover="auto"
+        className="m-0 p-0 border-0 bg-white rounded-lg shadow-xl max-w-sm fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+      >
+        <div className="p-6">
+          <h3 className="text-lg font-semibold mb-2">Potvrda brisanja</h3>
+          <p className="text-gray-600 mb-4">
+            Da li ste sigurni da želite da obrišete ovu želju?
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={hideDeleteConfirm}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Otkaži
+            </button>
+            <button
+              onClick={handleDeleteWish}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Obriši
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
