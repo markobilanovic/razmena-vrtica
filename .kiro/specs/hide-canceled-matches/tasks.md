@@ -61,7 +61,7 @@
 - [ ] 6. Checkpoint - Ensure all backend tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Create hide confirmation dialog component
+- [x] 7. Create hide confirmation dialog component
   - Build HideMatchConfirmation component with clear messaging
   - Implement confirmation and cancellation handlers
   - Add proper styling consistent with existing UI
