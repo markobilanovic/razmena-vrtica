@@ -1,6 +1,6 @@
 import { MatchGroupWithDetails, MatchStatus } from "@repo/shared"
 import { HideMatchConfirmation, HideMatchConfirmationRef } from "../../ui/HideMatchConfirmation"
-import { hideMatchApi } from "../../../lib/api"
+import { useHideMatch } from "../../../lib/queries"
 import { useRef, useState } from "react"
 
 interface ActiveExchangesSectionProps {
@@ -16,36 +16,30 @@ export const ActiveExchangesSection = ({
 }: ActiveExchangesSectionProps) => {
   const hideConfirmationRef = useRef<HideMatchConfirmationRef>(null)
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null)
-  const [isHiding, setIsHiding] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  
+  const hideMatchMutation = useHideMatch()
 
   const handleHideClick = (matchGroupId: string) => {
     setSelectedMatchId(matchGroupId)
-    setError(null)
     hideConfirmationRef.current?.show()
   }
 
   const handleHideConfirm = async () => {
     if (!selectedMatchId) return
 
-    setIsHiding(true)
-    setError(null)
-
     try {
-      await hideMatchApi(selectedMatchId)
+      await hideMatchMutation.mutateAsync(selectedMatchId)
       onMatchHidden?.(selectedMatchId)
     } catch (error) {
       console.error('Failed to hide match:', error)
-      setError(error instanceof Error ? error.message : 'Failed to hide match')
     } finally {
-      setIsHiding(false)
       setSelectedMatchId(null)
     }
   }
 
   const handleHideCancel = () => {
     setSelectedMatchId(null)
-    setError(null)
+    hideMatchMutation.reset() // Clear any error state
   }
   return (
     <div className="glass-card p-6 rounded-2xl border border-teal-100 bg-teal-50/30">
@@ -101,11 +95,11 @@ export const ActiveExchangesSection = ({
                     {isCanceled && (
                       <button
                         onClick={() => handleHideClick(group.id)}
-                        disabled={isHiding}
+                        disabled={hideMatchMutation.isPending}
                         className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Sakrij ovu otkazanu razmenu"
                       >
-                        {isHiding && selectedMatchId === group.id ? "Sakrivam..." : "Sakrij"}
+                        {hideMatchMutation.isPending && selectedMatchId === group.id ? "Sakrivam..." : "Sakrij"}
                       </button>
                     )}
                   </div>
@@ -157,10 +151,10 @@ export const ActiveExchangesSection = ({
         <p className="text-color-text-muted italic">Nema aktivnih razmena.</p>
       )}
       
-      {error && (
+      {hideMatchMutation.error && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">
-            <strong>Greška:</strong> {error}
+            <strong>Greška:</strong> {hideMatchMutation.error instanceof Error ? hideMatchMutation.error.message : 'Failed to hide match'}
           </p>
         </div>
       )}

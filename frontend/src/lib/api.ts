@@ -219,7 +219,7 @@ export async function hideMatchApi(
   matchGroupId: string,
 ): Promise<HideMatchResponse> {
   return fetchApi<HideMatchResponse>(
-    `/matches/${matchGroupId}/hide`,
+    `/matching/${matchGroupId}/hide`,
     {
       method: "POST",
       body: JSON.stringify({ matchGroupId } as HideMatchRequest),
@@ -232,7 +232,7 @@ export async function unhideMatchApi(
   matchGroupId: string,
 ): Promise<HideMatchResponse> {
   return fetchApi<HideMatchResponse>(
-    `/matches/${matchGroupId}/hide`,
+    `/matching/${matchGroupId}/hide`,
     {
       method: "DELETE",
     },
@@ -245,11 +245,7 @@ export async function unhideMatchApi(
 export async function getKindergartenByIdApi(
   id: string,
 ): Promise<Kindergarten> {
-  return fetchApi<Kindergarten>(
-    `/kindergartens/${id}`,
-    {},
-    KindergartenSchema,
-  )
+  return fetchApi<Kindergarten>(`/kindergartens/${id}`, {}, KindergartenSchema)
 }
 
 export async function getKindergartensByIdsApi(
@@ -282,9 +278,7 @@ export interface CreateChildRequest {
   current_kindergarten_id: string
 }
 
-export async function createChildApi(
-  data: CreateChildRequest,
-): Promise<any> {
+export async function createChildApi(data: CreateChildRequest): Promise<any> {
   return fetchApi("/children", {
     method: "POST",
     body: JSON.stringify(data),
@@ -322,7 +316,9 @@ export async function createWishlistApi(
   })
 }
 
-export async function deleteWishlistApi(id: string): Promise<{ success: boolean }> {
+export async function deleteWishlistApi(
+  id: string,
+): Promise<{ success: boolean }> {
   return fetchApi(`/wishlists/${id}`, {
     method: "DELETE",
   })

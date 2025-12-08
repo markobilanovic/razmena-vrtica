@@ -23,6 +23,8 @@ import {
   CreateWishlistRequest,
   deleteWishlistApi,
   deleteChildApi,
+  hideMatchApi,
+  unhideMatchApi,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -157,6 +159,40 @@ export function useCreateMatch() {
       })
 
       // Invalidate potential matches
+      queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
+    },
+  })
+}
+
+export function useHideMatch() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (matchGroupId: string) => hideMatchApi(matchGroupId),
+    onSuccess: (data, matchGroupId) => {
+      // Invalidate user profile to refetch with updated hidden matches
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+
+      // Invalidate all match-related queries to ensure hidden matches are filtered out
+      queryClient.invalidateQueries({ queryKey: ["child"] })
+      queryClient.invalidateQueries({ queryKey: ["matches"] })
+      queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
+    },
+  })
+}
+
+export function useUnhideMatch() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (matchGroupId: string) => unhideMatchApi(matchGroupId),
+    onSuccess: (data, matchGroupId) => {
+      // Invalidate user profile to refetch with updated hidden matches
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+
+      // Invalidate all match-related queries to ensure unhidden matches are visible
+      queryClient.invalidateQueries({ queryKey: ["child"] })
+      queryClient.invalidateQueries({ queryKey: ["matches"] })
       queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
     },
   })

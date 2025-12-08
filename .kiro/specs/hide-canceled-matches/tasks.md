@@ -89,7 +89,7 @@
   - **Property 6: Immediate update**
   - **Validates: Requirements 2.5**
 
-- [ ] 9. Update frontend API client for hide operations
+- [x] 9. Update frontend API client for hide operations
   - Add hideMatch and unhideMatch functions to api.ts
   - Add proper error handling and type safety
   - Update queries.ts with hide-aware match queries
