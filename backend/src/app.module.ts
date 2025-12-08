@@ -7,6 +7,7 @@ import { Kindergarten } from './entities/kindergarten.entity';
 import { Child } from './entities/child.entity';
 import { Wishlist } from './entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from './entities/match.entity';
+import { HiddenMatch } from './entities/hidden-match.entity';
 import { MatchingModule } from './modules/matching.module';
 import { AuthModule } from './modules/auth.module';
 import { UsersModule } from './modules/users.module';
@@ -30,6 +31,7 @@ import { ChildModule } from './modules/child.module';
         Wishlist,
         MatchGroup,
         MatchParticipant,
+        HiddenMatch,
       ],
       synchronize: true,
     }),

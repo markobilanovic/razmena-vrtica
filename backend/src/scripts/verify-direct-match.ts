@@ -4,6 +4,7 @@ import { Child, AgeGroup, Gender } from '../entities/child.entity';
 import { User } from '../entities/user.entity';
 import { Wishlist } from '../entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
+import { HiddenMatch } from '../entities/hidden-match.entity';
 import { MatchingService } from '../services/matching.service';
 
 const AppDataSource = new DataSource({
@@ -13,7 +14,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || 'admin',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_DATABASE || 'razmena_vrtica',
-  entities: [Kindergarten, Child, User, Wishlist, MatchGroup, MatchParticipant],
+  entities: [Kindergarten, Child, User, Wishlist, MatchGroup, MatchParticipant, HiddenMatch],
   synchronize: false, // Don't sync, just use existing schema
 });
 
@@ -30,6 +31,7 @@ async function verifyDirectMatch() {
     const wishlistRepo = AppDataSource.getRepository(Wishlist);
     const matchGroupRepo = AppDataSource.getRepository(MatchGroup);
     const matchParticipantRepo = AppDataSource.getRepository(MatchParticipant);
+    const hiddenMatchRepo = AppDataSource.getRepository(HiddenMatch);
 
     // Instantiate Service
     const matchingService = new MatchingService(
@@ -37,6 +39,7 @@ async function verifyDirectMatch() {
       wishlistRepo,
       matchGroupRepo,
       matchParticipantRepo,
+      hiddenMatchRepo,
     );
 
     console.log('Creating test data...');
