@@ -29,7 +29,7 @@ export function DashboardContent() {
             Dobrodošli, <span className="gradient-text">{user.full_name}</span>
           </h1>
           <p className="text-xl text-color-text-muted">
-            Upravljajte vašim profilom i pratite status razmera.
+            Upravljajte vašim profilom i pratite status razmena.
           </p>
         </div>
 
