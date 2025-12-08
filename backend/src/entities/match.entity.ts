@@ -8,13 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Child } from './child.entity';
-
-export enum MatchStatus {
-  PENDING_ACCEPTANCE = 'PENDING_ACCEPTANCE',
-  ACTIVE_CONTACT = 'ACTIVE_CONTACT',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-}
+import { MatchStatus } from '@repo/shared';
 
 @Entity()
 export class MatchGroup {
@@ -24,7 +18,7 @@ export class MatchGroup {
   @Column({
     type: 'enum',
     enum: MatchStatus,
-    default: MatchStatus.PENDING_ACCEPTANCE,
+    default: MatchStatus.ACTIVE,
   })
   status: MatchStatus;
 

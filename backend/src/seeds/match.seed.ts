@@ -1,9 +1,6 @@
 import { DataSource } from 'typeorm';
-import {
-  MatchGroup,
-  MatchParticipant,
-  MatchStatus,
-} from '../entities/match.entity';
+import { MatchGroup, MatchParticipant } from '../entities/match.entity';
+import { MatchStatus } from '@repo/shared';
 import { Child } from '../entities/child.entity';
 import { Wishlist } from '../entities/wishlist.entity';
 
@@ -69,9 +66,9 @@ export async function seedMatches(
         const mutualSwap = findMutualSwap(child1, child2);
 
         if (mutualSwap) {
-          // Create pending match
+          // Create active match with one participant not yet accepted
           const group1 = new MatchGroup();
-          group1.status = MatchStatus.PENDING_ACCEPTANCE;
+          group1.status = MatchStatus.ACTIVE;
           await matchGroupRepository.save(group1);
 
           const p1 = new MatchParticipant();
@@ -88,7 +85,7 @@ export async function seedMatches(
 
           await participantRepo.save([p1, p2]);
           console.log(
-            `✅ Seeded Scenario 1: Pending Match between ${child1.name} and ${child2.name}`,
+            `✅ Seeded Scenario 1: Active Match (pending acceptance) between ${child1.name} and ${child2.name}`,
           );
           matchesCreated++;
           break;
@@ -117,9 +114,9 @@ export async function seedMatches(
         const mutualSwap = findMutualSwap(child1, child2);
 
         if (mutualSwap) {
-          // Create active contact match
+          // Create active match with all participants accepted
           const group2 = new MatchGroup();
-          group2.status = MatchStatus.ACTIVE_CONTACT;
+          group2.status = MatchStatus.ACTIVE;
           await matchGroupRepository.save(group2);
 
           const p3 = new MatchParticipant();
@@ -136,7 +133,7 @@ export async function seedMatches(
 
           await participantRepo.save([p3, p4]);
           console.log(
-            `✅ Seeded Scenario 2: Active Contact Match between ${child1.name} and ${child2.name}`,
+            `✅ Seeded Scenario 2: Active Match (all accepted) between ${child1.name} and ${child2.name}`,
           );
           matchesCreated++;
           break;

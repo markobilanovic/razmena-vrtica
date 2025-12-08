@@ -22,8 +22,7 @@ export const AgeGroupSchema = z.nativeEnum(AgeGroup);
 
 // Match Status enum
 export enum MatchStatus {
-  PENDING_ACCEPTANCE = 'PENDING_ACCEPTANCE',
-  ACTIVE_CONTACT = 'ACTIVE_CONTACT',
+  ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
 }

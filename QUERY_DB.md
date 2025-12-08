@@ -1,4 +1,11 @@
-List all matches
+// run the migraion
+
+npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts
+
+
+
+
+// List all matches
 
 ```
 PGPASSWORD=password psql -h localhost -p 5433 -U admin -d razmena_vrtica -c "

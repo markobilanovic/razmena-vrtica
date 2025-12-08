@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
-import { MatchGroup, MatchStatus } from './src/entities/match.entity';
+import { MatchGroup, MatchParticipant } from './src/entities/match.entity';
+import { MatchStatus } from '@repo/shared';
 import { Kindergarten } from './src/entities/kindergarten.entity';
 import { Child } from './src/entities/child.entity';
 import { User } from './src/entities/user.entity';
 import { Wishlist } from './src/entities/wishlist.entity';
-import { MatchParticipant } from './src/entities/match.entity';
 
 const AppDataSource = new DataSource({
   type: 'postgres',

@@ -116,9 +116,9 @@ export class MatchingController {
         throw new NotFoundException('Match not found');
       }
 
-      // Check if match is in canceled state
-      if (match.status !== 'CANCELLED') {
-        throw new BadRequestException('Only canceled matches can be hidden');
+      // Check if match is in canceled or completed state
+      if (match.status !== 'CANCELLED' && match.status !== 'COMPLETED') {
+        throw new BadRequestException('Only canceled or completed matches can be hidden');
       }
 
       // Verify user has permission to hide this match (user's child is involved)
@@ -197,6 +197,114 @@ export class MatchingController {
         throw error;
       }
       throw new BadRequestException('Failed to unhide match');
+    }
+  }
+
+  /**
+   * Confirm that a match has been completed
+   * Sets the match status to COMPLETED
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post(':matchId/complete')
+  async completeMatch(
+    @Param('matchId') matchId: string,
+    @Request() req,
+  ): Promise<HideMatchResponse> {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    try {
+      const match = await this.matchingService.findMatchGroupById(matchId);
+      if (!match) {
+        throw new NotFoundException('Match not found');
+      }
+
+      // Verify user has permission
+      const userHasPermission = await this.matchingService.userCanAccessMatch(
+        req.user.id,
+        matchId,
+      );
+      if (!userHasPermission) {
+        throw new UnauthorizedException(
+          'You can only complete matches involving your children',
+        );
+      }
+
+      // Only allow completing active matches
+      if (match.status !== 'ACTIVE') {
+        throw new BadRequestException('Only active matches can be completed');
+      }
+
+      await this.matchingService.completeMatch(matchId);
+
+      return {
+        success: true,
+        message: 'Match marked as completed',
+      };
+    } catch (error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to complete match');
+    }
+  }
+
+  /**
+   * Cancel a match
+   * Sets the match status to CANCELLED
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post(':matchId/cancel')
+  async cancelMatch(
+    @Param('matchId') matchId: string,
+    @Request() req,
+  ): Promise<HideMatchResponse> {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    try {
+      const match = await this.matchingService.findMatchGroupById(matchId);
+      if (!match) {
+        throw new NotFoundException('Match not found');
+      }
+
+      // Verify user has permission
+      const userHasPermission = await this.matchingService.userCanAccessMatch(
+        req.user.id,
+        matchId,
+      );
+      if (!userHasPermission) {
+        throw new UnauthorizedException(
+          'You can only cancel matches involving your children',
+        );
+      }
+
+      // Only allow canceling active matches
+      if (match.status !== 'ACTIVE') {
+        throw new BadRequestException('Only active matches can be cancelled');
+      }
+
+      await this.matchingService.cancelMatch(matchId);
+
+      return {
+        success: true,
+        message: 'Match cancelled successfully',
+      };
+    } catch (error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+      throw new BadRequestException('Failed to cancel match');
     }
   }
 }

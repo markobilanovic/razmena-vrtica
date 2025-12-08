@@ -257,6 +257,30 @@ export async function unhideMatchApi(
   )
 }
 
+export async function completeMatchApi(
+  matchGroupId: string,
+): Promise<HideMatchResponse> {
+  return fetchApi<HideMatchResponse>(
+    `/matching/${matchGroupId}/complete`,
+    {
+      method: "POST",
+    },
+    HideMatchResponseSchema,
+  )
+}
+
+export async function cancelMatchApi(
+  matchGroupId: string,
+): Promise<HideMatchResponse> {
+  return fetchApi<HideMatchResponse>(
+    `/matching/${matchGroupId}/cancel`,
+    {
+      method: "POST",
+    },
+    HideMatchResponseSchema,
+  )
+}
+
 // ==================== KINDERGARTEN API ====================
 
 export async function getKindergartenByIdApi(

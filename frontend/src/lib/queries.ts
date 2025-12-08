@@ -25,6 +25,8 @@ import {
   deleteChildApi,
   hideMatchApi,
   unhideMatchApi,
+  completeMatchApi,
+  cancelMatchApi,
 } from "./api"
 import { AgeGroup } from "@repo/shared"
 
@@ -191,6 +193,36 @@ export function useUnhideMatch() {
       queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
 
       // Invalidate all match-related queries to ensure unhidden matches are visible
+      queryClient.invalidateQueries({ queryKey: ["child"] })
+      queryClient.invalidateQueries({ queryKey: ["matches"] })
+      queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
+    },
+  })
+}
+
+export function useCompleteMatch() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (matchGroupId: string) => completeMatchApi(matchGroupId),
+    onSuccess: () => {
+      // Invalidate user profile and all match-related queries
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
+      queryClient.invalidateQueries({ queryKey: ["child"] })
+      queryClient.invalidateQueries({ queryKey: ["matches"] })
+      queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })
+    },
+  })
+}
+
+export function useCancelMatch() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (matchGroupId: string) => cancelMatchApi(matchGroupId),
+    onSuccess: () => {
+      // Invalidate user profile and all match-related queries
+      queryClient.invalidateQueries({ queryKey: queryKeys.userProfile })
       queryClient.invalidateQueries({ queryKey: ["child"] })
       queryClient.invalidateQueries({ queryKey: ["matches"] })
       queryClient.invalidateQueries({ queryKey: ["potentialMatches"] })

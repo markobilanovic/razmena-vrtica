@@ -4,11 +4,8 @@ import { Repository } from 'typeorm';
 import { Child, AgeGroup } from '../entities/child.entity';
 import { Wishlist } from '../entities/wishlist.entity';
 import { Kindergarten } from '../entities/kindergarten.entity';
-import {
-  MatchGroup,
-  MatchParticipant,
-  MatchStatus,
-} from '../entities/match.entity';
+import { MatchGroup, MatchParticipant } from '../entities/match.entity';
+import { MatchStatus } from '@repo/shared';
 import { HiddenMatch } from '../entities/hidden-match.entity';
 
 export interface PotentialMatch {
@@ -261,7 +258,7 @@ export class MatchingService {
 
     // Create the match group
     const matchGroup = this.matchGroupRepository.create({
-      status: MatchStatus.PENDING_ACCEPTANCE,
+      status: MatchStatus.ACTIVE,
     });
     await this.matchGroupRepository.save(matchGroup);
 
@@ -453,8 +450,8 @@ export class MatchingService {
     const matches = await this.matchGroupRepository
       .createQueryBuilder('matchGroup')
       .leftJoinAndSelect('matchGroup.participants', 'participants')
-      .where('matchGroup.status IN (:...statuses)', {
-        statuses: [MatchStatus.PENDING_ACCEPTANCE, MatchStatus.ACTIVE_CONTACT],
+      .where('matchGroup.status = :status', {
+        status: MatchStatus.ACTIVE,
       })
       .getMany();
 
@@ -547,10 +544,7 @@ export class MatchingService {
 
     for (const matchGroup of matchGroups) {
       // Only check active matches (not completed or already cancelled)
-      if (
-        matchGroup.status === MatchStatus.PENDING_ACCEPTANCE ||
-        matchGroup.status === MatchStatus.ACTIVE_CONTACT
-      ) {
+      if (matchGroup.status === MatchStatus.ACTIVE) {
         const isStillValid = this.isMatchStillValidForChild(matchGroup, child);
 
         if (!isStillValid) {
@@ -716,5 +710,39 @@ export class MatchingService {
         participant.child.parent &&
         participant.child.parent.id === userId,
     );
+  }
+
+  /**
+   * Mark a match as completed
+   * Updates the match status to COMPLETED
+   */
+  async completeMatch(matchGroupId: string): Promise<void> {
+    const match = await this.matchGroupRepository.findOne({
+      where: { id: matchGroupId },
+    });
+
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    match.status = MatchStatus.COMPLETED;
+    await this.matchGroupRepository.save(match);
+  }
+
+  /**
+   * Cancel a match
+   * Updates the match status to CANCELLED
+   */
+  async cancelMatch(matchGroupId: string): Promise<void> {
+    const match = await this.matchGroupRepository.findOne({
+      where: { id: matchGroupId },
+    });
+
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    match.status = MatchStatus.CANCELLED;
+    await this.matchGroupRepository.save(match);
   }
 }
