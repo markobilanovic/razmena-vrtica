@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useState, useRef } from "react"
+import { Suspense, useState, useRef, useEffect } from "react"
 import { ChildDataSkeleton } from "@/components/LoadingFallback"
 import { ChildTabContent } from "./ChildTabContent"
 import { useDeleteChild } from "@/lib/queries"
@@ -29,15 +29,30 @@ type Child = {
 
 interface ChildrenTabsProps {
   children: Child[]
+  openAddChildDialog: () => void
 }
 
-export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
+export const ChildrenTabs = ({
+  children,
+  openAddChildDialog,
+}: ChildrenTabsProps) => {
   const [selectedChildId, setSelectedChildId] = useState(
     children?.[0]?.id || "",
   )
   const [childToDelete, setChildToDelete] = useState<Child | null>(null)
   const deleteChildMutation = useDeleteChild()
   const popoverRef = useRef<ConfirmationPopoverRef>(null)
+
+  // Update selected child when children array changes
+  useEffect(() => {
+    // If no child is selected or selected child no longer exists, select the first one
+    if (
+      children.length > 0 &&
+      (!selectedChildId || !children.find((c) => c.id === selectedChildId))
+    ) {
+      setSelectedChildId(children[0].id)
+    }
+  }, [children, selectedChildId])
 
   if (!children || children.length === 0) {
     return (
@@ -48,7 +63,7 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
           Dodajte podatke o vašoj deci da biste započeli pretragu za razmenu
           vrtića.
         </p>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={openAddChildDialog}>
           <span>Dodaj prvo dete</span>
         </button>
       </div>

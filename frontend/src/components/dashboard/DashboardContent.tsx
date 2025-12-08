@@ -55,7 +55,10 @@ export function DashboardContent() {
                 </button>
               </div>
 
-              <ChildrenTabs children={user.children || []} />
+              <ChildrenTabs
+                children={user.children || []}
+                openAddChildDialog={() => setIsAddChildOpen(true)}
+              />
             </div>
           </div>
         </div>
