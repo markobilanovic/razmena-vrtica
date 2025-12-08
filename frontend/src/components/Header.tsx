@@ -36,13 +36,13 @@ export default function Header() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-white text-xl font-bold">R</span>
             </div>
-            <span className="text-2xl font-bold gradient-text">
+            <span className="text-xl sm:text-2xl font-bold gradient-text">
               Razmena Vrtića
             </span>
           </Link>

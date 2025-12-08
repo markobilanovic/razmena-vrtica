@@ -11,7 +11,7 @@ export function DashboardContent() {
   const [isAddChildOpen, setIsAddChildOpen] = useState(false)
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
+    <div className="min-h-screen relative bg-gray-50 pt-20">
       {/* Background decorations */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"></div>
       <div
@@ -23,7 +23,7 @@ export function DashboardContent() {
         style={{ animationDelay: "2s" }}
       ></div>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <div className="mb-10 animate-fade-in-up">
           <h1 className="text-4xl font-bold mb-3">
             Dobrodošli, <span className="gradient-text">{user.full_name}</span>
@@ -33,7 +33,7 @@ export function DashboardContent() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Sidebar / Profile Card */}
           <ProfileSidebar fullName={user.full_name} email={user.email} />
 
