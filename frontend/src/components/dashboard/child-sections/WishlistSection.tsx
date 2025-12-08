@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { Kindergarten } from "@repo/shared"
-import { useCreateWishlist, useKindergartens } from "@/lib/queries"
+import { useCreateWishlist, useDeleteWishlist, useKindergartens } from "@/lib/queries"
 
 interface WishlistSectionProps {
   childId: string
-  wishlists?: Array<{ target_kindergarten_id: string }> | null
+  wishlists?: Array<{ id: string; target_kindergarten_id: string }> | null
   kindergartenMap: Map<string, Kindergarten>
 }
 
@@ -17,9 +17,11 @@ export const WishlistSection = ({
 }: WishlistSectionProps) => {
   const [isAddingWish, setIsAddingWish] = useState(false)
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("")
+  const [deletingWishId, setDeletingWishId] = useState<string | null>(null)
   
   const { data: allKindergartens = [] } = useKindergartens()
   const createWishlist = useCreateWishlist()
+  const deleteWishlist = useDeleteWishlist()
 
   // Filter out kindergartens already in wishlist
   const existingKindergartenIds = new Set(
@@ -42,6 +44,22 @@ export const WishlistSection = ({
     } catch (error) {
       console.error("Failed to add wish:", error)
       alert("Greška pri dodavanju želje. Pokušajte ponovo.")
+    }
+  }
+
+  const handleDeleteWish = async (wishId: string) => {
+    if (!confirm("Da li ste sigurni da želite da obrišete ovu želju?")) {
+      return
+    }
+
+    setDeletingWishId(wishId)
+    try {
+      await deleteWishlist.mutateAsync(wishId)
+    } catch (error) {
+      console.error("Failed to delete wish:", error)
+      alert("Greška pri brisanju želje. Pokušajte ponovo.")
+    } finally {
+      setDeletingWishId(null)
     }
   }
 
@@ -104,24 +122,35 @@ export const WishlistSection = ({
 
       {wishlists && wishlists.length > 0 ? (
         <ul className="space-y-2">
-          {wishlists.map((wish, index) => {
+          {wishlists.map((wish) => {
             const kindergarten = kindergartenMap.get(wish.target_kindergarten_id)
+            const isDeleting = deletingWishId === wish.id
             return (
               <li
-                key={index}
-                className="flex flex-col gap-1 bg-white/50 p-3 rounded-lg"
+                key={wish.id}
+                className="flex items-start justify-between gap-3 bg-white/50 p-3 rounded-lg"
               >
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                  <span className="font-semibold">
-                    {kindergarten?.name || "Učitavanje..."}
-                  </span>
+                <div className="flex flex-col gap-1 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span className="font-semibold">
+                      {kindergarten?.name || "Učitavanje..."}
+                    </span>
+                  </div>
+                  {kindergarten?.address && (
+                    <span className="text-sm text-color-text-muted ml-4">
+                      {kindergarten.address}
+                    </span>
+                  )}
                 </div>
-                {kindergarten?.address && (
-                  <span className="text-sm text-color-text-muted ml-4">
-                    {kindergarten.address}
-                  </span>
-                )}
+                <button
+                  onClick={() => handleDeleteWish(wish.id)}
+                  disabled={isDeleting}
+                  className="text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed p-1 transition-colors"
+                  title="Obriši želju"
+                >
+                  {isDeleting ? "..." : "✕"}
+                </button>
               </li>
             )
           })}
