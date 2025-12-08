@@ -3,6 +3,7 @@
 ## ✅ Completed Tasks
 
 ### 1. Entity Updates
+
 - ✅ Added `AgeGroup` enum to `child.entity.ts` with 6 age groups:
   - MLADJA_JASLENA (0.5y - 1.5y)
   - STARIJA_JASLENA (1.5y - 2.5y)
@@ -13,11 +14,13 @@
 - ✅ Added `group` field to Child entity (type: AgeGroup enum)
 
 ### 2. Utility Functions
+
 - ✅ Created `age-group.util.ts` with:
   - `calculateAgeGroup()` - Calculates age group from birth date
   - `getAgeInYears()` - Helper function for age calculation
 
 ### 3. Matching Service with Age Group Validation
+
 - ✅ Created comprehensive `matching.service.ts` with:
   - `findPotentialMatches()` - Finds matches within same age groups
   - `createMatch()` - Creates matches with strict age group validation
@@ -26,6 +29,7 @@
   - Automatic separation of children by age group during matching
 
 ### 4. Child Service
+
 - ✅ Created `child.service.ts` with automatic age group management:
   - Automatically sets age group on child creation
   - Updates age group when birth date changes
@@ -33,20 +37,24 @@
   - Query methods filtered by age group
 
 ### 5. Module & Controller
+
 - ✅ Created `matching.module.ts`
 - ✅ Created `matching.controller.ts` with REST endpoints
 - ✅ Updated `app.module.ts` to include MatchingModule
 
 ### 6. Database Migration
+
 - ✅ Created migration file: `1733514134000-AddGroupToChild.ts`
 - ✅ Migration adds `group` column and `age_group_enum` type
 
 ### 7. Data Migration Script
+
 - ✅ Created `update-child-age-groups.ts` script
 - ✅ Added npm script: `npm run migrate:age-groups`
 - ✅ Script populates age groups for existing children
 
 ### 8. Documentation
+
 - ✅ Created comprehensive `AGE_GROUPS.md` documentation
 - ✅ Includes setup instructions, API endpoints, and examples
 
@@ -55,25 +63,28 @@
 ### For the Backend to Work:
 
 1. **Restart the Backend Server** ⚠️ REQUIRED
+
    ```bash
    # Stop the current backend process (you may need to find and kill it)
    # Then restart:
    cd /Users/markobilanovic/git/razmena-vrtica/backend
    npm run start
    ```
-   
+
    Why? The backend is using `synchronize: true`, which means TypeORM will automatically create the `group` column when the app starts. Since you modified the entity, you need to restart for the schema to update.
 
 2. **Populate Age Groups for Existing Children**
+
    ```bash
    npm run migrate:age-groups
    ```
-   
+
    This must be run AFTER step 1, once the column exists in the database.
 
 ## 🔗 Key Files Created/Modified
 
 ### New Files:
+
 ```
 backend/
 ├── src/
@@ -95,6 +106,7 @@ backend/
 ```
 
 ### Modified Files:
+
 ```
 backend/
 ├── src/

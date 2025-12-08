@@ -1,6 +1,7 @@
 # Technology Stack
 
 ## Architecture
+
 - **Monorepo**: npm workspaces with backend, frontend, and shared packages
 - **Backend**: NestJS with TypeScript
 - **Frontend**: Next.js 16 with React 19 and TypeScript
@@ -13,6 +14,7 @@
 - **UI Components**: Radix UI primitives
 
 ## Development Tools
+
 - **Package Manager**: npm
 - **Code Formatting**: Prettier (workspace-wide)
 - **Linting**: ESLint with TypeScript support
@@ -22,6 +24,7 @@
 ## Common Commands
 
 ### Project Setup
+
 ```bash
 # Start database
 docker-compose up -d
@@ -32,11 +35,12 @@ npm install
 # Start backend (from root)
 npm run dev:backend
 
-# Start frontend (from root)  
+# Start frontend (from root)
 npm run dev:frontend
 ```
 
 ### Development
+
 ```bash
 # Format all code
 npm run format
@@ -52,6 +56,7 @@ npm run test
 ```
 
 ### Backend Specific
+
 ```bash
 cd backend
 
@@ -72,6 +77,7 @@ npm run test:e2e
 ```
 
 ### Database
+
 ```bash
 # Check database tables
 docker exec razmena-vrtica-db-1 psql -U admin -d razmena_vrtica -c "\dt"
@@ -81,6 +87,7 @@ docker-compose down
 ```
 
 ## Configuration Notes
+
 - Database runs on port **5433** (not default 5432) to avoid conflicts
 - Backend runs on port 3000, frontend on 3000/3001
 - Shared package provides common Zod schemas and types

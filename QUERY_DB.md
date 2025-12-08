@@ -1,8 +1,8 @@
-
 List all matches
+
 ```
 PGPASSWORD=password psql -h localhost -p 5433 -U admin -d razmena_vrtica -c "
-SELECT 
+SELECT
     mg.id as match_group_id,
     mg.status,
     mg.created_at,

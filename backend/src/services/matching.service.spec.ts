@@ -4,7 +4,11 @@ import { Repository } from 'typeorm';
 import { MatchingService } from './matching.service';
 import { Child, AgeGroup } from '../entities/child.entity';
 import { Wishlist } from '../entities/wishlist.entity';
-import { MatchGroup, MatchParticipant, MatchStatus } from '../entities/match.entity';
+import {
+  MatchGroup,
+  MatchParticipant,
+  MatchStatus,
+} from '../entities/match.entity';
 import { HiddenMatch } from '../entities/hidden-match.entity';
 import {
   mockChild,
@@ -580,14 +584,18 @@ describe('MatchingService', () => {
       matchGroupRepo.createQueryBuilder.mockReturnValue(mockMatchQueryBuilder);
 
       childRepo.findByIds.mockImplementation((ids) =>
-        Promise.resolve([childA, childB, childC, childD].filter((c) => ids.includes(c.id))),
+        Promise.resolve(
+          [childA, childB, childC, childD].filter((c) => ids.includes(c.id)),
+        ),
       );
       matchGroupRepo.create.mockReturnValue(mockMatchGroup());
       matchGroupRepo.save.mockResolvedValue(mockMatchGroup());
       matchParticipantRepo.create.mockImplementation((data) => data);
       matchParticipantRepo.save.mockResolvedValue([]);
 
-      const result = await service.checkAndCreateMatchesForAgeGroup(AgeGroup.MLADJA);
+      const result = await service.checkAndCreateMatchesForAgeGroup(
+        AgeGroup.MLADJA,
+      );
 
       expect(result.length).toBeGreaterThanOrEqual(1);
     });
@@ -695,7 +703,9 @@ describe('MatchingService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([matchGroup]),
       };
-      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+      matchGroupRepo.createQueryBuilder.mockReturnValue(
+        mockFindMatchesQueryBuilder,
+      );
       matchGroupRepo.save.mockResolvedValue(matchGroup);
 
       await service.validateAndCleanupMatchesForChild('child-a');
@@ -743,7 +753,9 @@ describe('MatchingService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([matchGroup]),
       };
-      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+      matchGroupRepo.createQueryBuilder.mockReturnValue(
+        mockFindMatchesQueryBuilder,
+      );
 
       await service.validateAndCleanupMatchesForChild('child-a');
 
@@ -777,7 +789,9 @@ describe('MatchingService', () => {
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([completedMatch, cancelledMatch]),
       };
-      matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+      matchGroupRepo.createQueryBuilder.mockReturnValue(
+        mockFindMatchesQueryBuilder,
+      );
 
       await service.validateAndCleanupMatchesForChild('child-a');
 
@@ -799,17 +813,21 @@ describe('MatchingService', () => {
     describe('hideMatchForUser()', () => {
       it('should create hidden match record when not already hidden', async () => {
         hiddenMatchRepo.findOne.mockResolvedValue(null);
-        hiddenMatchRepo.create.mockReturnValue({ id: 'hidden-1', user_id: 'user-1', match_group_id: 'match-1' });
+        hiddenMatchRepo.create.mockReturnValue({
+          id: 'hidden-1',
+          user_id: 'user-1',
+          match_group_id: 'match-1',
+        });
         hiddenMatchRepo.save.mockResolvedValue({ id: 'hidden-1' });
 
         await service.hideMatchForUser('user-1', 'match-1');
 
         expect(hiddenMatchRepo.findOne).toHaveBeenCalledWith({
-          where: { user_id: 'user-1', match_group_id: 'match-1' }
+          where: { user_id: 'user-1', match_group_id: 'match-1' },
         });
         expect(hiddenMatchRepo.create).toHaveBeenCalledWith({
           user_id: 'user-1',
-          match_group_id: 'match-1'
+          match_group_id: 'match-1',
         });
         expect(hiddenMatchRepo.save).toHaveBeenCalled();
       });
@@ -832,7 +850,7 @@ describe('MatchingService', () => {
 
         expect(hiddenMatchRepo.delete).toHaveBeenCalledWith({
           user_id: 'user-1',
-          match_group_id: 'match-1'
+          match_group_id: 'match-1',
         });
       });
     });
@@ -845,7 +863,7 @@ describe('MatchingService', () => {
 
         expect(result).toBe(true);
         expect(hiddenMatchRepo.findOne).toHaveBeenCalledWith({
-          where: { user_id: 'user-1', match_group_id: 'match-1' }
+          where: { user_id: 'user-1', match_group_id: 'match-1' },
         });
       });
 
@@ -872,20 +890,23 @@ describe('MatchingService', () => {
           orderBy: jest.fn().mockReturnThis(),
           getMany: jest.fn().mockResolvedValue([match1, match2, match3]),
         };
-        matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+        matchGroupRepo.createQueryBuilder.mockReturnValue(
+          mockFindMatchesQueryBuilder,
+        );
 
         // Mock hidden matches - user has hidden match-2
-        hiddenMatchRepo.find.mockResolvedValue([
-          { match_group_id: 'match-2' }
-        ]);
+        hiddenMatchRepo.find.mockResolvedValue([{ match_group_id: 'match-2' }]);
 
-        const result = await service.getVisibleMatchesForUser('user-1', 'child-1');
+        const result = await service.getVisibleMatchesForUser(
+          'user-1',
+          'child-1',
+        );
 
         expect(result).toHaveLength(2);
-        expect(result.map(m => m.id)).toEqual(['match-1', 'match-3']);
+        expect(result.map((m) => m.id)).toEqual(['match-1', 'match-3']);
         expect(hiddenMatchRepo.find).toHaveBeenCalledWith({
           where: { user_id: 'user-1' },
-          select: ['match_group_id']
+          select: ['match_group_id'],
         });
       });
 
@@ -900,16 +921,20 @@ describe('MatchingService', () => {
           orderBy: jest.fn().mockReturnThis(),
           getMany: jest.fn().mockResolvedValue([match1, match2]),
         };
-        matchGroupRepo.createQueryBuilder.mockReturnValue(mockFindMatchesQueryBuilder);
+        matchGroupRepo.createQueryBuilder.mockReturnValue(
+          mockFindMatchesQueryBuilder,
+        );
 
         hiddenMatchRepo.find.mockResolvedValue([]);
 
-        const result = await service.getVisibleMatchesForUser('user-1', 'child-1');
+        const result = await service.getVisibleMatchesForUser(
+          'user-1',
+          'child-1',
+        );
 
         expect(result).toHaveLength(2);
-        expect(result.map(m => m.id)).toEqual(['match-1', 'match-2']);
+        expect(result.map((m) => m.id)).toEqual(['match-1', 'match-2']);
       });
     });
   });
 });
-

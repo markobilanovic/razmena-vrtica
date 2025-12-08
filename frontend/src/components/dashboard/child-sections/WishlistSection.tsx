@@ -2,8 +2,15 @@
 
 import { useState, useRef } from "react"
 import { Kindergarten } from "@repo/shared"
-import { useCreateWishlist, useDeleteWishlist, useKindergartens } from "@/lib/queries"
-import { ConfirmationPopover, ConfirmationPopoverRef } from "@/components/ui/ConfirmationPopover"
+import {
+  useCreateWishlist,
+  useDeleteWishlist,
+  useKindergartens,
+} from "@/lib/queries"
+import {
+  ConfirmationPopover,
+  ConfirmationPopoverRef,
+} from "@/components/ui/ConfirmationPopover"
 
 interface WishlistSectionProps {
   childId: string
@@ -19,19 +26,21 @@ export const WishlistSection = ({
   const [isAddingWish, setIsAddingWish] = useState(false)
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("")
   const [deletingWishId, setDeletingWishId] = useState<string | null>(null)
-  const [confirmDeleteWishId, setConfirmDeleteWishId] = useState<string | null>(null)
+  const [confirmDeleteWishId, setConfirmDeleteWishId] = useState<string | null>(
+    null,
+  )
   const popoverRef = useRef<ConfirmationPopoverRef>(null)
-  
+
   const { data: allKindergartens = [] } = useKindergartens()
   const createWishlist = useCreateWishlist()
   const deleteWishlist = useDeleteWishlist()
 
   // Filter out kindergartens already in wishlist
   const existingKindergartenIds = new Set(
-    (wishlists || []).map((w) => w.target_kindergarten_id)
+    (wishlists || []).map((w) => w.target_kindergarten_id),
   )
   const availableKindergartens = allKindergartens.filter(
-    (k: Kindergarten) => !existingKindergartenIds.has(k.id)
+    (k: Kindergarten) => !existingKindergartenIds.has(k.id),
   )
 
   const handleAddWish = async () => {
@@ -59,7 +68,7 @@ export const WishlistSection = ({
     if (!confirmDeleteWishId) return
 
     setDeletingWishId(confirmDeleteWishId)
-    
+
     try {
       await deleteWishlist.mutateAsync(confirmDeleteWishId)
     } catch (error) {
@@ -131,7 +140,9 @@ export const WishlistSection = ({
       {wishlists && wishlists.length > 0 ? (
         <ul className="space-y-2">
           {wishlists.map((wish) => {
-            const kindergarten = kindergartenMap.get(wish.target_kindergarten_id)
+            const kindergarten = kindergartenMap.get(
+              wish.target_kindergarten_id,
+            )
             const isDeleting = deletingWishId === wish.id
             return (
               <li
@@ -178,4 +189,3 @@ export const WishlistSection = ({
     </div>
   )
 }
-

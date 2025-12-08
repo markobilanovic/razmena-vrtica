@@ -144,6 +144,23 @@ export async function registerApi(
   )
 }
 
+export async function confirmEmailApi(
+  token: string,
+): Promise<{ message: string }> {
+  return fetchApi<{ message: string }>(`/auth/confirm-email?token=${token}`, {
+    method: "GET",
+  })
+}
+
+export async function resendConfirmationApi(
+  email: string,
+): Promise<{ message: string }> {
+  return fetchApi<{ message: string }>("/auth/resend-confirmation", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  })
+}
+
 // ==================== USER API ====================
 
 export async function getUserProfileApi(): Promise<UserProfile> {

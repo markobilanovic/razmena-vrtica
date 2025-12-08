@@ -19,15 +19,19 @@ const AppDataSource = new DataSource({
 
 async function cancelMatch() {
   await AppDataSource.initialize();
-  
+
   const matchRepo = AppDataSource.getRepository(MatchGroup);
-  const matches = await matchRepo.find({ relations: ['participants', 'participants.child'] });
-  
-  console.log('Available matches:');
-  matches.forEach(match => {
-    console.log(`- ID: ${match.id}, Status: ${match.status}, Participants: ${match.participants?.length}`);
+  const matches = await matchRepo.find({
+    relations: ['participants', 'participants.child'],
   });
-  
+
+  console.log('Available matches:');
+  matches.forEach((match) => {
+    console.log(
+      `- ID: ${match.id}, Status: ${match.status}, Participants: ${match.participants?.length}`,
+    );
+  });
+
   if (matches.length > 0) {
     const firstMatch = matches[0];
     console.log(`\nCanceling match ${firstMatch.id}...`);
@@ -35,7 +39,7 @@ async function cancelMatch() {
     await matchRepo.save(firstMatch);
     console.log('Match canceled successfully!');
   }
-  
+
   await AppDataSource.destroy();
 }
 

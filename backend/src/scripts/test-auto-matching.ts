@@ -44,10 +44,9 @@ async function testAutoMatching() {
     console.log('\nTest 3: Test duplicate prevention');
     console.log('==================================');
 
-    const matchesAgain =
-      await matchingService.checkAndCreateMatchesForAgeGroup(
-        AgeGroup.MLADJA_JASLENA,
-      );
+    const matchesAgain = await matchingService.checkAndCreateMatchesForAgeGroup(
+      AgeGroup.MLADJA_JASLENA,
+    );
     console.log(
       `✅ Second run created ${matchesAgain.length} matches (should be 0 if duplicates prevented)`,
     );
@@ -65,4 +64,3 @@ testAutoMatching().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });
-

@@ -41,7 +41,9 @@ export class WishlistController {
   }
 
   @Get('child/:childId')
-  async getByChild(@Param('childId') childId: string): Promise<WishlistResponse[]> {
+  async getByChild(
+    @Param('childId') childId: string,
+  ): Promise<WishlistResponse[]> {
     return this.wishlistService.findByChild(childId);
   }
 
@@ -54,4 +56,3 @@ export class WishlistController {
     return wishlist;
   }
 }
-

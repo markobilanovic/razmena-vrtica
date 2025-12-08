@@ -51,21 +51,21 @@ backend/
 ### Test Setup
 
 ```typescript
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { WishlistService } from './wishlist.service';
-import { MatchingService } from './matching.service';
-import { Wishlist } from '../entities/wishlist.entity';
-import { Child } from '../entities/child.entity';
-import { Kindergarten } from '../entities/kindergarten.entity';
+import { Test, TestingModule } from "@nestjs/testing"
+import { getRepositoryToken } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
+import { WishlistService } from "./wishlist.service"
+import { MatchingService } from "./matching.service"
+import { Wishlist } from "../entities/wishlist.entity"
+import { Child } from "../entities/child.entity"
+import { Kindergarten } from "../entities/kindergarten.entity"
 
-describe('WishlistService', () => {
-  let service: WishlistService;
-  let wishlistRepo: MockType<Repository<Wishlist>>;
-  let childRepo: MockType<Repository<Child>>;
-  let kindergartenRepo: MockType<Repository<Kindergarten>>;
-  let matchingService: MockType<MatchingService>;
+describe("WishlistService", () => {
+  let service: WishlistService
+  let wishlistRepo: MockType<Repository<Wishlist>>
+  let childRepo: MockType<Repository<Child>>
+  let kindergartenRepo: MockType<Repository<Kindergarten>>
+  let matchingService: MockType<MatchingService>
 
   // Mock repository factory
   const mockRepository = () => ({
@@ -74,7 +74,7 @@ describe('WishlistService', () => {
     create: jest.fn(),
     save: jest.fn(),
     remove: jest.fn(),
-  });
+  })
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -99,19 +99,19 @@ describe('WishlistService', () => {
           },
         },
       ],
-    }).compile();
+    }).compile()
 
-    service = module.get<WishlistService>(WishlistService);
-    wishlistRepo = module.get(getRepositoryToken(Wishlist));
-    childRepo = module.get(getRepositoryToken(Child));
-    kindergartenRepo = module.get(getRepositoryToken(Kindergarten));
-    matchingService = module.get(MatchingService);
-  });
+    service = module.get<WishlistService>(WishlistService)
+    wishlistRepo = module.get(getRepositoryToken(Wishlist))
+    childRepo = module.get(getRepositoryToken(Child))
+    kindergartenRepo = module.get(getRepositoryToken(Kindergarten))
+    matchingService = module.get(MatchingService)
+  })
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+  it("should be defined", () => {
+    expect(service).toBeDefined()
+  })
+})
 ```
 
 ### Test Cases
@@ -122,27 +122,22 @@ describe('WishlistService', () => {
   - Given: Valid child ID and kindergarten ID
   - When: create() is called
   - Then: Wishlist is saved and MatchingService is called
-  
 - ✅ **Throws error when child not found**
   - Given: Invalid child ID
   - When: create() is called
   - Then: Error "Child not found" is thrown
-  
 - ✅ **Throws error when kindergarten not found**
   - Given: Invalid kindergarten ID
   - When: create() is called
   - Then: Error "Target kindergarten not found" is thrown
-  
 - ✅ **Throws error when duplicate wishlist exists**
   - Given: Wishlist already exists for child-kindergarten pair
   - When: create() is called
   - Then: Error "Wishlist already exists" is thrown
-  
 - ✅ **Calls MatchingService after creation**
   - Given: Valid wishlist creation
   - When: create() completes
   - Then: checkAndCreateMatchesForChild() is called with child ID
-  
 - ✅ **Wishlist creation succeeds even if matching fails**
   - Given: MatchingService throws error
   - When: create() is called
@@ -184,24 +179,24 @@ describe('WishlistService', () => {
 ### Test Setup
 
 ```typescript
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { MatchingService } from './matching.service';
-import { Child, AgeGroup } from '../entities/child.entity';
-import { Wishlist } from '../entities/wishlist.entity';
-import { MatchGroup, MatchParticipant } from '../entities/match.entity';
+import { Test, TestingModule } from "@nestjs/testing"
+import { getRepositoryToken } from "@nestjs/typeorm"
+import { MatchingService } from "./matching.service"
+import { Child, AgeGroup } from "../entities/child.entity"
+import { Wishlist } from "../entities/wishlist.entity"
+import { MatchGroup, MatchParticipant } from "../entities/match.entity"
 
-describe('MatchingService', () => {
-  let service: MatchingService;
-  let childRepo: any;
-  let wishlistRepo: any;
-  let matchGroupRepo: any;
-  let matchParticipantRepo: any;
+describe("MatchingService", () => {
+  let service: MatchingService
+  let childRepo: any
+  let wishlistRepo: any
+  let matchGroupRepo: any
+  let matchParticipantRepo: any
 
   beforeEach(async () => {
     // ... setup similar to WishlistService
-  });
-});
+  })
+})
 ```
 
 ### Test Cases
@@ -212,32 +207,26 @@ describe('MatchingService', () => {
   - Given: Child A at KG-1 wants KG-2, Child B at KG-2 wants KG-1 (same age group)
   - When: checkAndCreateMatchesForChild(childA.id) is called
   - Then: Match is created with both children
-  
 - ✅ **Creates match for 3-way swap**
   - Given: A→B, B→C, C→A (all same age group)
   - When: checkAndCreateMatchesForChild() is called for any child
   - Then: Match is created with all three children
-  
 - ✅ **Returns empty array when no matches found**
   - Given: Child with wishlist but no reciprocal wishlists
   - When: checkAndCreateMatchesForChild() is called
   - Then: Empty array is returned
-  
 - ✅ **Returns empty array when child not found**
   - Given: Invalid child ID
   - When: checkAndCreateMatchesForChild() is called
   - Then: Empty array is returned
-  
 - ✅ **Returns empty array when child has no age group**
   - Given: Child without age group assigned
   - When: checkAndCreateMatchesForChild() is called
   - Then: Empty array is returned
-  
 - ✅ **Does not create duplicate matches**
   - Given: Match already exists for child set
   - When: checkAndCreateMatchesForChild() is called again
   - Then: No new match is created
-  
 - ✅ **Only matches children in same age group**
   - Given: Child A (MLADJA) and Child B (SREDNJA) with reciprocal wishes
   - When: checkAndCreateMatchesForChild() is called
@@ -249,12 +238,10 @@ describe('MatchingService', () => {
   - Given: Match exists with children [A, B]
   - When: Checking for match with [B, A] (different order)
   - Then: Existing match is found
-  
 - ✅ **Returns null when no matching children found**
   - Given: Match exists with children [A, B]
   - When: Checking for match with [A, C]
   - Then: null is returned
-  
 - ✅ **Only checks PENDING_ACCEPTANCE and ACTIVE_CONTACT statuses**
   - Given: Match with status COMPLETED exists
   - When: Checking for match with same children
@@ -266,7 +253,6 @@ describe('MatchingService', () => {
   - Given: Multiple valid swap cycles in age group
   - When: checkAndCreateMatchesForAgeGroup(AgeGroup.MLADJA) is called
   - Then: All valid matches are created
-  
 - ✅ **Does not create matches across age groups**
   - Given: Children from multiple age groups
   - When: checkAndCreateMatchesForAgeGroup(AgeGroup.MLADJA) is called
@@ -299,40 +285,40 @@ describe('MatchingService', () => {
 ### Test Setup
 
 ```typescript
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import * as request from 'supertest';
-import { AppModule } from '../../src/app.module';
+import { Test, TestingModule } from "@nestjs/testing"
+import { INestApplication } from "@nestjs/common"
+import { TypeOrmModule } from "@nestjs/typeorm"
+import * as request from "supertest"
+import { AppModule } from "../../src/app.module"
 
-describe('Auto-Matching Integration (e2e)', () => {
-  let app: INestApplication;
-  let authToken: string;
+describe("Auto-Matching Integration (e2e)", () => {
+  let app: INestApplication
+  let authToken: string
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    }).compile()
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
+    app = moduleFixture.createNestApplication()
+    await app.init()
 
     // Login and get auth token
     const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: 'test@example.com', password: 'password' });
-    authToken = loginResponse.body.access_token;
-  });
+      .post("/auth/login")
+      .send({ email: "test@example.com", password: "password" })
+    authToken = loginResponse.body.access_token
+  })
 
   afterAll(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
   // Clear database between tests
   beforeEach(async () => {
     // Clean up matches and wishlists
-  });
-});
+  })
+})
 ```
 
 ### Test Scenarios
@@ -340,120 +326,120 @@ describe('Auto-Matching Integration (e2e)', () => {
 #### Scenario 1: 2-Way Swap Auto-Creation
 
 ```typescript
-it('should automatically create match when 2-way swap is detected', async () => {
+it("should automatically create match when 2-way swap is detected", async () => {
   // 1. Create test data: Two children in same age group at different KGs
-  const childA = await createChild('Alice', AgeGroup.MLADJA, 'KG-A');
-  const childB = await createChild('Bob', AgeGroup.MLADJA, 'KG-B');
+  const childA = await createChild("Alice", AgeGroup.MLADJA, "KG-A")
+  const childB = await createChild("Bob", AgeGroup.MLADJA, "KG-B")
 
   // 2. Alice creates wishlist: wants to go to KG-B
   await request(app.getHttpServer())
-    .post('/wishlists')
-    .set('Authorization', `Bearer ${authToken}`)
+    .post("/wishlists")
+    .set("Authorization", `Bearer ${authToken}`)
     .send({
       child_id: childA.id,
-      target_kindergarten_id: 'KG-B',
+      target_kindergarten_id: "KG-B",
     })
-    .expect(201);
+    .expect(201)
 
   // 3. No match should exist yet
-  let matches = await getMatchesForChild(childA.id);
-  expect(matches).toHaveLength(0);
+  let matches = await getMatchesForChild(childA.id)
+  expect(matches).toHaveLength(0)
 
   // 4. Bob creates wishlist: wants to go to KG-A
   await request(app.getHttpServer())
-    .post('/wishlists')
-    .set('Authorization', `Bearer ${authToken}`)
+    .post("/wishlists")
+    .set("Authorization", `Bearer ${authToken}`)
     .send({
       child_id: childB.id,
-      target_kindergarten_id: 'KG-A',
+      target_kindergarten_id: "KG-A",
     })
-    .expect(201);
+    .expect(201)
 
   // 5. Wait for async matching to complete
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100))
 
   // 6. Match should now exist for both children
-  matches = await getMatchesForChild(childA.id);
-  expect(matches).toHaveLength(1);
-  expect(matches[0].status).toBe('PENDING_ACCEPTANCE');
-  expect(matches[0].participants).toHaveLength(2);
+  matches = await getMatchesForChild(childA.id)
+  expect(matches).toHaveLength(1)
+  expect(matches[0].status).toBe("PENDING_ACCEPTANCE")
+  expect(matches[0].participants).toHaveLength(2)
 
-  const participantIds = matches[0].participants.map(p => p.child_id).sort();
-  expect(participantIds).toEqual([childA.id, childB.id].sort());
-});
+  const participantIds = matches[0].participants.map((p) => p.child_id).sort()
+  expect(participantIds).toEqual([childA.id, childB.id].sort())
+})
 ```
 
 #### Scenario 2: 3-Way Cycle Auto-Creation
 
 ```typescript
-it('should automatically create match when 3-way cycle is detected', async () => {
+it("should automatically create match when 3-way cycle is detected", async () => {
   // A at KG-1 wants KG-2
   // B at KG-2 wants KG-3
   // C at KG-3 wants KG-1
   // When C creates wishlist, match should be created
-});
+})
 ```
 
 #### Scenario 3: Age Group Boundary
 
 ```typescript
-it('should NOT create match across different age groups', async () => {
+it("should NOT create match across different age groups", async () => {
   // A (MLADJA) at KG-1 wants KG-2
   // B (SREDNJA) at KG-2 wants KG-1
   // No match should be created
-});
+})
 ```
 
 #### Scenario 4: Wishlist Update Triggers Re-Check
 
 ```typescript
-it('should check for matches when wishlist is updated', async () => {
+it("should check for matches when wishlist is updated", async () => {
   // Create wishlists that don't match
   // Update one wishlist to create matching cycle
   // Verify match is created
-});
+})
 ```
 
 #### Scenario 5: Wishlist Deletion Triggers Re-Check
 
 ```typescript
-it('should re-check matches when wishlist is deleted', async () => {
+it("should re-check matches when wishlist is deleted", async () => {
   // Create 3-way match
   // Delete one wishlist
   // Verify 2-way match still exists (if applicable)
-});
+})
 ```
 
 #### Scenario 6: Duplicate Match Prevention
 
 ```typescript
-it('should not create duplicate matches', async () => {
+it("should not create duplicate matches", async () => {
   // Create 2-way swap
   // Manually trigger matching again
   // Verify only one match exists
-});
+})
 ```
 
 #### Scenario 7: Multiple Matches for One Child
 
 ```typescript
-it('should handle child being in multiple potential matches', async () => {
+it("should handle child being in multiple potential matches", async () => {
   // A at KG-1 wants KG-2 and KG-3
   // B at KG-2 wants KG-1
   // C at KG-3 wants KG-1
   // Should create two separate 2-way matches
-});
+})
 ```
 
 #### Scenario 8: Matching Failure Doesn't Break Wishlist
 
 ```typescript
-it('should create wishlist even if matching service fails', async () => {
+it("should create wishlist even if matching service fails", async () => {
   // Mock MatchingService to throw error
   // Create wishlist
   // Verify wishlist is still created
   // Verify error is logged
-});
+})
 ```
 
 ---
@@ -481,28 +467,32 @@ it('should create wishlist even if matching service fails', async () => {
 ### Create Helper File: `test/helpers/test-data.helper.ts`
 
 ```typescript
-import { AgeGroup } from '../../src/entities/child.entity';
+import { AgeGroup } from "../../src/entities/child.entity"
 
 export class TestDataHelper {
-  static createChildData(name: string, ageGroup: AgeGroup, kindergartenId: string) {
+  static createChildData(
+    name: string,
+    ageGroup: AgeGroup,
+    kindergartenId: string,
+  ) {
     return {
       first_name: name,
-      last_name: 'Test',
-      date_of_birth: new Date('2020-01-01'),
+      last_name: "Test",
+      date_of_birth: new Date("2020-01-01"),
       group: ageGroup,
       current_kindergarten_id: kindergartenId,
-    };
+    }
   }
 
   static createWishlistData(childId: string, targetKindergartenId: string) {
     return {
       child_id: childId,
       target_kindergarten_id: targetKindergartenId,
-    };
+    }
   }
 
   static async waitForAsyncOperations(ms: number = 100): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }
 ```
@@ -511,30 +501,30 @@ export class TestDataHelper {
 
 ```typescript
 export const mockChild = (overrides = {}) => ({
-  id: 'child-1',
-  first_name: 'Test',
-  last_name: 'Child',
-  date_of_birth: new Date('2020-01-01'),
+  id: "child-1",
+  first_name: "Test",
+  last_name: "Child",
+  date_of_birth: new Date("2020-01-01"),
   group: AgeGroup.MLADJA,
-  current_kindergarten_id: 'kg-1',
+  current_kindergarten_id: "kg-1",
   wishlists: [],
   ...overrides,
-});
+})
 
 export const mockWishlist = (overrides = {}) => ({
-  id: 'wishlist-1',
-  child_id: 'child-1',
-  target_kindergarten_id: 'kg-2',
+  id: "wishlist-1",
+  child_id: "child-1",
+  target_kindergarten_id: "kg-2",
   created_at: new Date(),
   ...overrides,
-});
+})
 
 export const mockKindergarten = (overrides = {}) => ({
-  id: 'kg-1',
-  name: 'Test Kindergarten',
-  address: '123 Test St',
+  id: "kg-1",
+  name: "Test Kindergarten",
+  address: "123 Test St",
   ...overrides,
-});
+})
 ```
 
 ---
@@ -564,6 +554,7 @@ npm run test:cov
 ### Step 1: Setup Test Infrastructure (30 minutes)
 
 1. Install testing dependencies (if not already present):
+
 ```bash
 cd backend
 npm install --save-dev @nestjs/testing @types/jest @types/supertest supertest
@@ -639,12 +630,12 @@ npm run test --onlyFailures
 
 ```typescript
 // Option 1: Wait for async operations
-await TestDataHelper.waitForAsyncOperations(100);
+await TestDataHelper.waitForAsyncOperations(100)
 
 // Option 2: Use Jest fake timers
-jest.useFakeTimers();
+jest.useFakeTimers()
 // ... trigger async operation
-jest.runAllTimers();
+jest.runAllTimers()
 ```
 
 ### Issue 2: Database State Pollution
@@ -654,10 +645,10 @@ jest.runAllTimers();
 
 ```typescript
 beforeEach(async () => {
-  await matchParticipantRepo.clear();
-  await matchGroupRepo.clear();
-  await wishlistRepo.clear();
-});
+  await matchParticipantRepo.clear()
+  await matchGroupRepo.clear()
+  await wishlistRepo.clear()
+})
 ```
 
 ### Issue 3: Repository Method Not Mocked
@@ -666,7 +657,7 @@ beforeEach(async () => {
 **Solution**: Add mock implementation
 
 ```typescript
-mockRepository.findOne.mockResolvedValue(mockData);
+mockRepository.findOne.mockResolvedValue(mockData)
 ```
 
 ---
@@ -708,4 +699,3 @@ Once all tests are complete and passing:
 **Last Updated**: December 7, 2025  
 **Status**: Ready to implement  
 **Priority**: HIGH
-

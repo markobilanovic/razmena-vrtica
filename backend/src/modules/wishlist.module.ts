@@ -17,4 +17,3 @@ import { MatchingModule } from './matching.module';
   exports: [WishlistService],
 })
 export class WishlistModule {}
-

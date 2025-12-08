@@ -27,4 +27,3 @@ export class KindergartenService {
     return this.kindergartenRepository.find();
   }
 }
-

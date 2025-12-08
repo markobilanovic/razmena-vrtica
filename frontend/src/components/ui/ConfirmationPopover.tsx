@@ -29,7 +29,7 @@ export const ConfirmationPopover = forwardRef<
       onConfirm,
       onCancel,
     },
-    ref
+    ref,
   ) => {
     const popoverRef = useRef<HTMLDivElement>(null)
 
@@ -75,7 +75,7 @@ export const ConfirmationPopover = forwardRef<
         </div>
       </div>
     )
-  }
+  },
 )
 
 ConfirmationPopover.displayName = "ConfirmationPopover"

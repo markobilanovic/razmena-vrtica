@@ -1,5 +1,8 @@
 import { MatchGroupWithDetails, MatchStatus } from "@repo/shared"
-import { HideMatchConfirmation, HideMatchConfirmationRef } from "../../ui/HideMatchConfirmation"
+import {
+  HideMatchConfirmation,
+  HideMatchConfirmationRef,
+} from "../../ui/HideMatchConfirmation"
 import { useHideMatch } from "../../../lib/queries"
 import { useRef, useState } from "react"
 
@@ -16,7 +19,7 @@ export const ActiveExchangesSection = ({
 }: ActiveExchangesSectionProps) => {
   const hideConfirmationRef = useRef<HideMatchConfirmationRef>(null)
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null)
-  
+
   const hideMatchMutation = useHideMatch()
 
   const handleHideClick = (matchGroupId: string) => {
@@ -31,7 +34,7 @@ export const ActiveExchangesSection = ({
       await hideMatchMutation.mutateAsync(selectedMatchId)
       onMatchHidden?.(selectedMatchId)
     } catch (error) {
-      console.error('Failed to hide match:', error)
+      console.error("Failed to hide match:", error)
     } finally {
       setSelectedMatchId(null)
     }
@@ -60,7 +63,10 @@ export const ActiveExchangesSection = ({
             const otherParticipants = (group.participants || [])
               .filter((p) => p.child?.id !== currentChildId)
               .map((p) => p.child)
-              .filter((c): c is NonNullable<typeof c> => c !== null && c !== undefined)
+              .filter(
+                (c): c is NonNullable<typeof c> =>
+                  c !== null && c !== undefined,
+              )
 
             return (
               <div
@@ -73,8 +79,8 @@ export const ActiveExchangesSection = ({
                       {isActive
                         ? "Kontakt razmena aktivna!"
                         : isCanceled
-                        ? "Razmena otkazana"
-                        : "Potrebno prihvatanje"}
+                          ? "Razmena otkazana"
+                          : "Potrebno prihvatanje"}
                     </p>
                     <p className="text-sm text-color-text-muted">
                       Status: {group.status}
@@ -83,14 +89,18 @@ export const ActiveExchangesSection = ({
                   <div className="flex items-center gap-2">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
-                        isActive 
-                          ? "bg-green-100 text-green-700" 
+                        isActive
+                          ? "bg-green-100 text-green-700"
                           : isCanceled
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
-                      {isActive ? "AKTIVNO" : isCanceled ? "OTKAZANO" : "NA ČEKANJU"}
+                      {isActive
+                        ? "AKTIVNO"
+                        : isCanceled
+                          ? "OTKAZANO"
+                          : "NA ČEKANJU"}
                     </span>
                     {isCanceled && (
                       <button
@@ -99,7 +109,10 @@ export const ActiveExchangesSection = ({
                         className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Sakrij ovu otkazanu razmenu"
                       >
-                        {hideMatchMutation.isPending && selectedMatchId === group.id ? "Sakrivam..." : "Sakrij"}
+                        {hideMatchMutation.isPending &&
+                        selectedMatchId === group.id
+                          ? "Sakrivam..."
+                          : "Sakrij"}
                       </button>
                     )}
                   </div>
@@ -123,7 +136,9 @@ export const ActiveExchangesSection = ({
                             <p className="text-xs font-bold text-teal-700">
                               Kontakt roditelja:
                             </p>
-                            <p className="text-xs">{otherChild.parent.full_name}</p>
+                            <p className="text-xs">
+                              {otherChild.parent.full_name}
+                            </p>
                             <p className="text-xs">{otherChild.parent.email}</p>
                           </div>
                         )}
@@ -150,11 +165,14 @@ export const ActiveExchangesSection = ({
       ) : (
         <p className="text-color-text-muted italic">Nema aktivnih razmena.</p>
       )}
-      
+
       {hideMatchMutation.error && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">
-            <strong>Greška:</strong> {hideMatchMutation.error instanceof Error ? hideMatchMutation.error.message : 'Failed to hide match'}
+            <strong>Greška:</strong>{" "}
+            {hideMatchMutation.error instanceof Error
+              ? hideMatchMutation.error.message
+              : "Failed to hide match"}
           </p>
         </div>
       )}
@@ -167,4 +185,3 @@ export const ActiveExchangesSection = ({
     </div>
   )
 }
-

@@ -4,7 +4,9 @@ interface DirectMatchesSectionProps {
   matches: Kindergarten[]
 }
 
-export const DirectMatchesSection = ({ matches }: DirectMatchesSectionProps) => {
+export const DirectMatchesSection = ({
+  matches,
+}: DirectMatchesSectionProps) => {
   return (
     <div className="glass-card p-6 rounded-2xl border border-green-100 bg-green-50/30">
       <div className="flex items-center gap-3 mb-4">
@@ -40,4 +42,3 @@ export const DirectMatchesSection = ({ matches }: DirectMatchesSectionProps) => 
     </div>
   )
 }
-

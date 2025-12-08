@@ -624,7 +624,10 @@ export class MatchingService {
    * Unhide a match for a specific user
    * Removes the record from the HiddenMatch table
    */
-  async unhideMatchForUser(userId: string, matchGroupId: string): Promise<void> {
+  async unhideMatchForUser(
+    userId: string,
+    matchGroupId: string,
+  ): Promise<void> {
     await this.hiddenMatchRepository.delete({
       user_id: userId,
       match_group_id: matchGroupId,
@@ -635,7 +638,10 @@ export class MatchingService {
    * Get visible matches for a user's child, filtering out hidden matches
    * Returns matches where the child is a participant, excluding user-hidden matches
    */
-  async getVisibleMatchesForUser(userId: string, childId: string): Promise<MatchGroupWithDetails[]> {
+  async getVisibleMatchesForUser(
+    userId: string,
+    childId: string,
+  ): Promise<MatchGroupWithDetails[]> {
     // Get all matches for the child
     const allMatches = await this.findMatchGroupsForChild(childId);
 
@@ -645,17 +651,22 @@ export class MatchingService {
       select: ['match_group_id'],
     });
 
-    const hiddenMatchIds = new Set(hiddenMatches.map(hm => hm.match_group_id));
+    const hiddenMatchIds = new Set(
+      hiddenMatches.map((hm) => hm.match_group_id),
+    );
 
     // Filter out hidden matches
-    return allMatches.filter(match => !hiddenMatchIds.has(match.id));
+    return allMatches.filter((match) => !hiddenMatchIds.has(match.id));
   }
 
   /**
    * Check if a match is hidden for a specific user
    * Helper method to determine match visibility
    */
-  async isMatchHiddenForUser(userId: string, matchGroupId: string): Promise<boolean> {
+  async isMatchHiddenForUser(
+    userId: string,
+    matchGroupId: string,
+  ): Promise<boolean> {
     const hiddenMatch = await this.hiddenMatchRepository.findOne({
       where: {
         user_id: userId,
@@ -681,10 +692,17 @@ export class MatchingService {
    * Check if a user can access a specific match
    * Returns true if any of the user's children are participants in the match
    */
-  async userCanAccessMatch(userId: string, matchGroupId: string): Promise<boolean> {
+  async userCanAccessMatch(
+    userId: string,
+    matchGroupId: string,
+  ): Promise<boolean> {
     const match = await this.matchGroupRepository.findOne({
       where: { id: matchGroupId },
-      relations: ['participants', 'participants.child', 'participants.child.parent'],
+      relations: [
+        'participants',
+        'participants.child',
+        'participants.child.parent',
+      ],
     });
 
     if (!match) {
@@ -692,8 +710,11 @@ export class MatchingService {
     }
 
     // Check if any participant's child belongs to this user
-    return match.participants.some(participant => 
-      participant.child && participant.child.parent && participant.child.parent.id === userId
+    return match.participants.some(
+      (participant) =>
+        participant.child &&
+        participant.child.parent &&
+        participant.child.parent.id === userId,
     );
   }
 }

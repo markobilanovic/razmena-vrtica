@@ -11,4 +11,3 @@ import { KindergartenController } from '../controllers/kindergarten.controller';
   exports: [KindergartenService],
 })
 export class KindergartenModule {}
-

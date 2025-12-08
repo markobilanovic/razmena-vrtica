@@ -31,8 +31,12 @@ export async function seedMatches(
     child1: Child,
     child2: Child,
   ): { child1: Child; child2: Child } | null => {
-    const child1Wishlists = allWishlists.filter((w) => w.child.id === child1.id);
-    const child2Wishlists = allWishlists.filter((w) => w.child.id === child2.id);
+    const child1Wishlists = allWishlists.filter(
+      (w) => w.child.id === child1.id,
+    );
+    const child2Wishlists = allWishlists.filter(
+      (w) => w.child.id === child2.id,
+    );
 
     // Check if child1 wants child2's kindergarten AND child2 wants child1's kindergarten
     const child1WantsChild2KG = child1Wishlists.some(
@@ -142,9 +146,7 @@ export async function seedMatches(
   }
 
   if (matchesCreated === 0) {
-    console.log(
-      '⚠️  No mutual swaps found in wishlists. No matches created.',
-    );
+    console.log('⚠️  No mutual swaps found in wishlists. No matches created.');
     console.log(
       '💡 This means no two children want each others kindergartens.',
     );
@@ -152,6 +154,8 @@ export async function seedMatches(
       '   Consider adjusting the wishlist seed to guarantee at least one mutual swap.',
     );
   } else {
-    console.log(`✅ Match seeding completed. Created ${matchesCreated} matches.`);
+    console.log(
+      `✅ Match seeding completed. Created ${matchesCreated} matches.`,
+    );
   }
 }

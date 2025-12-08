@@ -31,6 +31,7 @@ export class KindergartenService {
 ```
 
 **Key Features:**
+
 - Single responsibility: manages only kindergarten data
 - Batch operations support with `findByIds` for efficient querying
 - Clean separation from user logic
@@ -47,6 +48,7 @@ export class KindergartenController {
 ```
 
 **Endpoints:**
+
 - `GET /kindergartens` - Returns all kindergartens
 - `GET /kindergartens/batch?ids=id1,id2` - Returns multiple kindergartens by IDs
 - `GET /kindergartens/:id` - Returns a single kindergarten
@@ -64,19 +66,24 @@ Added `KindergartenModule` to the main app module imports.
 #### 1. API Layer (`frontend/src/lib/api.ts`)
 
 Added new API functions:
+
 ```typescript
 export async function getKindergartenByIdApi(id: string): Promise<Kindergarten>
-export async function getKindergartensByIdsApi(ids: string[]): Promise<Kindergarten[]>
+export async function getKindergartensByIdsApi(
+  ids: string[],
+): Promise<Kindergarten[]>
 export async function getAllKindergartensApi(): Promise<Kindergarten[]>
 ```
 
 Also added:
+
 - `KindergartenSchema` for Zod validation
 - `Kindergarten` type export
 
 #### 2. Query Hooks (`frontend/src/lib/queries.ts`)
 
 Added React Query hooks:
+
 ```typescript
 export function useKindergartens() // All kindergartens
 export function useKindergarten(id: string) // Single kindergarten
@@ -84,6 +91,7 @@ export function useKindergartensBatch(ids: string[]) // Multiple kindergartens
 ```
 
 **Key Features:**
+
 - 30-minute stale time (kindergartens don't change often)
 - Proper query key management
 - Batch fetching support
@@ -91,6 +99,7 @@ export function useKindergartensBatch(ids: string[]) // Multiple kindergartens
 #### 3. Dashboard Updates (`frontend/src/app/dashboard/page.tsx`)
 
 Updated `ChildTabContent` component to:
+
 1. Extract kindergarten IDs from wishlists
 2. Fetch kindergarten data in a single batch request
 3. Create a Map for O(1) lookup
@@ -105,9 +114,7 @@ const { data: kindergartens = [] } = useKindergartensBatch(
   wishlistKindergartenIds,
 )
 
-const kindergartenMap = new Map(
-  kindergartens.map((k) => [k.id, k]),
-)
+const kindergartenMap = new Map(kindergartens.map((k) => [k.id, k]))
 ```
 
 ## Benefits
@@ -126,6 +133,7 @@ The backend was successfully built with `npm run build` with no errors.
 ## Future Enhancements
 
 Potential improvements:
+
 - Add pagination for `GET /kindergartens`
 - Add search/filter capabilities
 - Add caching layer (Redis) for frequently accessed kindergartens
@@ -135,12 +143,14 @@ Potential improvements:
 ## Files Modified
 
 **Backend:**
+
 - ✅ Created: `src/services/kindergarten.service.ts`
 - ✅ Created: `src/controllers/kindergarten.controller.ts`
 - ✅ Created: `src/modules/kindergarten.module.ts`
 - ✅ Modified: `src/app.module.ts`
 
 **Frontend:**
+
 - ✅ Modified: `src/lib/api.ts`
 - ✅ Modified: `src/lib/queries.ts`
 - ✅ Modified: `src/app/dashboard/page.tsx`
@@ -148,20 +158,25 @@ Potential improvements:
 ## API Reference
 
 ### Get All Kindergartens
+
 ```
 GET /kindergartens
 ```
 
 ### Get Kindergarten by ID
+
 ```
 GET /kindergartens/:id
 ```
 
 ### Get Multiple Kindergartens
+
 ```
 GET /kindergartens/batch?ids=id1&ids=id2&ids=id3
 ```
+
 or
+
 ```
 GET /kindergartens/batch?ids=id1,id2,id3
 ```
@@ -172,4 +187,3 @@ GET /kindergartens/batch?ids=id1,id2,id3
 - Wishlists still only return `target_kindergarten_id`, not the full relation
 - Frontend handles the kindergarten data fetching separately
 - This pattern can be applied to other entities (e.g., Child service)
-

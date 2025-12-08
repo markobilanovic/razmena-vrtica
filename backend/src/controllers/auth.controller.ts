@@ -5,6 +5,8 @@ import {
   UnauthorizedException,
   HttpCode,
   HttpStatus,
+  Query,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import type {
@@ -36,5 +38,20 @@ export class AuthController {
     @Body() signUpDto: RegisterRequest,
   ): Promise<RegisterResponse> {
     return this.authService.register(signUpDto);
+  }
+
+  @Get('confirm-email')
+  async confirmEmail(
+    @Query('token') token: string,
+  ): Promise<{ message: string }> {
+    return this.authService.confirmEmail(token);
+  }
+
+  @Post('resend-confirmation')
+  @HttpCode(HttpStatus.OK)
+  async resendConfirmation(
+    @Body('email') email: string,
+  ): Promise<{ message: string }> {
+    return this.authService.resendConfirmationEmail(email);
   }
 }

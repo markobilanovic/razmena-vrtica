@@ -9,7 +9,13 @@ import { HiddenMatch } from '../entities/hidden-match.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Child, Wishlist, MatchGroup, MatchParticipant, HiddenMatch]),
+    TypeOrmModule.forFeature([
+      Child,
+      Wishlist,
+      MatchGroup,
+      MatchParticipant,
+      HiddenMatch,
+    ]),
   ],
   controllers: [MatchingController],
   providers: [MatchingService],

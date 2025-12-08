@@ -55,31 +55,32 @@ export const ChildTabContent = ({ child }: ChildTabContentProps) => {
 
   const handleMatchHidden = (matchGroupId: string) => {
     // Invalidate match groups query to refetch data without the hidden match
-    queryClient.invalidateQueries({ 
-      queryKey: queryKeys.childMatchGroups(child.id) 
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.childMatchGroups(child.id),
     })
   }
 
   return (
     <div className="space-y-6 animate-fade-in-up">
-      <CurrentKindergartenSection currentKindergarten={child.current_kindergarten} />
-      
-      <WishlistSection 
+      <CurrentKindergartenSection
+        currentKindergarten={child.current_kindergarten}
+      />
+
+      <WishlistSection
         childId={child.id}
-        wishlists={child.wishlists} 
+        wishlists={child.wishlists}
         kindergartenMap={kindergartenMap}
       />
 
-      <ActiveExchangesSection 
-        matchGroups={matchGroups} 
+      <ActiveExchangesSection
+        matchGroups={matchGroups}
         currentChildId={child.id}
         onMatchHidden={handleMatchHidden}
       />
-      
+
       {/* <DirectMatchesSection matches={matches} />
       
       <PotentialMatchesSection potentials={potentials} /> */}
     </div>
   )
 }
-

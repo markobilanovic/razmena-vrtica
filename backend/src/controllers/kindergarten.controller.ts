@@ -19,10 +19,12 @@ export class KindergartenController {
   }
 
   @Get('batch')
-  async getByIds(@Query('ids') ids: string | string[]): Promise<Kindergarten[]> {
+  async getByIds(
+    @Query('ids') ids: string | string[],
+  ): Promise<Kindergarten[]> {
     // Handle both single string and array of strings
     const idArray = Array.isArray(ids) ? ids : ids.split(',');
-    
+
     if (idArray.length === 0) {
       throw new BadRequestException('At least one kindergarten ID is required');
     }
@@ -39,4 +41,3 @@ export class KindergartenController {
     return kindergarten;
   }
 }
-

@@ -40,13 +40,15 @@ export function useUserProfile() {
 ```
 
 **Benefits**:
+
 - No more `isLoading` or `isError` checks in components
 - Data is always defined (TypeScript knows this)
 - Suspense handles loading states declaratively
 - Error boundaries catch errors
 
 **All Updated Hooks**:
-- ✅ `useUserProfile()` 
+
+- ✅ `useUserProfile()`
 - ✅ `useChildMatches(childId)`
 - ✅ `useChildMatchGroups(childId)`
 - ✅ `usePotentialMatches(ageGroup)`
@@ -61,20 +63,26 @@ export function useUserProfile() {
 Three skeleton components with beautiful animations:
 
 #### `DashboardSkeleton`
+
 Full-page skeleton matching the dashboard layout:
+
 - Animated gradient background blobs
 - Profile card skeleton with avatar placeholder
 - Main content area with animated bars
 - Pulse animations for natural loading feel
 
 #### `ChildDataSkeleton`
+
 Tab content skeleton for individual child data:
+
 - Multiple card skeletons
 - Matches the actual content structure
 - Quick load for tab switching
 
 #### `FullPageSpinner`
+
 Simple centered spinner for quick operations:
+
 - Minimal fallback for fast loads
 - Clean and unobtrusive
 
@@ -85,19 +93,25 @@ Simple centered spinner for quick operations:
 Two error boundary implementations:
 
 #### `ErrorBoundary` (Class Component)
+
 Standard React error boundary that catches errors in child components:
+
 - Catches any JavaScript error in component tree
 - Provides reset functionality
 - Customizable fallback UI
 
 #### `QueryErrorBoundary`
+
 Specialized wrapper for query errors:
+
 - Tailored for TanStack Query errors
 - Integrates with reset callback
 - Passes through to DefaultErrorFallback
 
 #### `DefaultErrorFallback`
+
 User-friendly error display:
+
 - 🔐 **401 Unauthorized**: Auto-redirect to login with button
 - 📭 **404 Not Found**: Clear message with retry
 - 🚨 **500 Server Error**: Server issue message
@@ -125,17 +139,19 @@ Dashboard (wrapper)
 **Key Changes**:
 
 1. **Client-Only Rendering**:
+
    ```typescript
    const [isClient, setIsClient] = useState(false)
-   
+
    useEffect(() => {
      setIsClient(true)
    }, [])
-   
+
    if (!isClient) {
      return <DashboardSkeleton />
    }
    ```
+
    This prevents SSR issues during build time.
 
 2. **Split Components**:
@@ -144,12 +160,13 @@ Dashboard (wrapper)
    - `ChildTabContent`: Fetches child data (inside nested Suspense)
 
 3. **Nested Suspense Boundaries**:
+
    ```typescript
    // Page-level Suspense
    <Suspense fallback={<DashboardSkeleton />}>
      <DashboardContent /> {/* User profile loads here */}
    </Suspense>
-   
+
    // Tab-level Suspense (inside DashboardContent)
    <Suspense fallback={<ChildDataSkeleton />}>
      <ChildTabContent child={child} /> {/* Child data loads here */}
@@ -157,16 +174,17 @@ Dashboard (wrapper)
    ```
 
 4. **Simplified Components**:
+
    ```typescript
    // Before: Manual loading/error handling
    const { data, isLoading, isError, error } = useUserProfile()
-   
+
    if (isLoading) return <Loading />
    if (isError) return <Error error={error} />
    if (!data) return null
-   
+
    return <div>{data.full_name}</div>
-   
+
    // After: Just use the data
    const { data } = useUserProfile() // Always has data!
    return <div>{data.full_name}</div>
@@ -208,12 +226,12 @@ const nextConfig: NextConfig = {
 
 ### 📊 Code Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Dashboard component lines | ~190 | ~150 | **-21%** |
-| Manual loading states | Many | 0 | **-100%** |
-| Manual error handling | Per component | Centralized | Better maintainability |
-| Type safety | Good | Excellent | `data` always defined |
+| Metric                    | Before        | After       | Improvement            |
+| ------------------------- | ------------- | ----------- | ---------------------- |
+| Dashboard component lines | ~190          | ~150        | **-21%**               |
+| Manual loading states     | Many          | 0           | **-100%**              |
+| Manual error handling     | Per component | Centralized | Better maintainability |
+| Type safety               | Good          | Excellent   | `data` always defined  |
 
 ### 🎨 User Experience
 
@@ -267,14 +285,14 @@ function Dashboard() {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <Header /> {/* Loads with user data */}
-      
+
       <Tabs>
         <Tab value="child1">
           <Suspense fallback={<TabSkeleton />}>
             <ChildData id="child1" /> {/* Loads independently */}
           </Suspense>
         </Tab>
-        
+
         <Tab value="child2">
           <Suspense fallback={<TabSkeleton />}>
             <ChildData id="child2" /> {/* Loads independently */}
@@ -308,7 +326,7 @@ function useChildData(childId: string, ageGroup?: AgeGroup) {
   const matches = useChildMatches(childId)
   const matchGroups = useChildMatchGroups(childId)
   const potentials = usePotentialMatches(ageGroup)
-  
+
   return {
     matches: matches.data,
     matchGroups: matchGroups.data,
@@ -320,7 +338,7 @@ function useChildData(childId: string, ageGroup?: AgeGroup) {
 function ChildTab({ childId, ageGroup }) {
   const { matches, matchGroups, potentials } = useChildData(childId, ageGroup)
   // All three queries run in parallel, Suspense shows loading for all
-  
+
   return (
     <div>
       <Matches data={matches} />
@@ -336,6 +354,7 @@ function ChildTab({ childId, ageGroup }) {
 ### 1. Suspense Boundary Placement
 
 ✅ **Good**: Granular boundaries for independent sections
+
 ```typescript
 <Suspense fallback={<HeaderSkeleton />}>
   <Header />
@@ -347,6 +366,7 @@ function ChildTab({ childId, ageGroup }) {
 ```
 
 ❌ **Bad**: One boundary for entire page
+
 ```typescript
 <Suspense fallback={<FullPageSkeleton />}>
   <Header />
@@ -358,6 +378,7 @@ function ChildTab({ childId, ageGroup }) {
 ### 2. Error Boundaries
 
 ✅ **Good**: Error boundary wraps Suspense
+
 ```typescript
 <ErrorBoundary>
   <Suspense fallback={<Loading />}>
@@ -367,6 +388,7 @@ function ChildTab({ childId, ageGroup }) {
 ```
 
 ❌ **Bad**: Suspense wraps error boundary
+
 ```typescript
 <Suspense fallback={<Loading />}>
   <ErrorBoundary>
@@ -378,11 +400,13 @@ function ChildTab({ childId, ageGroup }) {
 ### 3. Skeleton Design
 
 ✅ **Good**: Match actual content dimensions
+
 ```typescript
 <div className="h-20 w-full bg-gray-200 rounded animate-pulse" />
 ```
 
 ❌ **Bad**: Generic spinner
+
 ```typescript
 <div>Loading...</div>
 ```
@@ -408,31 +432,35 @@ return <SuspenseComponent />
 ### From `useQuery` to `useSuspenseQuery`
 
 1. **Update the hook import**:
+
    ```typescript
-   import { useSuspenseQuery } from '@tanstack/react-query'
+   import { useSuspenseQuery } from "@tanstack/react-query"
    ```
 
 2. **Change the hook call**:
+
    ```typescript
    // Before
    const { data, isLoading, isError } = useQuery({ ... })
-   
+
    // After
    const { data } = useSuspenseQuery({ ... })
    ```
 
 3. **Remove conditional rendering**:
+
    ```typescript
    // Before
    if (isLoading) return <Loading />
    if (isError) return <Error />
    return <View data={data} />
-   
+
    // After
    return <View data={data} />
    ```
 
 4. **Wrap component with Suspense**:
+
    ```typescript
    <Suspense fallback={<Loading />}>
      <Component />
@@ -459,7 +487,7 @@ import { Suspense } from 'react'
 
 test('shows loading then content', async () => {
   const queryClient = new QueryClient()
-  
+
   render(
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={<div>Loading...</div>}>
@@ -467,9 +495,9 @@ test('shows loading then content', async () => {
       </Suspense>
     </QueryClientProvider>
   )
-  
+
   expect(screen.getByText('Loading...')).toBeInTheDocument()
-  
+
   await waitFor(() => {
     expect(screen.getByText('Content')).toBeInTheDocument()
   })
@@ -526,7 +554,6 @@ The React Suspense + TanStack Query integration provides:
 ✅ **Type-safe data** (always defined)  
 ✅ **Parallel loading** with nested boundaries  
 ✅ **Production-ready** error recovery  
-✅ **Build successful** with no errors  
+✅ **Build successful** with no errors
 
 The application is now more maintainable, performant, and provides a significantly better user experience.
-

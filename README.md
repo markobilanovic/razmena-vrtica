@@ -31,24 +31,30 @@ The application supports **multi-way circular swaps** (A→B→C→A):
 ### Setup Instructions
 
 1. **Start the Database**
+
    ```bash
    docker-compose up -d
    ```
+
    This starts PostgreSQL on port 5433.
 
 2. **Install Backend Dependencies**
+
    ```bash
    cd backend
    npm install
    ```
 
 3. **Start the Backend**
+
    ```bash
    npm run start
    ```
+
    The backend will run on `http://localhost:3000` and automatically create database tables.
 
 4. **Install Frontend Dependencies** (in a new terminal)
+
    ```bash
    cd frontend
    npm install
@@ -63,6 +69,7 @@ The application supports **multi-way circular swaps** (A→B→C→A):
 ### Verify Database Connection
 
 To check if tables were created successfully:
+
 ```bash
 docker exec razmena-vrtica-db-1 psql -U admin -d razmena_vrtica -c "\dt"
 ```
@@ -89,6 +96,7 @@ You should see 6 tables: `child`, `kindergarten`, `match_group`, `match_particip
 The database runs on port **5433** (not the default 5432) to avoid conflicts.
 
 Connection details:
+
 - Host: `localhost`
 - Port: `5433`
 - Database: `razmena_vrtica`

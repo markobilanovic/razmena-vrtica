@@ -69,4 +69,3 @@ export const ProfileSidebar = ({ fullName, email }: ProfileSidebarProps) => {
     </div>
   )
 }
-

@@ -4,7 +4,10 @@ import { Suspense, useState, useRef } from "react"
 import { ChildDataSkeleton } from "@/components/LoadingFallback"
 import { ChildTabContent } from "./ChildTabContent"
 import { useDeleteChild } from "@/lib/queries"
-import { ConfirmationPopover, ConfirmationPopoverRef } from "@/components/ui/ConfirmationPopover"
+import {
+  ConfirmationPopover,
+  ConfirmationPopoverRef,
+} from "@/components/ui/ConfirmationPopover"
 
 type Child = {
   id: string
@@ -30,7 +33,7 @@ interface ChildrenTabsProps {
 
 export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
   const [selectedChildId, setSelectedChildId] = useState(
-    children?.[0]?.id || ""
+    children?.[0]?.id || "",
   )
   const [childToDelete, setChildToDelete] = useState<Child | null>(null)
   const deleteChildMutation = useDeleteChild()
@@ -69,7 +72,7 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
     } catch (error) {
       console.error("Failed to delete child:", error)
       alert(
-        "Greška pri brisanju deteta. Molimo pokušajte ponovo ili kontaktirajte podršku."
+        "Greška pri brisanju deteta. Molimo pokušajte ponovo ili kontaktirajte podršku.",
       )
     } finally {
       setChildToDelete(null)
@@ -180,4 +183,3 @@ export const ChildrenTabs = ({ children }: ChildrenTabsProps) => {
     </div>
   )
 }
-

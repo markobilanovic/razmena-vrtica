@@ -3,6 +3,7 @@
 ## 🎯 Quick Start
 
 ### 1. Use Suspense Query Hook
+
 ```typescript
 import { useSuspenseQuery } from '@tanstack/react-query'
 
@@ -11,12 +12,13 @@ function MyComponent() {
     queryKey: ['myData'],
     queryFn: fetchMyData,
   })
-  
+
   return <div>{data.name}</div> // data is always defined!
 }
 ```
 
 ### 2. Wrap with Suspense Boundary
+
 ```typescript
 import { Suspense } from 'react'
 
@@ -26,6 +28,7 @@ import { Suspense } from 'react'
 ```
 
 ### 3. Add Error Boundary
+
 ```typescript
 import { QueryErrorBoundary } from '@/components/ErrorBoundary'
 
@@ -41,9 +44,11 @@ import { QueryErrorBoundary } from '@/components/ErrorBoundary'
 All hooks return `{ data }` - no need for `isLoading` or `isError`!
 
 ### User Hooks
+
 - `useUserProfile()` - Current user profile
 
 ### Matching Hooks
+
 - `useChildMatches(childId)` - Direct matches for a child
 - `useChildMatchGroups(childId)` - Active match groups for a child
 - `usePotentialMatches(ageGroup?)` - Potential circular matches
@@ -51,9 +56,11 @@ All hooks return `{ data }` - no need for `isLoading` or `isError`!
 - `useValidateMatch(matchId)` - Validate a specific match
 
 ### Composite Hooks
+
 - `useChildData(childId, ageGroup?)` - Combines matches, groups, and potentials
 
 ### Mutation Hooks (not Suspense)
+
 - `useLogin()` - Login mutation
 - `useRegister()` - Registration mutation
 - `useCreateMatch()` - Create match mutation
@@ -82,7 +89,7 @@ import {
 ```typescript
 import { QueryErrorBoundary } from '@/components/ErrorBoundary'
 
-<QueryErrorBoundary 
+<QueryErrorBoundary
   onReset={() => console.log('User clicked retry')}
 >
   <Suspense fallback={<Loading />}>
@@ -92,6 +99,7 @@ import { QueryErrorBoundary } from '@/components/ErrorBoundary'
 ```
 
 **Handles**:
+
 - 401 Unauthorized → Auto-redirect to login
 - 404 Not Found → Friendly error message
 - 500 Server Error → Server issue message
@@ -100,6 +108,7 @@ import { QueryErrorBoundary } from '@/components/ErrorBoundary'
 ## 🏗️ Patterns
 
 ### Basic Component
+
 ```typescript
 function UserName() {
   const { data } = useUserProfile()
@@ -113,12 +122,13 @@ function UserName() {
 ```
 
 ### Nested Suspense (Independent Loading)
+
 ```typescript
 function Dashboard() {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <Header /> {/* Loads first */}
-      
+
       <Tabs>
         {children.map(child => (
           <TabContent value={child.id}>
@@ -134,11 +144,12 @@ function Dashboard() {
 ```
 
 ### Composite Hook
+
 ```typescript
 function ChildDetails({ childId, ageGroup }) {
   // All queries run in parallel, Suspense waits for all
   const { matches, matchGroups, potentials } = useChildData(childId, ageGroup)
-  
+
   return (
     <>
       <Matches data={matches} />
@@ -150,18 +161,19 @@ function ChildDetails({ childId, ageGroup }) {
 ```
 
 ### Client-Only Component (for auth pages)
+
 ```typescript
 function AuthenticatedPage() {
   const [isClient, setIsClient] = useState(false)
-  
+
   useEffect(() => {
     setIsClient(true)
   }, [])
-  
+
   if (!isClient) {
     return <Skeleton />
   }
-  
+
   return (
     <Suspense fallback={<Skeleton />}>
       <AuthenticatedContent />
@@ -195,11 +207,12 @@ Query client configured in `src/components/QueryProvider.tsx`:
 ✅ Automatic caching  
 ✅ Beautiful skeleton screens  
 ✅ One-click error recovery  
-✅ Granular loading boundaries  
+✅ Granular loading boundaries
 
 ## ⚠️ Common Mistakes
 
 ### ❌ Don't access data outside Suspense
+
 ```typescript
 function BadComponent() {
   const { data } = useSuspenseQuery(...)
@@ -208,6 +221,7 @@ function BadComponent() {
 ```
 
 ### ✅ Always wrap with Suspense
+
 ```typescript
 <Suspense fallback={<Loading />}>
   <GoodComponent />
@@ -215,18 +229,21 @@ function BadComponent() {
 ```
 
 ### ❌ Don't check for loading
+
 ```typescript
 const { data, isLoading } = useSuspenseQuery(...)
 if (isLoading) return <Loading /> // Unnecessary!
 ```
 
 ### ✅ Just use the data
+
 ```typescript
 const { data } = useSuspenseQuery(...)
 return <div>{data.name}</div>
 ```
 
 ### ❌ Error boundary inside Suspense
+
 ```typescript
 <Suspense>
   <ErrorBoundary>
@@ -236,6 +253,7 @@ return <div>{data.name}</div>
 ```
 
 ### ✅ Error boundary wraps Suspense
+
 ```typescript
 <ErrorBoundary>
   <Suspense>
@@ -250,4 +268,3 @@ return <div>{data.name}</div>
 - TanStack Query docs: `TANSTACK_QUERY_IMPLEMENTATION.md`
 - React Suspense: https://react.dev/reference/react/Suspense
 - TanStack Query: https://tanstack.com/query/latest
-

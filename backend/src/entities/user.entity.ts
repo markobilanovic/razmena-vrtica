@@ -18,8 +18,17 @@ export class User {
   @Column()
   full_name: string;
 
-  @Column({ nullable: true })
-  password_hash: string;
+  @Column({ type: 'varchar', nullable: true })
+  password_hash: string | null;
+
+  @Column({ type: 'boolean', default: false })
+  email_confirmed: boolean;
+
+  @Column({ type: 'varchar', nullable: true })
+  email_confirmation_token: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  email_confirmation_token_expires: Date | null;
 
   @CreateDateColumn()
   created_at: Date;

@@ -37,7 +37,9 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback(this.state.error, this.reset)
       }
 
-      return <DefaultErrorFallback error={this.state.error} reset={this.reset} />
+      return (
+        <DefaultErrorFallback error={this.state.error} reset={this.reset} />
+      )
     }
 
     return this.props.children
@@ -75,7 +77,8 @@ function DefaultErrorFallback({
           <p className="text-gray-600 mb-6">
             {statusCode === 401
               ? "Molimo prijavite se ponovo da biste pristupili ovoj stranici."
-              : error.message || "Došlo je do neočekivane greške. Molimo pokušajte ponovo."}
+              : error.message ||
+                "Došlo je do neočekivane greške. Molimo pokušajte ponovo."}
           </p>
 
           {statusCode === 401 ? (
@@ -136,4 +139,3 @@ export function QueryErrorBoundary({
     </ErrorBoundary>
   )
 }
-

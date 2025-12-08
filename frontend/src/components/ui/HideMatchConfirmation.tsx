@@ -49,15 +49,16 @@ export const HideMatchConfirmation = forwardRef<
             Sakrij otkazanu razmenu
           </h3>
         </div>
-        
+
         <div className="mb-6">
           <p className="text-gray-600 mb-3">
             Da li ste sigurni da želite da sakrijete ovu otkazanu razmenu?
           </p>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <p className="text-sm text-amber-800">
-              <strong>Napomena:</strong> Ova akcija će trajno sakriti razmenu iz vašeg prikaza. 
-              Razmena će i dalje postojati u sistemu, ali je nećete videti na kontrolnoj tabli.
+              <strong>Napomena:</strong> Ova akcija će trajno sakriti razmenu iz
+              vašeg prikaza. Razmena će i dalje postojati u sistemu, ali je
+              nećete videti na kontrolnoj tabli.
             </p>
           </div>
         </div>

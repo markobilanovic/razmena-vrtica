@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, Request, UseGuards, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+  UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { MatchingService } from '../services/matching.service';
 import { AgeGroup } from '@repo/shared';
 import { Kindergarten } from '../entities/kindergarten.entity';
@@ -109,19 +122,28 @@ export class MatchingController {
       }
 
       // Verify user has permission to hide this match (user's child is involved)
-      const userHasPermission = await this.matchingService.userCanAccessMatch(req.user.id, matchId);
+      const userHasPermission = await this.matchingService.userCanAccessMatch(
+        req.user.id,
+        matchId,
+      );
       if (!userHasPermission) {
-        throw new UnauthorizedException('You can only hide matches involving your children');
+        throw new UnauthorizedException(
+          'You can only hide matches involving your children',
+        );
       }
 
       await this.matchingService.hideMatchForUser(req.user.id, matchId);
-      
+
       return {
         success: true,
         message: 'Match hidden successfully',
       };
     } catch (error) {
-      if (error instanceof UnauthorizedException || error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
         throw error;
       }
       throw new BadRequestException('Failed to hide match');
@@ -150,19 +172,28 @@ export class MatchingController {
       }
 
       // Verify user has permission to unhide this match
-      const userHasPermission = await this.matchingService.userCanAccessMatch(req.user.id, matchId);
+      const userHasPermission = await this.matchingService.userCanAccessMatch(
+        req.user.id,
+        matchId,
+      );
       if (!userHasPermission) {
-        throw new UnauthorizedException('You can only unhide matches involving your children');
+        throw new UnauthorizedException(
+          'You can only unhide matches involving your children',
+        );
       }
 
       await this.matchingService.unhideMatchForUser(req.user.id, matchId);
-      
+
       return {
         success: true,
         message: 'Match unhidden successfully',
       };
     } catch (error) {
-      if (error instanceof UnauthorizedException || error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
         throw error;
       }
       throw new BadRequestException('Failed to unhide match');
