@@ -1,3 +1,3 @@
 export const jwtConstants = {
-  secret: 'DO_NOT_USE_THIS_IN_PRODUCTION_SECRET_KEY', // TODO: In a real app this should be environment variable
+  secret: process.env.JWT_SECRET || 'fallback-dev-secret-change-in-production',
 };
