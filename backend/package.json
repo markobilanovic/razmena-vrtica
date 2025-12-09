@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:run": "ts-node -r tsconfig-paths/register src/seeds/run-seed.ts",
-    "migrate:age-groups": "ts-node -r tsconfig-paths/register src/scripts/update-child-age-groups.ts"
+    "migrate:age-groups": "ts-node -r tsconfig-paths/register src/scripts/update-child-age-groups.ts",
+    "test:mailgun": "ts-node test-mailgun.ts",
+    "test:email": "ts-node -r tsconfig-paths/register test-email-service.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -31,10 +33,10 @@
     "@nestjs/typeorm": "^11.0.0",
     "@repo/shared": "*",
     "@types/bcrypt": "^6.0.0",
-    "@types/nodemailer": "^7.0.4",
     "@types/passport-jwt": "^4.0.1",
     "bcrypt": "^6.0.0",
-    "nodemailer": "^7.0.11",
+    "form-data": "^4.0.5",
+    "mailgun.js": "^12.4.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.16.3",
