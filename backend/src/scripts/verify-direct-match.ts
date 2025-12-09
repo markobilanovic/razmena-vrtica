@@ -6,6 +6,7 @@ import { Wishlist } from '../entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
 import { HiddenMatch } from '../entities/hidden-match.entity';
 import { MatchingService } from '../services/matching.service';
+import { EmailService } from '../services/email.service';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -41,6 +42,9 @@ async function verifyDirectMatch() {
     const matchParticipantRepo = AppDataSource.getRepository(MatchParticipant);
     const hiddenMatchRepo = AppDataSource.getRepository(HiddenMatch);
 
+    // Create EmailService instance for testing
+    const emailService = new EmailService();
+
     // Instantiate Service
     const matchingService = new MatchingService(
       childRepo,
@@ -48,6 +52,7 @@ async function verifyDirectMatch() {
       matchGroupRepo,
       matchParticipantRepo,
       hiddenMatchRepo,
+      emailService,
     );
 
     console.log('Creating test data...');

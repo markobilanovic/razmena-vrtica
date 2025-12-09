@@ -6,6 +6,7 @@ import { Wishlist } from '../entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
 import { HiddenMatch } from '../entities/hidden-match.entity';
 import { MatchingService } from '../services/matching.service';
+import { EmailService } from '../services/email.service';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -40,12 +41,16 @@ async function verifyCircleMatch() {
     const matchParticipantRepo = AppDataSource.getRepository(MatchParticipant);
     const hiddenMatchRepo = AppDataSource.getRepository(HiddenMatch);
 
+    // Create EmailService instance for testing
+    const emailService = new EmailService();
+
     const matchingService = new MatchingService(
       childRepo,
       wishlistRepo,
       matchGroupRepo,
       matchParticipantRepo,
       hiddenMatchRepo,
+      emailService,
     );
 
     console.log('Creating test data for 3-way circle match...');
