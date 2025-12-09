@@ -124,4 +124,69 @@ export class EmailService {
       await this.transporter.sendMail(mailOptions);
     }
   }
+
+  async sendMatchFoundEmail(
+    email: string,
+    fullName: string,
+    childName: string,
+    matchDetails: {
+      matchId: string;
+      participantCount: number;
+      targetKindergartenName: string;
+    },
+  ): Promise<void> {
+    const dashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard`;
+
+    const mailOptions = {
+      from: process.env.SMTP_FROM || 'noreply@razmenavrtica.rs',
+      to: email,
+      subject: 'Pronađena razmena za vaše dete - Razmena Vrtica',
+      html: `
+        <h2>Zdravo, ${fullName}!</h2>
+        <p>Odlične vesti! Pronašli smo potencijalnu razmenu za <strong>${childName}</strong>.</p>
+        <h3>Detalji razmene:</h3>
+        <ul>
+          <li><strong>Broj učesnika:</strong> ${matchDetails.participantCount} ${matchDetails.participantCount === 2 ? 'dece' : matchDetails.participantCount === 3 ? 'dece' : 'dece'}</li>
+          <li><strong>Ciljna vrtić:</strong> ${matchDetails.targetKindergartenName}</li>
+        </ul>
+        <p>Prijavite se na platformu da vidite sve detalje razmene i kontaktirate druge roditelje:</p>
+        <p><a href="${dashboardUrl}" style="display: inline-block; padding: 10px 20px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 5px;">Pogledaj razmenu</a></p>
+        <p>Ili kopirajte sledeći link u vaš pretraživač:</p>
+        <p>${dashboardUrl}</p>
+        <br>
+        <p>Razmena je automatski kreirana na osnovu vaših željenih vrtića. Možete je pregledati, kontaktirati druge roditelje i dogovoriti detalje.</p>
+        <p><em>Napomena: Razmena ostaje aktivna dok svi učesnici ne potvrde ili dok neko ne otkaže.</em></p>
+      `,
+      text: `
+        Zdravo, ${fullName}!
+        
+        Odlične vesti! Pronašli smo potencijalnu razmenu za ${childName}.
+        
+        Detalji razmene:
+        - Broj učesnika: ${matchDetails.participantCount} dece
+        - Ciljna vrtić: ${matchDetails.targetKindergartenName}
+        
+        Prijavite se na platformu da vidite sve detalje razmene i kontaktirate druge roditelje:
+        ${dashboardUrl}
+        
+        Razmena je automatski kreirana na osnovu vaših željenih vrtića. Možete je pregledati, kontaktirati druge roditelje i dogovoriti detalje.
+        
+        Napomena: Razmena ostaje aktivna dok svi učesnici ne potvrde ili dok neko ne otkaže.
+      `,
+    };
+
+    if (this.isDevelopment) {
+      console.log('\n=== DEV MODE: Match Found Notification ===');
+      console.log(`To: ${email}`);
+      console.log(`Subject: ${mailOptions.subject}`);
+      console.log(`Child: ${childName}`);
+      console.log(`Match ID: ${matchDetails.matchId}`);
+      console.log(`Participants: ${matchDetails.participantCount}`);
+      console.log(`Target Kindergarten: ${matchDetails.targetKindergartenName}`);
+      console.log(`Dashboard URL: ${dashboardUrl}`);
+      console.log('==========================================\n');
+    } else {
+      await this.transporter.sendMail(mailOptions);
+    }
+  }
 }

@@ -6,6 +6,7 @@ import { Child } from '../entities/child.entity';
 import { Wishlist } from '../entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
 import { HiddenMatch } from '../entities/hidden-match.entity';
+import { EmailService } from '../services/email.service';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { HiddenMatch } from '../entities/hidden-match.entity';
     ]),
   ],
   controllers: [MatchingController],
-  providers: [MatchingService],
+  providers: [MatchingService, EmailService],
   exports: [MatchingService],
 })
 export class MatchingModule {}

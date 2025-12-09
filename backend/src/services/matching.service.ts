@@ -7,6 +7,7 @@ import { Kindergarten } from '../entities/kindergarten.entity';
 import { MatchGroup, MatchParticipant } from '../entities/match.entity';
 import { MatchStatus } from '@repo/shared';
 import { HiddenMatch } from '../entities/hidden-match.entity';
+import { EmailService } from './email.service';
 
 export interface PotentialMatch {
   children: Child[];
@@ -30,6 +31,7 @@ export class MatchingService {
     private matchParticipantRepository: Repository<MatchParticipant>,
     @InjectRepository(HiddenMatch)
     private hiddenMatchRepository: Repository<HiddenMatch>,
+    private emailService: EmailService,
   ) {}
 
   /**
@@ -426,6 +428,9 @@ export class MatchingService {
           try {
             const newMatch = await this.createMatch(childIds);
             createdMatches.push(newMatch);
+
+            // Send email notifications to all parents
+            await this.notifyMatchCreated(newMatch);
           } catch (error) {
             console.error(
               `Failed to create match for children ${childIds.join(', ')}:`,
@@ -491,6 +496,9 @@ export class MatchingService {
         try {
           const newMatch = await this.createMatch(childIds);
           createdMatches.push(newMatch);
+
+          // Send email notifications to all parents
+          await this.notifyMatchCreated(newMatch);
         } catch (error) {
           console.error(
             `Failed to create match for children ${childIds.join(', ')}:`,
@@ -744,5 +752,67 @@ export class MatchingService {
 
     match.status = MatchStatus.CANCELLED;
     await this.matchGroupRepository.save(match);
+  }
+
+  /**
+   * Send email notifications to all parents when a match is created
+   * Loads full match details and sends personalized emails to each parent
+   */
+  private async notifyMatchCreated(match: MatchGroup): Promise<void> {
+    try {
+      // Load match with all participants and their details
+      const fullMatch = await this.matchGroupRepository.findOne({
+        where: { id: match.id },
+        relations: [
+          'participants',
+          'participants.child',
+          'participants.child.parent',
+          'participants.next_child',
+          'participants.next_child.current_kindergarten',
+        ],
+      });
+
+      if (!fullMatch || !fullMatch.participants) {
+        console.error(`Could not load match ${match.id} for notifications`);
+        return;
+      }
+
+      // Send email to each parent
+      for (const participant of fullMatch.participants) {
+        const parent = participant.child?.parent;
+        const child = participant.child;
+        const targetKindergarten =
+          participant.next_child?.current_kindergarten;
+
+        if (!parent || !child || !targetKindergarten) {
+          console.warn(
+            `Missing data for participant in match ${match.id}, skipping notification`,
+          );
+          continue;
+        }
+
+        // Send email notification
+        await this.emailService.sendMatchFoundEmail(
+          parent.email,
+          parent.full_name,
+          child.name,
+          {
+            matchId: match.id,
+            participantCount: fullMatch.participants.length,
+            targetKindergartenName: targetKindergarten.name,
+          },
+        );
+      }
+
+      console.log(
+        `Sent match notifications for match ${match.id} to ${fullMatch.participants.length} parents`,
+      );
+    } catch (error) {
+      console.error(
+        `Failed to send notifications for match ${match.id}:`,
+        error,
+      );
+      // Don't throw - we don't want notification failures to break match creation
+    }
   }
 }
