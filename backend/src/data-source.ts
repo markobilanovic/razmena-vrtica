@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { config } from 'dotenv';
 import { User } from './entities/user.entity';
 import { Kindergarten } from './entities/kindergarten.entity';
 import { Child } from './entities/child.entity';
@@ -6,13 +7,16 @@ import { Wishlist } from './entities/wishlist.entity';
 import { MatchGroup, MatchParticipant } from './entities/match.entity';
 import { HiddenMatch } from './entities/hidden-match.entity';
 
+// Load environment variables
+config();
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5433,
-  username: 'admin',
-  password: 'password',
-  database: 'razmena_vrtica',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5433', 10),
+  username: process.env.DB_USERNAME || 'admin',
+  password: process.env.DB_PASSWORD || 'password',
+  database: process.env.DB_NAME || 'razmena_vrtica',
   entities: [
     User,
     Kindergarten,
