@@ -38,7 +38,7 @@ const KindergartenSchema = z.object({
 
 export type Kindergarten = z.infer<typeof KindergartenSchema>
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+const API_URL = process.env.NEXT_PUBLIC_API_URL!
 
 // Custom error class for API errors
 export class ApiError extends Error {
