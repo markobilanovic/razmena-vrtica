@@ -16,8 +16,9 @@
     "test": "npm run test --workspaces",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "migrate:prod": "cd backend && NODE_ENV=production npm run typeorm migration:run",
-    "seed:prod": "cd backend && NODE_ENV=production npm run seed:kindergartens"
+    "migrate:prod": "cd backend && npm run migration:run",
+    "seed:prod": "cd backend && npm run seed:prod",
+    "test:supabase": "cd backend && npm run test:supabase"
   },
   "devDependencies": {
     "prettier": "^3.7.4"
