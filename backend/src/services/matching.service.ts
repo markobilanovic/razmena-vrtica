@@ -727,14 +727,61 @@ export class MatchingService {
   async completeMatch(matchGroupId: string): Promise<void> {
     const match = await this.matchGroupRepository.findOne({
       where: { id: matchGroupId },
+      relations: [
+        'participants',
+        'participants.child',
+        'participants.next_child',
+        'participants.next_child.current_kindergarten',
+      ],
     });
 
     if (!match) {
       throw new Error('Match not found');
     }
 
+    if (match.status === MatchStatus.COMPLETED) {
+      return;
+    }
+
     match.status = MatchStatus.COMPLETED;
     await this.matchGroupRepository.save(match);
+
+    // Calculate moves first to avoid state mutation issues during iteration
+    // We map Child ID -> Target Kindergarten
+    const moves = new Map<string, Kindergarten>();
+    for (const participant of match.participants) {
+      if (
+        participant.child &&
+        participant.next_child &&
+        participant.next_child.current_kindergarten
+      ) {
+        moves.set(
+          participant.child.id,
+          participant.next_child.current_kindergarten,
+        );
+      }
+    }
+
+    // Apply updates
+    for (const participant of match.participants) {
+      const child = participant.child;
+      if (!child) continue;
+
+      const targetKG = moves.get(child.id);
+      if (targetKG) {
+        child.current_kindergarten = targetKG;
+        child.current_kindergarten_id = targetKG.id;
+
+        // Clear wishlists for this child as they have successfully moved
+        await this.wishlistRepository.delete({ child_id: child.id });
+
+        // Save updated child
+        await this.childRepository.save(child);
+
+        // Invalidate other pending matches involving this child
+        await this.invalidateMatchesForChild(child.id);
+      }
+    }
   }
 
   /**
@@ -781,8 +828,7 @@ export class MatchingService {
       for (const participant of fullMatch.participants) {
         const parent = participant.child?.parent;
         const child = participant.child;
-        const targetKindergarten =
-          participant.next_child?.current_kindergarten;
+        const targetKindergarten = participant.next_child?.current_kindergarten;
 
         if (!parent || !child || !targetKindergarten) {
           console.warn(
