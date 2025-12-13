@@ -9,11 +9,15 @@
   "scripts": {
     "dev:backend": "npm run start:dev -w backend",
     "dev:frontend": "npm run dev -w frontend",
-    "db": "docker compose up -d",
+    "db:dev": "docker compose -f docker-compose.dev.yml up -d",
+    "db:dev:stop": "docker compose -f docker-compose.dev.yml down",
     "build": "npm run build --workspaces",
+    "build:shared": "npm run build -w shared",
     "test": "npm run test --workspaces",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "migrate:prod": "cd backend && NODE_ENV=production npm run typeorm migration:run",
+    "seed:prod": "cd backend && NODE_ENV=production npm run seed:kindergartens"
   },
   "devDependencies": {
     "prettier": "^3.7.4"

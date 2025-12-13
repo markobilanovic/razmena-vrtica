@@ -4,7 +4,7 @@
 cleanup() {
     echo "Stopping all services..."
     kill $(jobs -p) 2>/dev/null
-    docker compose stop
+    docker compose -f docker-compose.dev.yml stop
     exit
 }
 
@@ -12,7 +12,7 @@ cleanup() {
 trap cleanup SIGINT
 
 echo "Starting Database..."
-docker compose up -d
+docker compose -f docker-compose.dev.yml up -d
 
 echo "Starting Backend..."
 cd backend
