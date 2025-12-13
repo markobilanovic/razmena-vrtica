@@ -20,6 +20,13 @@ The application supports **multi-way circular swaps** (A→B→C→A):
 - **MatchGroup**: Groups of users in circular swap matches
 - **MatchParticipant**: Individual participants in each match
 
+## 📚 Documentation
+
+- **[📖 Full Documentation](docs/)** - Complete documentation index
+- **[🚀 Production Deployment](docs/deployment/PRODUCTION_DEPLOYMENT_GUIDE.md)** - Deploy to production
+- **[⚡ Supabase Quick Start](docs/deployment/SUPABASE_QUICK_START.md)** - 10-minute database setup
+- **[🗄️ Database Files](database/)** - Schemas, seeds, and backups
+
 ## 🚀 Getting Started
 
 ### Prerequisites

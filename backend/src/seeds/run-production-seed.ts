@@ -1,17 +1,18 @@
 import { DataSource } from 'typeorm';
+import { config } from 'dotenv';
 import { Kindergarten } from '../entities/kindergarten.entity';
 import { seedKindergartens } from './kindergarten.seed';
 
-// Database configuration
+// Load environment variables from .env.production
+config({ path: '.env.production' });
+
+// Database configuration - use DATABASE_URL to avoid password encoding issues
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST!,
-  port: parseInt(process.env.DB_PORT!),
-  username: process.env.DB_USERNAME!,
-  password: process.env.DB_PASSWORD!,
-  database: process.env.DB_DATABASE!,
+  url: process.env.DATABASE_URL!,
   entities: [Kindergarten],
   synchronize: false,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 async function runProductionSeeds() {

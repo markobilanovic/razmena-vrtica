@@ -1,0 +1,91 @@
+-- Kindergarten Seed Data SQL Script
+-- This script populates the kindergarten table with all kindergarten data
+-- Run this manually in your database to seed kindergarten data
+
+-- Clear existing kindergarten data (optional - remove if you want to keep existing data)
+DELETE FROM kindergarten;
+
+-- Insert kindergarten data
+INSERT INTO kindergarten (id, name, city, address, latitude, longitude) VALUES
+-- Generate UUIDs for each kindergarten entry
+(gen_random_uuid(), 'Palčica', 'Novi Sad', 'Branimira Ćosića 40', NULL, NULL),
+(gen_random_uuid(), 'Čuperak', 'Novi Sad', 'Save Kovačevića 7', NULL, NULL),
+(gen_random_uuid(), 'Zvončica', 'Novi Sad', 'Save Kovačevića 14', NULL, NULL),
+(gen_random_uuid(), 'Vendi', 'Novi Sad', 'Braće Dronjak bb', NULL, NULL),
+(gen_random_uuid(), 'Zlatna ribica', 'Novi Sad', 'Marodićeva 4a', NULL, NULL),
+(gen_random_uuid(), 'Zeka', 'Novi Sad', 'Budisava, Vuka Karadžića bb', NULL, NULL),
+(gen_random_uuid(), 'Neven', 'Novi Sad', 'Kovilj, Vojvođanskih brigada 14', NULL, NULL),
+(gen_random_uuid(), 'Zvončić', 'Novi Sad', 'Kać, Save Maleševa b.b.', NULL, NULL),
+(gen_random_uuid(), 'Kolibri', 'Novi Sad', 'Bulevar Jaše Tomića 3', NULL, NULL),
+(gen_random_uuid(), 'Bambi', 'Novi Sad', 'Karađorđeva 55', NULL, NULL),
+(gen_random_uuid(), 'Vrtić Srna', 'Novi Sad', 'Radoja Domanovića 24', NULL, NULL),
+(gen_random_uuid(), 'Detelina sa 4 lista', 'Novi Sad', 'Kalmana Langa 2', NULL, NULL),
+(gen_random_uuid(), 'Pinokio', 'Novi Sad', 'Begeč, Kralja Petra l, 45', NULL, NULL),
+(gen_random_uuid(), 'Švrća', 'Novi Sad', 'Jerneja Kopitara 1', NULL, NULL),
+(gen_random_uuid(), 'Lane', 'Novi Sad', 'Heroja Pinkija 25', NULL, NULL),
+(gen_random_uuid(), 'Crvenkapa', 'Novi Sad', 'Futog III, Proleterska 2', NULL, NULL),
+(gen_random_uuid(), 'Biberče', 'Novi Sad', 'Futog IV, Voj. Mišića bb', NULL, NULL),
+(gen_random_uuid(), 'Radosnica', 'Novi Sad', 'Adice, S. Šolaje bb', NULL, NULL),
+(gen_random_uuid(), 'Dunavski cvet', 'Novi Sad', 'Ćirila i Metodija 69', NULL, NULL),
+(gen_random_uuid(), 'Kockica', 'Sremski Karlovci', 'Karlovačkih đaka 31a Sremski Karlovci', NULL, NULL),
+(gen_random_uuid(), 'Čigra', 'Novi Sad', 'Jože Vlahovića, bb', NULL, NULL),
+(gen_random_uuid(), 'Cvrčak', 'Novi Sad', 'Palmotićeva 1', NULL, NULL),
+(gen_random_uuid(), 'Zeka', 'Novi Sad', 'Bukovac, Vidovdanska 8', NULL, NULL),
+(gen_random_uuid(), 'Čika Jova', 'Sremska Kamenica', 'Sremska Kamenica, Zmajevac 2', NULL, NULL),
+(gen_random_uuid(), 'Zmaj', 'Sremska Kamenica', 'Sremska Kamenica II, Bul. 23. Oktobra 2', NULL, NULL),
+(gen_random_uuid(), 'Plavi čuperak', 'Sremska Kamenica', 'Sremska Kamenica III, S. Miletića bb', NULL, NULL),
+(gen_random_uuid(), 'Izvorčić', 'Stari Ledinci', 'Stari Ledinci, V. Karadžića 63', NULL, NULL),
+(gen_random_uuid(), 'Čarobnjak', 'Novi Ledinci', 'Novi Ledinci, Đurđevdanska 1', NULL, NULL),
+(gen_random_uuid(), 'Bubamara', 'Novi Sad', 'Čenejska 50', NULL, NULL),
+(gen_random_uuid(), 'Čarobni breg', 'Novi Sad', 'Klisanski put 165', NULL, NULL),
+(gen_random_uuid(), 'Vidovdanski zvončić', 'Novi Sad', 'Vidovdansko naselje', NULL, NULL),
+(gen_random_uuid(), 'Lasta', 'Novi Sad', 'Čenej, Partizanska 2', NULL, NULL),
+(gen_random_uuid(), 'Krcko oraščić', 'Novi Sad', 'Orahova', NULL, NULL),
+(gen_random_uuid(), 'Duga', 'Novi Sad', 'Šangaj, VIII ulica br. 6', NULL, NULL),
+(gen_random_uuid(), 'Veverica', 'Novi Sad', 'Visarionova 4a', NULL, NULL),
+(gen_random_uuid(), 'Đurđevak', 'Novi Sad', 'Beogradski kej 37', NULL, NULL),
+(gen_random_uuid(), 'Plavi zec', 'Novi Sad', 'Miletićeva 22', NULL, NULL),
+(gen_random_uuid(), 'Sigridrug', 'Novi Sad', 'Almaška 24', NULL, NULL),
+(gen_random_uuid(), 'Različak', 'Novi Sad', 'Narodnog Fronta 45', NULL, NULL),
+(gen_random_uuid(), 'Suncokret', 'Novi Sad', 'Alekse Šantića 32', NULL, NULL),
+(gen_random_uuid(), 'Poletarac', 'Novi Sad', 'Puškinova 19', NULL, NULL),
+(gen_random_uuid(), 'Zlatokosa', 'Novi Sad', 'Veternik, Kralja Aleksandra, 62', NULL, NULL),
+(gen_random_uuid(), 'Roda', 'Novi Sad', 'Veternik, Paunova', NULL, NULL),
+(gen_random_uuid(), 'Kamičak', 'Novi Sad', 'Veternik, Milana Tepića', NULL, NULL),
+(gen_random_uuid(), 'Novosađanče', 'Novi Sad', 'Banović Strahinje bb', NULL, NULL),
+(gen_random_uuid(), 'Zvezdani gaj', 'Novi Sad', 'Stepanovićevo', NULL, NULL),
+(gen_random_uuid(), 'Lienka', 'Novi Sad', 'Kisač, Jana Amosa Komenskog', NULL, NULL),
+(gen_random_uuid(), 'Veseli patuljci', 'Novi Sad', 'Rumenka, P. Šandora 25', NULL, NULL),
+(gen_random_uuid(), 'Plava Zvezda', 'Novi Sad', 'Sajlovo 37', NULL, NULL),
+(gen_random_uuid(), 'Petar Pan', 'Novi Sad', 'Janka Čmelika 87', NULL, NULL),
+(gen_random_uuid(), 'Cvrčak i mrav', 'Novi Sad', 'Trg Majke Jevrosime 2', NULL, NULL),
+(gen_random_uuid(), 'Kalimero', 'Novi Sad', 'Dragiše Brašovana 16', NULL, NULL),
+(gen_random_uuid(), 'Mrvica', 'Novi Sad', 'Jirečekova 9', NULL, NULL),
+(gen_random_uuid(), 'Veseli vrtić', 'Novi Sad', 'Dr Ilije Đuričića 2', NULL, NULL),
+(gen_random_uuid(), 'Čarolija', 'Novi Sad', 'Sonje Marinković 1', NULL, NULL),
+(gen_random_uuid(), 'Veseljko', 'Novi Sad', 'Trg Komenskog 9', NULL, NULL),
+(gen_random_uuid(), 'Maslačak', 'Novi Sad', 'Narodnog fronta 42', NULL, NULL),
+(gen_random_uuid(), 'Svitac', 'Novi Sad', 'Stojana Novakovića bb', NULL, NULL),
+(gen_random_uuid(), 'Guliver', 'Novi Sad', 'Bate Brkića 1a', NULL, NULL),
+(gen_random_uuid(), 'Bistričak I', 'Novi Sad', 'Seljačkih Buna 63', NULL, NULL),
+(gen_random_uuid(), 'Bistričak II', 'Novi Sad', 'Seljačkih Buna 65', NULL, NULL),
+(gen_random_uuid(), 'Zvezdan', 'Novi Sad', 'Seljačkih Buna 51', NULL, NULL),
+(gen_random_uuid(), 'Bajka', 'Novi Sad', 'Stevana Hristića 15', NULL, NULL),
+(gen_random_uuid(), 'Veseli vozić', 'Novi Sad', 'Janka Čmelika 110', NULL, NULL),
+(gen_random_uuid(), 'Vilenjak', 'Novi Sad', 'Radnička 20', NULL, NULL),
+(gen_random_uuid(), 'Meda', 'Novi Sad', 'Radnička 47', NULL, NULL),
+(gen_random_uuid(), 'Zlatna greda', 'Novi Sad', 'Zlatne Grede 6', NULL, NULL),
+(gen_random_uuid(), 'Vila', 'Novi Sad', 'Vojvođanskih Brigada 14', NULL, NULL),
+(gen_random_uuid(), 'Pčelica', 'Novi Sad', 'Laze Kostića 5', NULL, NULL),
+(gen_random_uuid(), 'Bubica', 'Novi Sad', 'Pap Pavla 9', NULL, NULL),
+(gen_random_uuid(), 'Panda', 'Novi Sad', 'Nikole Tesle 4', NULL, NULL),
+(gen_random_uuid(), 'Leptirić', 'Novi Sad', 'Braće Krkljuš 15', NULL, NULL),
+(gen_random_uuid(), 'Sunce', 'Novi Sad', 'Gagarinova 10', NULL, NULL),
+(gen_random_uuid(), 'Spomenak', 'Novi Sad', 'Antona Urbana 2', NULL, NULL),
+(gen_random_uuid(), 'Pužić', 'Novi Sad', 'Vršačka 23', NULL, NULL);
+
+-- Display count of inserted records
+SELECT COUNT(*) as total_kindergartens FROM kindergarten;
+
+-- Display sample of inserted data
+SELECT name, city, address FROM kindergarten ORDER BY name LIMIT 10;

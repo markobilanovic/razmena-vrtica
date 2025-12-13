@@ -27,7 +27,13 @@
     "migration:revert": "NODE_ENV=production npm run typeorm migration:revert -- -d src/data-source.ts",
     "test:mailgun": "ts-node test-mailgun.ts",
     "test:email": "ts-node -r tsconfig-paths/register test-email-service.ts",
-    "test:supabase": "ts-node -r tsconfig-paths/register test-supabase-connection.ts"
+    "test:supabase": "ts-node -r tsconfig-paths/register test-supabase-connection.ts",
+    "create-prod-db": "ts-node -r tsconfig-paths/register src/scripts/create-production-db.ts",
+    "generate-schema": "ts-node -r tsconfig-paths/register src/scripts/generate-production-schema.ts",
+    "generate-supabase-schema": "ts-node -r tsconfig-paths/register src/scripts/generate-supabase-schema.ts",
+    "generate-migration-sql": "ts-node -r tsconfig-paths/register src/scripts/generate-migration-sql.ts",
+    "compare-schemas": "ts-node -r tsconfig-paths/register src/scripts/compare-schemas.ts",
+    "deploy-supabase": "ts-node -r tsconfig-paths/register src/scripts/deploy-to-supabase.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

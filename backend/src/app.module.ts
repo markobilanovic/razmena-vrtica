@@ -20,15 +20,25 @@ import { ChildModule } from './modules/child.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env' : '.env.development',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST!,
-      port: parseInt(process.env.DB_PORT!, 10),
-      username: process.env.DB_USERNAME!,
-      password: process.env.DB_PASSWORD!,
-      database: process.env.DB_NAME!,
+      // Support both individual params and connection string
+      ...(process.env.NODE_ENV === 'production'
+        ? { url: process.env.DATABASE_URL }
+        : {
+            host: process.env.DB_HOST!,
+            port: parseInt(process.env.DB_PORT!, 10),
+            username: process.env.DB_USERNAME!,
+            password: process.env.DB_PASSWORD!,
+            database: process.env.DB_NAME!,
+          }),
+      // Enable SSL for production
+      ssl:
+        process.env.NODE_ENV === 'production' && process.env.DB_SSL === 'true'
+          ? { rejectUnauthorized: false }
+          : false,
       entities: [
         User,
         Kindergarten,
@@ -41,6 +51,9 @@ import { ChildModule } from './modules/child.module';
       synchronize: process.env.NODE_ENV !== 'production',
       migrations: ['dist/migrations/*.js'],
       migrationsRun: process.env.NODE_ENV === 'production',
+      // Production optimizations
+      logging: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      maxQueryExecutionTime: 1000,
     }),
     MatchingModule,
     AuthModule,

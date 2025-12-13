@@ -34,7 +34,10 @@ async function testSupabaseConnection() {
   const testDataSource = new DataSource({
     type: 'postgres',
     url: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     logging: false,
   });
 
