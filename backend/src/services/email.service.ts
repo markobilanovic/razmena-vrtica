@@ -1,32 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import FormData from 'form-data';
-import Mailgun from 'mailgun.js';
+import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
-  private mailgunClient: any;
+  private resendClient: Resend | null;
   private isDevelopment: boolean;
-  private mailgunDomain: string;
   private fromEmail: string;
 
   constructor() {
     this.isDevelopment = process.env.NODE_ENV !== 'production';
-    this.mailgunDomain = process.env.MAILGUN_DOMAIN!;
     this.fromEmail =
-      process.env.MAILGUN_FROM ||
-      `Razmena Vrtica <postmaster@${this.mailgunDomain}>`;
+      process.env.EMAIL_FROM || 'Razmena Vrtica <onboarding@resend.dev>';
 
     if (!this.isDevelopment) {
-      // Initialize Mailgun client for production
-      const mailgun = new Mailgun(FormData);
-      this.mailgunClient = mailgun.client({
-        username: 'api',
-        key: process.env.MAILGUN_API_KEY!,
-        // Uncomment if using EU domain:
-        // url: 'https://api.eu.mailgun.net'
-      });
+      // Initialize Resend client for production
+      if (!process.env.RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY is not set in production environment!');
+      }
+      this.resendClient = new Resend(process.env.RESEND_API_KEY);
     } else {
-      this.mailgunClient = null;
+      this.resendClient = null;
     }
   }
 
@@ -186,21 +179,18 @@ export class EmailService {
     html: string,
     text: string,
   ): Promise<void> {
-    if (!this.mailgunClient) {
-      throw new Error('Mailgun client not initialized');
+    if (!this.resendClient) {
+      throw new Error('Resend client not initialized');
     }
 
     try {
-      const data = await this.mailgunClient.messages.create(
-        this.mailgunDomain,
-        {
-          from: this.fromEmail,
-          to: [to],
-          subject,
-          html,
-          text,
-        },
-      );
+      const data = await this.resendClient.emails.send({
+        from: this.fromEmail,
+        to: [to],
+        subject,
+        html,
+        text,
+      });
       console.log('Email sent successfully:', data);
     } catch (error) {
       console.error('Failed to send email:', error);
