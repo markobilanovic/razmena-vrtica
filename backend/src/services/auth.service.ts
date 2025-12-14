@@ -158,9 +158,9 @@ export class AuthService {
     googleId: string;
   }): Promise<any> {
     const { email, firstName, lastName, googleId } = googleUser;
-    
+
     let user = await this.usersRepository.findOne({ where: { email } });
-    
+
     if (user) {
       // Update existing user with Google ID if not set
       if (!user.google_id) {
