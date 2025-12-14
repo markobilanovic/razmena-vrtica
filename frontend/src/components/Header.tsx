@@ -39,12 +39,17 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center shrink-0">
               <span className="text-white text-xl font-bold">R</span>
             </div>
-            <span className="text-xl sm:text-2xl font-bold gradient-text">
-              Razmena Vrtića
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl sm:text-2xl font-bold gradient-text leading-none">
+                Razmena Vrtića
+              </span>
+              <span className="text-xs sm:text-sm text-gray-500 font-medium">
+                PU „Radosno detinjstvo”
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}

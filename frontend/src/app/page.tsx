@@ -37,7 +37,7 @@ export default function Home() {
             <div className="animate-fade-in-up">
               <div className="inline-block mb-4 px-4 py-2 bg-blue-100 rounded-full">
                 <span className="text-sm font-semibold text-blue-600">
-                  🎉 Za roditelje PU &quot;Radosno detinjstvo&quot;
+                  🎉 Za roditelje PU „Radosno detinjstvo”
                 </span>
               </div>
               <h1 className="mb-6">
@@ -46,8 +46,8 @@ export default function Home() {
                 dete
               </h1>
               <p className="text-xl text-color-text-muted mb-8 leading-relaxed">
-                Povezujemo roditelje čija deca idu u vrtiće PU &quot;Radosno
-                detinjstvo&quot; u Novom Sadu. Pronađite mesto koje vam više
+                Povezujemo roditelje čija deca idu u vrtiće PU „Radosno
+                detinjstvo” u Novom Sadu. Pronađite mesto koje vam više
                 odgovara.
               </p>
 
@@ -125,9 +125,7 @@ export default function Home() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm text-color-text-muted">
-                        Podaci su
-                      </p>
+                      <p className="text-sm text-color-text-muted">Podaci su</p>
                       <p className="text-lg font-bold">Sigurni</p>
                     </div>
                   </div>
@@ -142,9 +140,7 @@ export default function Home() {
                       <span className="text-2xl">⚡</span>
                     </div>
                     <div>
-                      <p className="text-sm text-color-text-muted">
-                        Brzo i
-                      </p>
+                      <p className="text-sm text-color-text-muted">Brzo i</p>
                       <p className="text-lg font-bold">Jednostavno</p>
                     </div>
                   </div>
@@ -295,7 +291,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="mb-6">
-              Kako funkcioniše <span className="gradient-text">kružna razmena</span>?
+              Kako funkcioniše{" "}
+              <span className="gradient-text">kružna razmena</span>?
             </h2>
             <p className="text-xl text-color-text-muted max-w-2xl mx-auto">
               Naš algoritam ne traži samo direktne zamene, već i kružne razmene
@@ -347,10 +344,12 @@ export default function Home() {
 
               <div className="bg-blue-50/50 rounded-2xl p-6 text-center text-blue-900 leading-relaxed border border-blue-100">
                 <p>
-                  <strong>Vi</strong> želite vrtić u kom je <strong>Osoba B</strong>.
+                  <strong>Vi</strong> želite vrtić u kom je{" "}
+                  <strong>Osoba B</strong>.
                 </p>
                 <p>
-                  <strong>Osoba B</strong> želi vrtić u kom ste <strong>Vi</strong>.
+                  <strong>Osoba B</strong> želi vrtić u kom ste{" "}
+                  <strong>Vi</strong>.
                 </p>
               </div>
             </div>
@@ -521,8 +520,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-6">
         <div className="max-w-7xl mx-auto">
@@ -536,7 +533,7 @@ export default function Home() {
               </div>
               <p className="text-gray-400">
                 Povezujemo roditelje i olakšavamo razmenu mesta u vrtićima PU
-                &quot;Radosno detinjstvo&quot;.
+                „Radosno detinjstvo”.
               </p>
             </div>
 
