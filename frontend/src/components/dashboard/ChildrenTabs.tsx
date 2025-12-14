@@ -19,6 +19,7 @@ type Child = {
     address: string
   } | null
   wishlists?: Array<{
+    id: string
     target_kindergarten_id: string
   }> | null
   parent?: {
