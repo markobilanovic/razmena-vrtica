@@ -2,6 +2,7 @@ export function DashboardSkeleton() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
       {/* Background decorations */}
+
       <div className="absolute -top-48 -left-48 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"></div>
       <div
         className="absolute -top-48 -right-48 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"
