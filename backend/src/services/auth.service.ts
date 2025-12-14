@@ -149,4 +149,37 @@ export class AuthService {
 
     return { message: 'Confirmation email sent' };
   }
+
+  async validateGoogleUser(googleUser: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    picture?: string;
+    googleId: string;
+  }): Promise<any> {
+    const { email, firstName, lastName, googleId } = googleUser;
+    
+    let user = await this.usersRepository.findOne({ where: { email } });
+    
+    if (user) {
+      // Update existing user with Google ID if not set
+      if (!user.google_id) {
+        user.google_id = googleId;
+        await this.usersRepository.save(user);
+      }
+    } else {
+      // Create new user from Google profile
+      user = this.usersRepository.create({
+        email,
+        full_name: `${firstName} ${lastName}`,
+        google_id: googleId,
+        email_confirmed: true, // Google emails are pre-verified
+        password_hash: null, // No password for OAuth users
+      });
+      await this.usersRepository.save(user);
+    }
+
+    const { password_hash, email_confirmation_token, ...result } = user;
+    return result;
+  }
 }

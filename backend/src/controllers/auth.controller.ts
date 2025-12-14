@@ -7,7 +7,11 @@ import {
   HttpStatus,
   Query,
   Get,
+  UseGuards,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../services/auth.service';
 import type {
   LoginRequest,
@@ -53,5 +57,23 @@ export class AuthController {
     @Body('email') email: string,
   ): Promise<{ message: string }> {
     return this.authService.resendConfirmationEmail(email);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {
+    // Initiates Google OAuth flow
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const loginResult = await this.authService.login(req.user);
+    
+    // Redirect to frontend with token
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
+    const redirectUrl = `${frontendUrl}/auth/callback?token=${loginResult.access_token}`;
+    
+    return res.redirect(redirectUrl);
   }
 }

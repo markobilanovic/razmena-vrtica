@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "prettier": "^3.7.4"
+  },
+  "dependencies": {
+    "passport-google-oauth20": "^2.0.0"
   }
 }

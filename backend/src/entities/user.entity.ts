@@ -30,6 +30,9 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   email_confirmation_token_expires: Date | null;
 
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  google_id: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 

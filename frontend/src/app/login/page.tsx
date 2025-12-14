@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLogin } from "@/lib/queries"
-import { ApiError } from "@/lib/api"
+import { ApiError, getGoogleAuthUrl } from "@/lib/api"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -23,6 +23,10 @@ export default function LoginPage() {
         },
       },
     )
+  }
+
+  const handleGoogleLogin = () => {
+    window.location.href = getGoogleAuthUrl()
   }
 
   return (
@@ -142,6 +146,7 @@ export default function LoginPage() {
 
         <button
           type="button"
+          onClick={handleGoogleLogin}
           className="w-full py-3.5 px-6 bg-white/5 hover:bg-white/10 border border-white/10 active:scale-[0.98] rounded-xl font-medium text-white transition-all duration-200 flex items-center justify-center gap-3 group"
         >
           <svg

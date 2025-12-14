@@ -2,10 +2,10 @@
 
 /**
  * Migration SQL Generator
- * 
+ *
  * Converts TypeORM migrations to Supabase-compatible SQL
  * Handles RLS policy updates and Supabase-specific considerations
- * 
+ *
  * Usage:
  * npm run generate-migration-sql MigrationName
  * npm run generate-migration-sql -- --all  # Generate all pending migrations
@@ -40,7 +40,7 @@ async function generateMigrationSQL(migrationName?: string) {
 
     const migrationsDir = join(process.cwd(), 'src', 'migrations');
     const outputDir = join(process.cwd(), 'supabase-migrations');
-    
+
     // Create output directory if it doesn't exist
     try {
       const { execSync } = require('child_process');
@@ -51,16 +51,16 @@ async function generateMigrationSQL(migrationName?: string) {
 
     // Get migration files
     const migrationFiles = readdirSync(migrationsDir)
-      .filter(file => file.endsWith('.ts'))
-      .map(file => {
+      .filter((file) => file.endsWith('.ts'))
+      .map((file) => {
         const match = file.match(/^(\d+)-(.+)\.ts$/);
         if (!match) return null;
-        
+
         return {
           name: match[2],
           timestamp: parseInt(match[1]),
           className: match[2],
-          filePath: join(migrationsDir, file)
+          filePath: join(migrationsDir, file),
         };
       })
       .filter(Boolean) as MigrationInfo[];
@@ -68,10 +68,10 @@ async function generateMigrationSQL(migrationName?: string) {
     // Filter by migration name if provided
     let targetMigrations = migrationFiles;
     if (migrationName && migrationName !== '--all') {
-      targetMigrations = migrationFiles.filter(m => 
-        m.name.toLowerCase().includes(migrationName.toLowerCase())
+      targetMigrations = migrationFiles.filter((m) =>
+        m.name.toLowerCase().includes(migrationName.toLowerCase()),
       );
-      
+
       if (targetMigrations.length === 0) {
         console.error(`❌ No migration found matching: ${migrationName}`);
         process.exit(1);
@@ -79,7 +79,7 @@ async function generateMigrationSQL(migrationName?: string) {
     }
 
     console.log(`📋 Found ${targetMigrations.length} migration(s) to process:`);
-    targetMigrations.forEach(m => console.log(`   - ${m.name}`));
+    targetMigrations.forEach((m) => console.log(`   - ${m.name}`));
     console.log('');
 
     // Process each migration
@@ -95,7 +95,6 @@ async function generateMigrationSQL(migrationName?: string) {
     console.log('2. Test on staging Supabase project');
     console.log('3. Apply to production Supabase');
     console.log('4. Update migration tracking');
-
   } catch (error) {
     console.error('❌ Error generating migration SQL:', error);
     process.exit(1);
@@ -108,52 +107,61 @@ async function generateMigrationSQL(migrationName?: string) {
 
 async function processMigration(migration: MigrationInfo, outputDir: string) {
   console.log(`🔄 Processing: ${migration.name}`);
-  
+
   try {
     // Read migration file
     const migrationContent = readFileSync(migration.filePath, 'utf8');
-    
+
     // Extract SQL queries from up() method
     const upQueries = extractQueriesFromMethod(migrationContent, 'up');
     const downQueries = extractQueriesFromMethod(migrationContent, 'down');
-    
+
     // Generate Supabase-compatible SQL
     const supabaseSQL = generateSupabaseSQL(migration, upQueries, downQueries);
-    
+
     // Write to output file
-    const outputFile = join(outputDir, `${migration.timestamp}-${migration.name}.sql`);
+    const outputFile = join(
+      outputDir,
+      `${migration.timestamp}-${migration.name}.sql`,
+    );
     writeFileSync(outputFile, supabaseSQL);
-    
+
     console.log(`   ✅ Generated: ${outputFile}`);
-    
   } catch (error) {
     console.error(`   ❌ Error processing ${migration.name}:`, error);
   }
 }
 
-function extractQueriesFromMethod(content: string, method: 'up' | 'down'): string[] {
+function extractQueriesFromMethod(
+  content: string,
+  method: 'up' | 'down',
+): string[] {
   const queries: string[] = [];
-  
+
   // Simple regex to extract queries from queryRunner.query() calls
   const methodRegex = new RegExp(`public async ${method}\\([^}]+\\}`, 's');
   const methodMatch = content.match(methodRegex);
-  
+
   if (methodMatch) {
     const methodContent = methodMatch[0];
     const queryRegex = /queryRunner\.query\(\s*`([^`]+)`/g;
     let match;
-    
+
     while ((match = queryRegex.exec(methodContent)) !== null) {
       queries.push(match[1].trim());
     }
   }
-  
+
   return queries;
 }
 
-function generateSupabaseSQL(migration: MigrationInfo, upQueries: string[], downQueries: string[]): string {
+function generateSupabaseSQL(
+  migration: MigrationInfo,
+  upQueries: string[],
+  downQueries: string[],
+): string {
   const timestamp = new Date().toISOString();
-  
+
   let sql = `-- Supabase Migration: ${migration.name}
 -- Generated from TypeORM migration
 -- Timestamp: ${migration.timestamp}
@@ -233,7 +241,7 @@ BEGIN;
 // Run the script
 if (require.main === module) {
   const migrationName = process.argv[2];
-  
+
   generateMigrationSQL(migrationName)
     .then(() => {
       process.exit(0);

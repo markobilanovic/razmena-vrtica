@@ -161,6 +161,10 @@ export async function resendConfirmationApi(
   })
 }
 
+export function getGoogleAuthUrl(): string {
+  return `${API_URL}/auth/google`
+}
+
 // ==================== USER API ====================
 
 export async function getUserProfileApi(): Promise<UserProfile> {
