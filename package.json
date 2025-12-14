@@ -14,6 +14,7 @@
     "build": "npm run build --workspaces",
     "build:shared": "npm run build -w shared",
     "build:backend": "npm run build -w backend",
+    "build:frontend": "npm run build:shared && npm run build -w frontend",
     "build:vercel": "npm run build -w backend",
     "test": "npm run test --workspaces",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
