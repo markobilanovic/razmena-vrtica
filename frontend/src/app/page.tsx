@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 px-6 overflow-hidden">
+      <section className="relative py-32 px-6 overflow-hidden">
         {/* Background decorations */}
         <div className="absolute -top-48 -left-48 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
         <div
@@ -110,7 +110,9 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-purple-50/40 to-pink-50/40 opacity-50"></div>
 
                   <div className="relative z-10 text-center transform transition-transform duration-500 group-hover:scale-105">
-                    <div className="text-8xl mb-6 filter drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-2">🏫</div>
+                    <div className="text-8xl mb-6 filter drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-2">
+                      🏫
+                    </div>
                     <div className="bg-white/40 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/50 shadow-sm">
                       <p className="text-xl font-semibold text-gray-800">
                         Vaš novi vrtić čeka
@@ -129,7 +131,9 @@ export default function Home() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">Podaci su</p>
+                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">
+                        Podaci su
+                      </p>
                       <p className="text-lg font-bold text-gray-900">Sigurni</p>
                     </div>
                   </div>
@@ -144,8 +148,12 @@ export default function Home() {
                       <span className="text-2xl">⚡</span>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">Brzo i</p>
-                      <p className="text-lg font-bold text-gray-900">Jednostavno</p>
+                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">
+                        Brzo i
+                      </p>
+                      <p className="text-lg font-bold text-gray-900">
+                        Jednostavno
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -493,8 +501,11 @@ export default function Home() {
 
               <div className="bg-green-50 rounded-2xl p-6 text-sm text-center text-green-900 leading-relaxed border border-green-200">
                 <p>
-                  <strong>Vi</strong> imate Palčicu a želite Vevericu.<br /><strong>Neko drugi</strong> ima Vevericu a želi Maslačak.{" "}
-                  <br /><strong>Neko treći</strong> ima Maslačak a želi Palčicu.
+                  <strong>Vi</strong> imate Palčicu a želite Vevericu.
+                  <br />
+                  <strong>Neko drugi</strong> ima Vevericu a želi Maslačak.{" "}
+                  <br />
+                  <strong>Neko treći</strong> ima Maslačak a želi Palčicu.
                 </p>
                 <p className="mt-1 font-semibold text-green-700">
                   Svi dobijaju željeno mesto!
@@ -554,8 +565,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
-              <Link 
-                href="/privacy" 
+              <Link
+                href="/privacy"
                 className="text-gray-300 hover:text-white transition-colors underline"
               >
                 Politika privatnosti
