@@ -15,7 +15,7 @@ export function DashboardContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <div className="mb-10 animate-fade-in-up">
           <h1 className="text-4xl font-bold mb-3">
-            Dobrodošli, <span className="gradient-text">{user.full_name}</span>
+            Dobrodošli, <span className="gradient-text break-all ">{user.full_name}</span>
           </h1>
           <p className="text-xl text-color-text-muted">
             Upravljajte vašim profilom i pratite status razmena.
