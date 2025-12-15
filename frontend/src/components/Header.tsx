@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -39,8 +40,14 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center shrink-0">
-              <span className="text-white text-xl font-bold">R</span>
+            <div className="relative w-10 h-10 shrink-0">
+              <Image
+                src="/logo.svg"
+                alt="Razmena Vrtića Logo"
+                fill
+                className="object-contain"
+                sizes="40px"
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-xl sm:text-2xl font-bold gradient-text leading-none">
