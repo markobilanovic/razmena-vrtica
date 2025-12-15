@@ -162,10 +162,8 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
       {/*</div>*/}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Trenutni vrtić <span className="text-red-500">*</span>
-        </label>
         <SearchableKindergartenSelect
+          label="Trenutni vrtić"
           kindergartens={kindergartens}
           value={kindergartenId}
           onChange={(id) => {
