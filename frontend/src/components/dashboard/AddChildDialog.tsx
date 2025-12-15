@@ -16,6 +16,7 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
   const [ageGroup, setAgeGroup] = useState("")
   const [kindergartenId, setKindergartenId] = useState("")
   const [error, setError] = useState("")
+  const [showAgeInfo, setShowAgeInfo] = useState(false)
 
   const { data: kindergartensData } = useKindergartens()
   const kindergartens = kindergartensData || []
@@ -77,9 +78,32 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Uzrasna grupa <span className="text-red-500">*</span>
-        </label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Uzrasna grupa <span className="text-red-500">*</span>
+          </label>
+          <button
+            type="button"
+            onClick={() => setShowAgeInfo(!showAgeInfo)}
+            className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <svg
+              className="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Uzrasti
+          </button>
+        </div>
+        
         <select
           value={ageGroup}
           onChange={(e) => setAgeGroup(e.target.value)}
@@ -87,13 +111,27 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
           required
         >
           <option value="">Izaberite uzrasnu grupu</option>
-          <option value="MLADJA_JASLENA">Mlađa jaslena (0.5-1.5 god)</option>
-          <option value="STARIJA_JASLENA">Starija jaslena (1.5-2.5 god)</option>
-          <option value="MLADJA">Mlađa (2.5-3.5 god)</option>
-          <option value="SREDNJA">Srednja (3.5-4.5 god)</option>
-          <option value="STARIJA">Starija (4.5-5.5 god)</option>
-          <option value="NAJSTARIJA">Najstarija (5.5-6.5 god)</option>
+          <option value="MLADJA_JASLENA">Mlađa jaslena</option>
+          <option value="STARIJA_JASLENA">Starija jaslena</option>
+          <option value="MLADJA">Mlađa</option>
+          <option value="SREDNJA">Srednja</option>
+          <option value="STARIJA">Starija</option>
+          <option value="NAJSTARIJA">Najstarija</option>
         </select>
+
+        {showAgeInfo && (
+          <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="text-sm font-medium text-blue-900 mb-2">Uzrasne grupe po datumu rođenja:</h4>
+            <div className="space-y-1 text-xs text-blue-800">
+              <div><strong>Mlađa jaslena:</strong> mart 2024 - mart 2025</div>
+              <div><strong>Starija jaslena:</strong> mart 2023 - mart 2024</div>
+              <div><strong>Mlađa:</strong> mart 2022 - mart 2023</div>
+              <div><strong>Srednja:</strong> mart 2021 - mart 2022</div>
+              <div><strong>Starija:</strong> mart 2020 - mart 2021</div>
+              <div><strong>Najstarija:</strong> mart 2019 - mart 2020</div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/*<div>*/}
