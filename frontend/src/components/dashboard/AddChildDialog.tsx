@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, Suspense, useMemo, useRef, useEffect } from "react"
+import { useState, Suspense } from "react"
 import { useCreateChild, useKindergartens } from "@/lib/queries"
+import { SearchableKindergartenSelect } from "@/components/ui/SearchableKindergartenSelect"
 
 interface AddChildDialogProps {
   isOpen: boolean
@@ -17,60 +18,8 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState("")
 
   const { data: kindergartensData } = useKindergartens()
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
   const kindergartens = kindergartensData || []
 
-  const sortedKindergartens = useMemo(() => {
-    return [...kindergartens].sort((a, b) => a.name.localeCompare(b.name))
-  }, [kindergartens])
-
-  const filteredKindergartens = useMemo(() => {
-    if (!searchTerm && !kindergartenId) return sortedKindergartens
-    // If a kindergarten is selected and the search term matches it, show all (so user can switch)
-    // Or if user is typing, filter.
-    // To keep it simple: always filter by searchTerm if it exists.
-    // If user clicked an item, searchTerm would be "Name - City".
-
-    // Better UX: If dropdown is open, filter.
-    const lower = searchTerm.toLowerCase()
-    return sortedKindergartens.filter(
-      (k) =>
-        k.name.toLowerCase().includes(lower) ||
-        k.city.toLowerCase().includes(lower),
-    )
-  }, [sortedKindergartens, searchTerm, kindergartenId])
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-
-  const handleSelectKindergarten = (k: any) => {
-    setKindergartenId(k.id)
-    setSearchTerm(`${k.name} - ${k.city}`)
-    setIsDropdownOpen(false)
-    setError("")
-  }
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    if (kindergartenId) {
-      setKindergartenId("")
-    }
-    setIsDropdownOpen(true)
-  }
   const createChild = useCreateChild()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,7 +64,7 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Ime deteta
+          Ime deteta <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -174,38 +123,19 @@ function AddChildForm({ onClose }: { onClose: () => void }) {
       {/*  </select>*/}
       {/*</div>*/}
 
-      <div className="relative" ref={dropdownRef}>
+      <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Trenutni vrtić <span className="text-red-500">*</span>
         </label>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          onFocus={() => setIsDropdownOpen(true)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Pretražite vrtiće..."
-          required={!kindergartenId} // Requires input if no ID selected, but handled by handleSubmit mostly
+        <SearchableKindergartenSelect
+          kindergartens={kindergartens}
+          value={kindergartenId}
+          onChange={(id) => {
+            setKindergartenId(id)
+            if (error) setError("")
+          }}
+          required
         />
-        {isDropdownOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {filteredKindergartens.length === 0 ? (
-              <div className="px-4 py-2 text-gray-500 text-sm">
-                Nema rezultata
-              </div>
-            ) : (
-              filteredKindergartens.map((k) => (
-                <div
-                  key={k.id}
-                  onClick={() => handleSelectKindergarten(k)}
-                  className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-700"
-                >
-                  {k.name} - {k.city}
-                </div>
-              ))
-            )}
-          </div>
-        )}
       </div>
 
       <div className="flex gap-3 pt-4">

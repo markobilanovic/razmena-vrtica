@@ -11,6 +11,7 @@ import {
   ConfirmationPopover,
   ConfirmationPopoverRef,
 } from "@/components/ui/ConfirmationPopover"
+import { SearchableKindergartenSelect } from "@/components/ui/SearchableKindergartenSelect"
 
 interface WishlistSectionProps {
   childId: string
@@ -104,18 +105,12 @@ export const WishlistSection = ({
           <label className="block text-sm font-medium mb-2">
             Izaberite vrtić:
           </label>
-          <select
+          <SearchableKindergartenSelect
+            kindergartens={availableKindergartens}
             value={selectedKindergartenId}
-            onChange={(e) => setSelectedKindergartenId(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          >
-            <option value="">-- Izaberite vrtić --</option>
-            {availableKindergartens.map((k: Kindergarten) => (
-              <option key={k.id} value={k.id}>
-                {k.name} - {k.address}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedKindergartenId}
+            className="mb-3"
+          />
           <div className="flex gap-2">
             <button
               onClick={handleAddWish}

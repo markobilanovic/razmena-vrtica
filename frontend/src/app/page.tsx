@@ -164,42 +164,25 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
                 icon: "🔍",
-                title: "Lako pretraživanje",
+                title: "Pametna pretraga",
                 description:
-                  "Pretražite dostupne razmene po gradu, opštini i vrtiću koji vam odgovara.",
+                  "Naš sistem automatski pronalazi roditelje čije želje se poklapaju sa vašim potrebama.",
               },
               {
-                icon: "🔔",
-                title: "Notifikacije u realnom vremenu",
+                icon: "�",
+                title: "Kružne razmene",
                 description:
-                  "Dobijte obaveštenje čim se pojavi razmena koja odgovara vašim potrebama.",
+                  "Povećavamo šanse za uspeh povezivanjem tri ili više roditelja u krug (A→B→C).",
               },
               {
-                icon: "💬",
-                title: "Direktna komunikacija",
+                icon: "�",
+                title: "Direktan kontakt",
                 description:
-                  "Stupite u kontakt sa drugim roditeljima i dogovorite detalje razmene.",
-              },
-              {
-                icon: "🔒",
-                title: "Sigurno i pouzdano",
-                description:
-                  "Vaši podaci su zaštićeni, a svi korisnici su verifikovani.",
-              },
-              {
-                icon: "📱",
-                title: "Mobilna aplikacija",
-                description:
-                  "Pristupite platformi sa bilo kog uređaja, u bilo koje vreme.",
-              },
-              {
-                icon: "⚡",
-                title: "Brzo i efikasno",
-                description: "Pronađite razmenu za nekoliko minuta, ne meseci.",
+                  "Čim dođe do poklapanja, razmenjujemo vaše kontakte radi daljeg dogovora.",
               },
             ].map((feature, index) => (
               <div
@@ -315,7 +298,7 @@ export default function Home() {
                   <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-3xl border-4 border-white shadow-xl">
                     👩
                   </div>
-                  <span className="font-semibold mt-3 text-lg">Vi</span>
+                  <span className="font-semibold mt-3 text-lg">Palčica</span>
                 </div>
 
                 <div className="flex flex-col gap-2 text-blue-500">
@@ -338,18 +321,16 @@ export default function Home() {
                   <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center text-3xl border-4 border-white shadow-xl">
                     👨
                   </div>
-                  <span className="font-semibold mt-3 text-lg">Osoba B</span>
+                  <span className="font-semibold mt-3 text-lg">Veverica</span>
                 </div>
               </div>
 
               <div className="bg-blue-50/50 rounded-2xl p-6 text-center text-blue-900 leading-relaxed border border-blue-100">
                 <p>
-                  <strong>Vi</strong> želite vrtić u kom je{" "}
-                  <strong>Osoba B</strong>.
+                  <strong>Vi</strong> želite Vevericu.
                 </p>
                 <p>
-                  <strong>Osoba B</strong> želi vrtić u kom ste{" "}
-                  <strong>Vi</strong>.
+                  <strong>Neko drugi</strong> želi Palčicu.
                 </p>
               </div>
             </div>
@@ -378,8 +359,8 @@ export default function Home() {
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl border-4 border-white shadow-lg">
                     👩
                   </div>
-                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm">
-                    Vi (A)
+                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm whitespace-nowrap">
+                    Palčica
                   </span>
                 </div>
 
@@ -388,8 +369,8 @@ export default function Home() {
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-2xl border-4 border-white shadow-lg">
                     👨
                   </div>
-                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm">
-                    Osoba B
+                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm whitespace-nowrap">
+                    Veverica
                   </span>
                 </div>
 
@@ -398,8 +379,8 @@ export default function Home() {
                   <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-2xl border-4 border-white shadow-lg">
                     👩‍🦰
                   </div>
-                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm">
-                    Osoba C
+                  <span className="font-semibold text-sm mt-1 bg-white px-2 rounded-full shadow-sm whitespace-nowrap">
+                    Maslačak
                   </span>
                 </div>
 
@@ -466,8 +447,8 @@ export default function Home() {
 
               <div className="bg-green-50 rounded-2xl p-6 text-sm text-center text-green-900 leading-relaxed border border-green-200">
                 <p>
-                  <strong>Vi</strong> želite B. <strong>B</strong> želi C.{" "}
-                  <strong>C</strong> želi Vas.
+                  <strong>Vi</strong> imate Palčicu a želite Vevericu.<br /><strong>Neko drugi</strong> ima Vevericu a želi Maslačak.{" "}
+                  <br /><strong>Neko treći</strong> ima Maslačak a želi Palčicu.
                 </p>
                 <p className="mt-1 font-semibold text-green-700">
                   Svi dobijaju željeno mesto!
@@ -479,15 +460,16 @@ export default function Home() {
       </section>
 
       {/* Community Section (Replacing Testimonials) */}
+      {/* Community Section */}
       <section id="community" className="py-32 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="mb-6">
-              Postanite deo <span className="gradient-text">zajednice</span>
+              Zajedno do <span className="gradient-text">željenog vrtića</span>
             </h2>
             <p className="text-xl text-color-text-muted max-w-2xl mx-auto">
-              Budite među prvima koji će pronaći savršenu razmenu vrtića. Vaše
-              iskustvo će pomoći drugima!
+              Što nas je više, to su veće šanse za sve. Vaša registracija može
+              biti ključni deo slagalice za nekog drugog.
             </p>
           </div>
 
@@ -496,20 +478,21 @@ export default function Home() {
 
             <div className="relative z-10">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl">
-                🚀
+                🤝
               </div>
-              <h3 className="text-2xl font-bold mb-4">Lansiramo se!</h3>
+              <h3 className="text-2xl font-bold mb-4">Povezujemo roditelje</h3>
+
               <p className="text-lg text-color-text-muted mb-8 max-w-2xl mx-auto">
-                Naša platforma je upravo otvorena za registracije. Pridružite se
-                sada, postavite svoj oglas potpuno besplatno i budite pionir u
-                modernoj razmeni vrtića u Srbiji.
+                Trenutno gradimo mrežu roditelja u Novom Sadu. Svaki novi član
+                povećava verovatnoću da se krug zatvori. Unesite svoje želje
+                danas i povećajte šanse za uspešnu razmenu.
               </p>
 
               <Link
                 href="/register"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                Postani prvi član
+                Unesi svoje želje
               </Link>
             </div>
 
