@@ -1,18 +1,6 @@
 export function DashboardSkeleton() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50 pt-20">
-      {/* Background decorations */}
-
-      <div className="absolute -top-48 -left-48 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"></div>
-      <div
-        className="absolute -top-48 -right-48 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"
-        style={{ animationDelay: "1s" }}
-      ></div>
-      <div
-        className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"
-        style={{ animationDelay: "2s" }}
-      ></div>
-
       <div className="max-w-7xl mx-auto px-6 py-10 relative z-10">
         <div className="mb-10 animate-pulse">
           <div className="h-10 bg-gray-200 rounded-lg w-2/3 mb-3"></div>

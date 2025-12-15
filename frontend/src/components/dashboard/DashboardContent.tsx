@@ -12,17 +12,6 @@ export function DashboardContent() {
 
   return (
     <div className="relative bg-gray-50 min-h-screen">
-      {/* Background decorations */}
-      <div className="absolute -top-48 -left-48 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"></div>
-      <div
-        className="absolute -top-48 -right-48 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"
-        style={{ animationDelay: "1s" }}
-      ></div>
-      <div
-        className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float pointer-events-none"
-        style={{ animationDelay: "2s" }}
-      ></div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <div className="mb-10 animate-fade-in-up">
           <h1 className="text-4xl font-bold mb-3">

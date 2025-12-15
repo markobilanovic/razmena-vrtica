@@ -3,7 +3,7 @@ import {
   HideMatchConfirmation,
   HideMatchConfirmationRef,
 } from "../../ui/HideMatchConfirmation"
-import { useHideMatch, useCompleteMatch, useCancelMatch } from "../../../lib/queries"
+import { useHideMatch, useCompleteMatch, useCancelMatch } from "@/lib/queries"
 import { useRef, useState } from "react"
 
 interface ActiveExchangesSectionProps {
@@ -48,7 +48,11 @@ export const ActiveExchangesSection = ({
   }
 
   const handleCompleteMatch = async (matchGroupId: string) => {
-    if (!confirm("Da li ste sigurni da ste uspešno razmenili vrtić sa svim učesnicima?")) {
+    if (
+      !confirm(
+        "Da li ste sigurni da ste uspešno razmenili vrtić sa svim učesnicima?",
+      )
+    ) {
       return
     }
 
@@ -139,7 +143,11 @@ export const ActiveExchangesSection = ({
                         onClick={() => handleHideClick(group.id)}
                         disabled={hideMatchMutation.isPending}
                         className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={isCompleted ? "Sakrij ovu završenu razmenu" : "Sakrij ovu otkazanu razmenu"}
+                        title={
+                          isCompleted
+                            ? "Sakrij ovu završenu razmenu"
+                            : "Sakrij ovu otkazanu razmenu"
+                        }
                       >
                         {hideMatchMutation.isPending &&
                         selectedMatchId === group.id
@@ -171,7 +179,7 @@ export const ActiveExchangesSection = ({
                             <p className="text-xs">
                               {otherChild.parent.full_name}
                             </p>
-                            <a 
+                            <a
                               href={`mailto:${otherChild.parent.email}`}
                               className="text-xs text-teal-600 hover:underline"
                             >
@@ -188,22 +196,27 @@ export const ActiveExchangesSection = ({
                 {isActive && (
                   <div className="mt-4 space-y-2">
                     <p className="text-xs text-gray-600 italic">
-                      Kontaktirajte sve učesnike i dogovorite razmenu. Nakon što se dogovorite, potvrdite razmenu ili je otkažite.
+                      Kontaktirajte sve učesnike i dogovorite razmenu. Nakon što
+                      se dogovorite, potvrdite razmenu ili je otkažite.
                     </p>
                     <div className="flex gap-2">
-                      <button 
+                      <button
                         onClick={() => handleCompleteMatch(group.id)}
                         disabled={completeMatchMutation.isPending}
                         className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {completeMatchMutation.isPending ? "Potvrđujem..." : "✓ Razmena završena"}
+                        {completeMatchMutation.isPending
+                          ? "Potvrđujem..."
+                          : "✓ Razmena završena"}
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleCancelMatch(group.id)}
                         disabled={cancelMatchMutation.isPending}
                         className="flex-1 bg-red-50 text-red-600 py-2 rounded-lg text-sm font-semibold hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {cancelMatchMutation.isPending ? "Otkažem..." : "✗ Otkaži razmenu"}
+                        {cancelMatchMutation.isPending
+                          ? "Otkažem..."
+                          : "✗ Otkaži razmenu"}
                       </button>
                     </div>
                   </div>
@@ -216,17 +229,19 @@ export const ActiveExchangesSection = ({
         <p className="text-color-text-muted italic">Nema aktivnih razmena.</p>
       )}
 
-      {(hideMatchMutation.error || completeMatchMutation.error || cancelMatchMutation.error) && (
+      {(hideMatchMutation.error ||
+        completeMatchMutation.error ||
+        cancelMatchMutation.error) && (
         <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">
             <strong>Greška:</strong>{" "}
             {hideMatchMutation.error instanceof Error
               ? hideMatchMutation.error.message
               : completeMatchMutation.error instanceof Error
-              ? completeMatchMutation.error.message
-              : cancelMatchMutation.error instanceof Error
-              ? cancelMatchMutation.error.message
-              : "Došlo je do greške"}
+                ? completeMatchMutation.error.message
+                : cancelMatchMutation.error instanceof Error
+                  ? cancelMatchMutation.error.message
+                  : "Došlo je do greške"}
           </p>
         </div>
       )}
