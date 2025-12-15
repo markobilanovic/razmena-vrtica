@@ -69,10 +69,10 @@ export default function Header() {
                   Kako funkcioniše
                 </a>
                 <a
-                  href="/#testimonials"
+                  href="/#community"
                   className="text-color-text-muted hover:text-color-text transition-colors font-medium"
                 >
-                  Iskustva
+                  Zajednica
                 </a>
               </>
             )}
@@ -152,11 +152,11 @@ export default function Header() {
                   Kako funkcioniše
                 </a>
                 <a
-                  href="/#testimonials"
+                  href="/#community"
                   className="block text-color-text-muted hover:text-color-text transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Iskustva
+                  Zajednica
                 </a>
               </>
             )}

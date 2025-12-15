@@ -101,47 +101,51 @@ export default function Home() {
             </div>
 
             <div
-              className="relative animate-fade-in-up"
+              className="relative animate-fade-in-up flex justify-center lg:block"
               style={{ animationDelay: "0.2s" }}
             >
-              <div className="relative">
+              <div className="relative w-full max-w-md lg:max-w-full">
                 {/* Placeholder for hero image */}
-                <div className="glass-card rounded-3xl p-8 aspect-square flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-8xl mb-4">🏫</div>
-                    <p className="text-2xl font-semibold text-color-text-muted">
-                      Vaš novi vrtić čeka
-                    </p>
+                <div className="glass-card rounded-3xl p-8 aspect-[4/3] flex items-center justify-center relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-purple-50/40 to-pink-50/40 opacity-50"></div>
+
+                  <div className="relative z-10 text-center transform transition-transform duration-500 group-hover:scale-105">
+                    <div className="text-8xl mb-6 filter drop-shadow-sm transition-transform duration-300 group-hover:-translate-y-2">🏫</div>
+                    <div className="bg-white/40 backdrop-blur-md px-8 py-4 rounded-2xl border border-white/50 shadow-sm">
+                      <p className="text-xl font-semibold text-gray-800">
+                        Vaš novi vrtić čeka
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Floating stats */}
-                <div className="absolute -top-6 -left-6 glass-card rounded-2xl p-4 animate-pulse-glow">
+                {/* Floating stats - Hidden on mobile */}
+                <div className="hidden md:block absolute -top-6 -left-6 glass-card rounded-2xl p-4 animate-pulse-glow shadow-lg transform hover:scale-105 transition-transform">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-md">
                       <span className="text-2xl">
                         {/* Show Shield icon if no stats, otherwise Users icon */}
-                        �️
+                        🛡️
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm text-color-text-muted">Podaci su</p>
-                      <p className="text-lg font-bold">Sigurni</p>
+                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">Podaci su</p>
+                      <p className="text-lg font-bold text-gray-900">Sigurni</p>
                     </div>
                   </div>
                 </div>
 
                 <div
-                  className="absolute -bottom-6 -right-6 glass-card rounded-2xl p-4 animate-pulse-glow"
+                  className="hidden md:block absolute -bottom-6 -right-6 glass-card rounded-2xl p-4 animate-pulse-glow shadow-lg transform hover:scale-105 transition-transform"
                   style={{ animationDelay: "1s" }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-success rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-success rounded-xl flex items-center justify-center shadow-md">
                       <span className="text-2xl">⚡</span>
                     </div>
                     <div>
-                      <p className="text-sm text-color-text-muted">Brzo i</p>
-                      <p className="text-lg font-bold">Jednostavno</p>
+                      <p className="text-xs font-medium text-color-text-muted uppercase tracking-wider">Brzo i</p>
+                      <p className="text-lg font-bold text-gray-900">Jednostavno</p>
                     </div>
                   </div>
                 </div>
@@ -167,19 +171,61 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-10">
             {[
               {
-                icon: "🔍",
+                icon: (
+                  <svg
+                    className="w-12 h-12 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                ),
                 title: "Pametna pretraga",
                 description:
                   "Naš sistem automatski pronalazi roditelje čije želje se poklapaju sa vašim potrebama.",
               },
               {
-                icon: "�",
+                icon: (
+                  <svg
+                    className="w-12 h-12 text-purple-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                ),
                 title: "Kružne razmene",
                 description:
                   "Povećavamo šanse za uspeh povezivanjem tri ili više roditelja u krug (A→B→C).",
               },
               {
-                icon: "�",
+                icon: (
+                  <svg
+                    className="w-12 h-12 text-pink-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
+                  </svg>
+                ),
                 title: "Direktan kontakt",
                 description:
                   "Čim dođe do poklapanja, razmenjujemo vaše kontakte radi daljeg dogovora.",
@@ -190,7 +236,7 @@ export default function Home() {
                 className="feature-card animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="text-5xl mb-4">{feature.icon}</div>
+                <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
                 <p className="text-color-text-muted">{feature.description}</p>
               </div>
@@ -327,10 +373,10 @@ export default function Home() {
 
               <div className="bg-blue-50/50 rounded-2xl p-6 text-center text-blue-900 leading-relaxed border border-blue-100">
                 <p>
-                  <strong>Vi</strong> želite Vevericu.
+                  <strong>Vi</strong> imate Palčicu a želite Vevericu.
                 </p>
                 <p>
-                  <strong>Neko drugi</strong> želi Palčicu.
+                  <strong>Neko drugi</strong> ima Palčicu a želi Vevericu.
                 </p>
               </div>
             </div>
