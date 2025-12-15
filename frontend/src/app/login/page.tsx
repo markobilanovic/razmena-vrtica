@@ -173,15 +173,25 @@ export default function LoginPage() {
           Google
         </button>
 
-        <p className="mt-8 text-center text-white/60 text-sm">
-          Nemate nalog?{" "}
-          <Link
-            href="/register"
-            className="text-white font-medium hover:underline decoration-white/50 underline-offset-4"
-          >
-            Registrujte se
-          </Link>
-        </p>
+        <div className="mt-8 text-center text-white/60 text-sm space-y-2">
+          <p>
+            Nemate nalog?{" "}
+            <Link
+              href="/register"
+              className="text-white font-medium hover:underline decoration-white/50 underline-offset-4"
+            >
+              Registrujte se
+            </Link>
+          </p>
+          <p>
+            <Link
+              href="/privacy"
+              className="text-white/50 hover:text-white/70 transition-colors underline decoration-white/30 underline-offset-4"
+            >
+              Politika privatnosti
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

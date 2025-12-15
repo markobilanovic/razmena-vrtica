@@ -552,86 +552,16 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">R</span>
-                </div>
-                <span className="text-xl font-bold">Razmena Vrtića</span>
-              </div>
-              <p className="text-gray-400">
-                Povezujemo roditelje i olakšavamo razmenu mesta u vrtićima PU
-                „Radosno detinjstvo”.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Platforma</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Pretraga razmena
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kako funkcioniše
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Cenovnik
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Podrška</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Česta pitanja
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kontakt
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Pomoć
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4">Pravno</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Uslovi korišćenja
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Politika privatnosti
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Kolačići
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 Razmena Vrtića. Sva prava zadržana.</p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
+              <Link 
+                href="/privacy" 
+                className="text-gray-300 hover:text-white transition-colors underline"
+              >
+                Politika privatnosti
+              </Link>
+            </div>
+            <p>&copy; 2025 Razmena Vrtića</p>
           </div>
         </div>
       </footer>
