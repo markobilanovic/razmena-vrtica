@@ -380,12 +380,15 @@ export default function Home() {
               </div>
 
               <div className="bg-blue-50/50 rounded-2xl p-6 text-center text-blue-900 leading-relaxed border border-blue-100">
-                <p>
-                  <strong>Vi</strong> imate Palčicu a želite Vevericu.
-                </p>
-                <p>
-                  <strong>Neko drugi</strong> ima Palčicu a želi Vevericu.
-                </p>
+                <ul className="space-y-2 text-center">
+                  <li>
+                    Vi biste iz <strong>Laste</strong> u <strong>Rode</strong>.
+                  </li>
+                  <li>
+                    Neko drugi bi iz <strong>Rodu</strong> u{" "}
+                    <strong>Lastu</strong>.
+                  </li>
+                </ul>
               </div>
             </div>
 
@@ -499,15 +502,22 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-green-50 rounded-2xl p-6 text-sm text-center text-green-900 leading-relaxed border border-green-200">
-                <p>
-                  <strong>Vi</strong> imate Palčicu a želite Vevericu.
-                  <br />
-                  <strong>Neko drugi</strong> ima Vevericu a želi Maslačak.{" "}
-                  <br />
-                  <strong>Neko treći</strong> ima Maslačak a želi Palčicu.
-                </p>
-                <p className="mt-1 font-semibold text-green-700">
+              <div className="bg-green-50 rounded-2xl p-2 sm:p-6 text-sm sm:text-base text-green-900 leading-relaxed border border-green-200">
+                <ul className="space-y-2 text-center">
+                  <li>
+                    Vi biste iz <strong>Laste</strong> u <strong>Rodu</strong>.
+                  </li>
+                  <li>
+                    Neko drugi bi iz <strong>Rode</strong> u{" "}
+                    <strong>Medu</strong>.
+                  </li>
+                  <li>
+                    Neko treći bi iz <strong>Mede</strong> u{" "}
+                    <strong>Lastu</strong>.
+                  </li>
+                </ul>
+
+                <p className="mt-4 font-semibold text-green-700 text-center">
                   Svi dobijaju željeno mesto!
                 </p>
               </div>
