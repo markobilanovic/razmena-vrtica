@@ -52,6 +52,18 @@ export function SearchableKindergartenSelect({
 
     const filteredKindergartens = useMemo(() => {
         const lower = searchTerm.toLowerCase()
+        
+        // Check if search term is in formatted display format "Name - City"
+        if (lower.includes(' - ')) {
+            const [namePart, cityPart] = lower.split(' - ')
+            return sortedKindergartens.filter(
+                (k) =>
+                    k.name.toLowerCase().startsWith(namePart) &&
+                    k.city.toLowerCase().startsWith(cityPart)
+            )
+        }
+        
+        // Otherwise use fuzzy matching on name or city
         return sortedKindergartens.filter(
             (k) =>
                 k.name.toLowerCase().includes(lower) ||
@@ -181,7 +193,7 @@ export function SearchableKindergartenSelect({
                     value={searchTerm}
                     onChange={handleSearchChange}
                     onKeyDown={handleKeyDown}
-                    onFocus={() => setIsOpen(true)}
+                    onClick={() => setIsOpen(true)}
                     className={`
                         w-full px-4 py-2 border rounded-lg 
                         focus:ring-2 focus:ring-blue-500 focus:border-transparent 
