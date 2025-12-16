@@ -1,20 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function Home() {
   const router = useRouter()
-  const [email, setEmail] = useState("")
 
-  const handleGetStarted = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email) {
-      router.push(`/register?email=${encodeURIComponent(email)}`)
-    } else {
-      router.push("/register")
-    }
+  const handleGetStarted = () => {
+    router.push("/register")
   }
 
   return (
@@ -51,24 +44,32 @@ export default function Home() {
                 odgovara.
               </p>
 
-              <form
-                onSubmit={handleGetStarted}
-                className="flex flex-col sm:flex-row gap-4 mb-6"
-              >
-                <input
-                  type="email"
-                  placeholder="Unesite vašu email adresu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none transition-all text-lg shadow-sm hover:shadow-md bg-white"
-                  required
-                />
-                <button type="submit" className="btn-primary whitespace-nowrap">
-                  <span>Započni sada</span>
+              <div className="mb-8 text-center">
+                <button 
+                  onClick={handleGetStarted}
+                  className="group relative inline-flex items-center justify-center px-10 py-5 text-xl font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                >
+                  <span className="relative z-10 flex items-center gap-3">
+                    Započni sada
+                    <svg 
+                      className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M17 8l4 4m0 0l-4 4m4-4H3" 
+                      />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </button>
-              </form>
+              </div>
 
-              <div className="flex items-center gap-6 text-sm text-color-text-muted">
+              <div className="flex flex-row items-center justify-center gap-6 text-sm text-color-text-muted">
                 <div className="flex items-center gap-2">
                   <svg
                     className="w-5 h-5 text-green-500"
