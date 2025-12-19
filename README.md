@@ -2,6 +2,8 @@
 
 A platform for exchanging kindergarten spots in Serbia. This application helps parents find and swap places in kindergartens to better suit their location or needs.
 
+Live site: https://razmena-vrtica.vercel.app
+
 ## 🏗️ Architecture
 
 - **Backend**: NestJS with TypeORM
