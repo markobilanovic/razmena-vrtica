@@ -1,26 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
+import * as nodemailer from 'nodemailer';
+
+type EmailProvider = 'smtp' | 'resend';
 
 @Injectable()
 export class EmailService {
+  private provider: EmailProvider;
   private resendClient: Resend | null;
+  private smtpTransporter: nodemailer.Transporter | null;
   private isDevelopment: boolean;
   private fromEmail: string;
 
   constructor() {
     this.isDevelopment = process.env.NODE_ENV !== 'production';
+
+    // Determine which provider to use (defaults to 'smtp')
+    this.provider = (process.env.EMAIL_PROVIDER as EmailProvider) || 'smtp';
+
     this.fromEmail =
-      process.env.EMAIL_FROM || 'Razmena Vrtica <onboarding@resend.dev>';
+      process.env.EMAIL_FROM ||
+      (this.provider === 'smtp'
+        ? 'Razmena Vrtica <noreply@razmenavrtica.rs>'
+        : 'Razmena Vrtica <onboarding@resend.dev>');
+
+    // Initialize clients based on provider
+    this.resendClient = null;
+    this.smtpTransporter = null;
 
     if (!this.isDevelopment) {
-      // Initialize Resend client for production
-      if (!process.env.RESEND_API_KEY) {
-        console.warn('RESEND_API_KEY is not set in production environment!');
+      if (this.provider === 'resend') {
+        this.initializeResend();
+      } else if (this.provider === 'smtp') {
+        this.initializeSMTP();
       }
-      this.resendClient = new Resend(process.env.RESEND_API_KEY);
-    } else {
-      this.resendClient = null;
     }
+
+    console.log(`📧 Email service initialized with provider: ${this.provider} (${this.isDevelopment ? 'development' : 'production'} mode)`);
+  }
+
+  private initializeResend(): void {
+    if (!process.env.RESEND_API_KEY) {
+      console.warn('⚠️  RESEND_API_KEY is not set in production environment!');
+    }
+    this.resendClient = new Resend(process.env.RESEND_API_KEY);
+    console.log('✅ Resend client initialized');
+  }
+
+  private initializeSMTP(): void {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('⚠️  SMTP_USER or SMTP_PASS is not set in production environment!');
+    }
+
+    this.smtpTransporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+    console.log('✅ SMTP transporter initialized');
   }
 
   async sendConfirmationEmail(
@@ -179,6 +220,21 @@ export class EmailService {
     html: string,
     text: string,
   ): Promise<void> {
+    if (this.provider === 'resend') {
+      await this.sendViaResend(to, subject, html, text);
+    } else if (this.provider === 'smtp') {
+      await this.sendViaSMTP(to, subject, html, text);
+    } else {
+      throw new Error(`Unknown email provider: ${this.provider}`);
+    }
+  }
+
+  private async sendViaResend(
+    to: string,
+    subject: string,
+    html: string,
+    text: string,
+  ): Promise<void> {
     if (!this.resendClient) {
       throw new Error('Resend client not initialized');
     }
@@ -191,9 +247,34 @@ export class EmailService {
         html,
         text,
       });
-      console.log('Email sent successfully:', data);
+      console.log('✅ Email sent successfully via Resend:', data);
     } catch (error) {
-      console.error('Failed to send email:', error);
+      console.error('❌ Failed to send email via Resend:', error);
+      throw error;
+    }
+  }
+
+  private async sendViaSMTP(
+    to: string,
+    subject: string,
+    html: string,
+    text: string,
+  ): Promise<void> {
+    if (!this.smtpTransporter) {
+      throw new Error('SMTP transporter not initialized');
+    }
+
+    try {
+      const info = await this.smtpTransporter.sendMail({
+        from: this.fromEmail,
+        to,
+        subject,
+        html,
+        text,
+      });
+      console.log('✅ Email sent successfully via SMTP:', info.messageId);
+    } catch (error) {
+      console.error('❌ Failed to send email via SMTP:', error);
       throw error;
     }
   }
